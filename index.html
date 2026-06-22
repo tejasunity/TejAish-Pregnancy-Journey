@@ -1,132 +1,465 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TejAish Pregnancy Journey V12</title>
-<style>
-body{margin:0;font-family:-apple-system;background:#fff8fb;color:#333}
-.hero{position:sticky;top:0;background:linear-gradient(135deg,#f7d8e8,#dcefff);padding:20px;z-index:10}
-.glass{background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-radius:20px;padding:14px;margin-top:10px}
-.section{margin:12px}
-.card{background:#fff;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.progress{height:16px;background:#eee;border-radius:20px;overflow:hidden}
-.bar{height:100%;background:linear-gradient(90deg,#f5a8c8,#b9ddff)}
-.week{cursor:pointer}
-input,textarea{width:100%;box-sizing:border-box;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #ddd}
-button{padding:10px 14px;border:none;border-radius:10px}
-#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center}
-#box{background:white;width:92%;max-width:700px;max-height:90vh;overflow:auto;padding:16px;border-radius:20px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>TejAish Pregnancy Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    body { background-color: #FAF9F5; }
+    .phase-1 { background-color: #F4EFE6; color: #705335; }
+    .phase-2 { background-color: #E6EEF4; color: #355370; }
+    .phase-3 { background-color: #EAE6F4; color: #4A3570; }
+    .report-grid-layout {
+      display: grid;
+      grid-template-columns: 55px 65px 210px 170px 90px 90px 135px 135px;
+      align-items: center;
+      text-align: left;
+    }
+    @media print {
+      body { background-color: #ffffff; padding: 0; }
+      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons { display: none !important; }
+      #report-backdrop { position: relative !important; display: block !important; background: none !important; padding: 0 !important; }
+      .report-grid-layout { page-break-inside: avoid; }
+    }
+  </style>
 </head>
-<body>
-<div class="hero">
-<h1>✨ TejAish Pregnancy Journey</h1>
-<div>Aish ❤️ Tejas • Twin Miracle Edition</div>
-<div class="glass">
-<div id="summary"></div>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<div id="pct"></div>
-</div>
-<div class="glass">
-<h3>Current Week + Next 5 Weeks</h3>
-<div id="snapshot"></div>
-</div>
-</div>
+<body class="pb-12 text-stone-800 antialiased selection:bg-rose-100">
 
-<div class="section">
-<div class="card"><h3>Family Dashboard</h3><div id="family"></div></div>
-<div class="card"><h3>Memory Journal</h3><textarea id="journal"></textarea><button onclick="saveJournal()">Save</button></div>
-<div class="card"><h3>Baby Name Planner</h3><input id="boy" placeholder="Boy names"><input id="girl" placeholder="Girl names"><input id="unisex" placeholder="Unisex names"><button onclick="saveNames()">Save</button></div>
-<div class="card"><h3>Hospital Bag</h3><label><input type="checkbox"> Documents</label><br><label><input type="checkbox"> Insurance</label><br><label><input type="checkbox"> Baby Clothes</label></div>
-<div class="card"><h3>Export</h3><button onclick="backup()">Backup JSON</button><button onclick="window.print()">Save PDF</button></div>
-</div>
+  <header class="bg-white border-b border-stone-200/60 px-5 py-4 flex justify-between items-center shadow-xs">
+    <div>
+      <h1 class="text-lg font-extrabold tracking-tight text-stone-900">TejAish Pregnancy Tracker</h1>
+      <p class="text-[10px] font-bold text-stone-400 tracking-wider uppercase mt-0.5">Aish ❤️ Tejas • Twin Miracle Edition</p>
+    </div>
+    
+    <div class="relative inline-block text-left">
+      <button onclick="toggleReportMenuDropdown()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-5 py-2.5 rounded-full transition active:scale-95 shadow-sm flex items-center gap-1 cursor-pointer">
+        View Compiled Report ▾
+      </button>
+      <div id="report-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-stone-100">
+        <button onclick="launchReportViewModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition flex items-center gap-2 cursor-pointer">👨‍👩‍👧‍👦 Family Share View</button>
+      </div>
+    </div>
+  </header>
 
-<div class="section"><h2>Pregnancy Timeline</h2><div id="timeline"></div></div>
+  <main class="max-w-4xl mx-auto p-4 space-y-6 no-print">
+    
+    <section class="bg-gradient-to-br from-[#FCEFF5] to-[#EBF3FC] rounded-2xl p-5 border border-white/60 shadow-xs">
+      <h2 class="text-base font-extrabold text-stone-900 mb-3">Live Timeline Metrics</h2>
+      <div id="summary-metrics" class="grid grid-cols-2 gap-4 text-xs font-semibold text-stone-700"></div>
+      
+      <div class="mt-4">
+        <div class="flex justify-between text-[9px] font-extrabold text-stone-400 uppercase mb-1 tracking-wider">
+          <span>LMP Base</span>
+          <span id="progress-percent-label">0%</span>
+          <span>Twins Delivery (37W)</span>
+        </div>
+        <div class="w-full h-2.5 bg-stone-200/60 rounded-full overflow-hidden p-0.5">
+          <div id="progress-gauge" class="h-full bg-gradient-to-r from-rose-300 to-sky-300 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
 
-<div id="modal">
-<div id="box">
-<h2 id="title"></h2>
-<input id="event" placeholder="Key Event">
-<textarea id="feeling" placeholder="How is Aish feeling?"></textarea>
-<h3>Twin A</h3>
-<input id="aweight" placeholder="Weight">
-<input id="apos" placeholder="Position">
-<h3>Twin B</h3>
-<input id="bweight" placeholder="Weight">
-<input id="bpos" placeholder="Position">
-<input id="vaccine" placeholder="Vaccine">
-<input id="blood" placeholder="Blood Test">
-<input id="doctor" placeholder="Dr Adkar Appointment">
-<input id="sono" placeholder="Sonography">
-<button onclick="saveWeek()">Save Week</button>
-<button onclick="closeModal()">Close</button>
-</div>
-</div>
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
+        <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">✍️ Memory Journal</h3>
+        <textarea id="journal-input" rows="4" class="w-full text-xs p-3 border border-stone-200/80 rounded-xl focus:border-stone-900 outline-hidden transition resize-none bg-stone-50/50" placeholder="Pour your memories down..."></textarea>
+        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition cursor-pointer">Save Thoughts</button>
+      </div>
 
-<script>
-const LMP=new Date('2026-02-26');
-const twinEDD=new Date(LMP); twinEDD.setDate(twinEDD.getDate()+259);
-const fullEDD=new Date(LMP); fullEDD.setDate(fullEDD.getDate()+280);
-const db=JSON.parse(localStorage.getItem('tejAishV12')||'{}');
-let active=1;
+      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
+        <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">👶 Baby Name Planner</h3>
+        <div class="space-y-1.5 text-xs">
+          <input type="text" id="names-boy" placeholder="Boy Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
+          <input type="text" id="names-girl" placeholder="Girl Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
+          <input type="text" id="names-unisex" placeholder="Unisex Picks" class="w-full p-2 border border-stone-200 rounded-lg">
+        </div>
+        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition cursor-pointer">Update Selections</button>
+      </div>
+    </section>
 
-const today=new Date();
-const currentWeek=Math.max(1,Math.floor((today-LMP)/86400000/7)+1);
-const remain=Math.max(0,Math.floor((twinEDD-today)/86400000));
-const pct=Math.min(100,Math.round(((today-LMP)/86400000)/259*100));
+    <section class="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden">
+      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60">
+        <h3 class="text-xs font-extrabold text-stone-900 uppercase tracking-wider">Pregnancy Timeline Map</h3>
+      </div>
+      <div class="overflow-x-auto relative">
+        <div class="min-w-[850px] divide-y divide-stone-200 text-xs">
+          <div class="grid grid-cols-12 bg-stone-50 text-[9px] font-extrabold tracking-wider text-stone-400 uppercase py-3 px-3 text-center border-b border-stone-200">
+            <div class="col-span-1 text-left pl-1">Week</div>
+            <div class="col-span-2 text-left">Calendar Date</div>
+            <div class="col-span-3 text-left px-2">Key Events & Milestones</div>
+            <div class="col-span-2 text-left px-2">Aish's Log</div>
+            <div class="col-span-2 text-left px-2">Twin Developmental Specs</div>
+            <div class="col-span-2 text-left pl-2">Clinical Diagnostics</div>
+          </div>
+          <div id="timeline-row-terminal" class="divide-y divide-stone-100"></div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-summary.innerHTML=`Current Week: ${currentWeek}<br>Twin Delivery Target: ${twinEDD.toDateString()}<br>Standard EDD: ${fullEDD.toDateString()}<br>Days Remaining: ${remain}`;
-bar.style.width=pct+'%';
-document.getElementById('pct').innerText=pct+'%';
+  <div id="editor-backdrop" class="fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 overflow-y-auto hidden px-3 py-6 items-start justify-center no-print">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-stone-200/60 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/80 flex justify-between items-center">
+        <div>
+          <h2 id="modal-header-title" class="text-sm font-extrabold text-stone-900 uppercase tracking-wider">Edit Records</h2>
+          <p id="modal-header-subtitle" class="text-[11px] text-stone-400 mt-0.5"></p>
+        </div>
+        <button onclick="closeModalWindow()" class="text-stone-400 hover:text-stone-900 text-base p-1 px-2.5 bg-stone-100 rounded-full transition cursor-pointer">&times;</button>
+      </div>
 
-for(let w=currentWeek;w<=Math.min(40,currentWeek+5);w++){
- snapshot.innerHTML += `<div>Week ${w}</div>`;
-}
-family.innerHTML=`Progress ${pct}% • Week ${currentWeek}`;
+      <div class="p-5 space-y-4 text-xs">
+        <input type="hidden" id="target-week-key">
+        <div>
+          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">Key Event / Milestone Specifics</label>
+          <input type="text" id="form-event" class="w-full p-2.5 border border-stone-200 rounded-xl font-semibold text-stone-900 bg-stone-50/30">
+        </div>
+        <div>
+          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">How is Aish Feeling?</label>
+          <textarea id="form-feeling" rows="2" class="w-full p-2.5 border border-stone-200 rounded-xl font-medium text-stone-800 resize-none" placeholder="Symptoms, notes..."></textarea>
+        </div>
 
-for(let w=1;w<=40;w++){
- let d=new Date(LMP); d.setDate(d.getDate()+((w-1)*7));
- let card=document.createElement('div');
- card.className='card week';
- card.innerHTML=`<b>Week ${w}</b><br>${d.toDateString()}<br>${(db['w'+w]?.event)||'Tap to edit'}`;
- card.onclick=()=>openWeek(w);
- timeline.appendChild(card);
-}
+        <div class="bg-stone-50/80 border border-stone-200/60 rounded-xl p-3.5 space-y-3">
+          <h4 class="font-extrabold text-stone-900 text-xs tracking-wider uppercase flex items-center gap-1">👶 Twin Development Log</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white p-2.5 border border-stone-200/50 rounded-lg space-y-2">
+              <span class="block text-[9px] font-extrabold text-rose-500 uppercase tracking-wider">Twin A</span>
+              <input type="text" id="form-aheight" placeholder="Height (cm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+              <input type="text" id="form-ahb" placeholder="Heartbeat (bpm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+              <input type="text" id="form-aobs" placeholder="Observations" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+            </div>
+            <div class="bg-white p-2.5 border border-stone-200/50 rounded-lg space-y-2">
+              <span class="block text-[9px] font-extrabold text-sky-500 uppercase tracking-wider">Twin B</span>
+              <input type="text" id="form-bheight" placeholder="Height (cm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+              <input type="text" id="form-bhb" placeholder="Heartbeat (bpm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+              <input type="text" id="form-bobs" placeholder="Observations" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
+            </div>
+          </div>
+        </div>
 
-journal.value=db.journal||'';
-boy.value=db.boy||'';
-girl.value=db.girl||'';
-unisex.value=db.unisex||'';
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🛡️ Vaccine</label>
+            <input type="text" id="form-vaccine" class="w-full p-2 border border-stone-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🧪 Blood Lab Screening</label>
+            <input type="text" id="form-blood" class="w-full p-2 border border-stone-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🩺 Dr Adkar Consult</label>
+            <input type="text" id="form-doctor" class="w-full p-2 border border-stone-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🖼️ Sonography Scan</label>
+            <input type="text" id="form-sono" class="w-full p-2 border border-stone-200 rounded-lg">
+          </div>
+        </div>
 
-function saveJournal(){db.journal=journal.value;persist();}
-function saveNames(){db.boy=boy.value;db.girl=girl.value;db.unisex=unisex.value;persist();}
-function persist(){localStorage.setItem('tejAishV12',JSON.stringify(db));alert('Saved');}
+        <div class="pt-2 border-t border-stone-100 flex justify-end gap-2">
+          <button onclick="closeModalWindow()" class="px-4 py-2 text-stone-500 font-bold rounded-xl transition hover:bg-stone-50 cursor-pointer">Cancel</button>
+          <button onclick="commitModalSavePipeline()" class="px-5 py-2 bg-stone-900 text-white font-bold rounded-xl shadow-md transition cursor-pointer">Save Entry</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-function openWeek(w){
- active=w;
- const x=db['w'+w]||{};
- title.innerText='Week '+w;
- ['event','feeling','aweight','apos','bweight','bpos','vaccine','blood','doctor','sono'].forEach(id=>{
-  document.getElementById(id).value=x[id]||'';
- });
- modal.style.display='flex';
-}
-function closeModal(){modal.style.display='none';}
-function saveWeek(){
- db['w'+active]={};
- ['event','feeling','aweight','apos','bweight','bpos','vaccine','blood','doctor','sono'].forEach(id=>{
-  db['w'+active][id]=document.getElementById(id).value;
- });
- persist();
- location.reload();
-}
-function backup(){
- const a=document.createElement('a');
- a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
- a.download='TejAishV12Backup.json';
- a.click();
-}
-</script>
+  <div id="report-backdrop" class="fixed inset-0 bg-stone-900/60 backdrop-blur-md z-50 overflow-y-auto hidden p-2 sm:p-4 justify-center items-start">
+    <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-stone-200 my-2 overflow-hidden">
+      <div id="report-backdrop-buttons" class="px-6 py-4 bg-gradient-to-r from-[#FAF9F5] to-stone-50 border-b border-stone-200 flex justify-between items-center">
+        <div>
+          <h2 class="text-base font-extrabold text-stone-900 uppercase tracking-wider">Family Share Report</h2>
+          <p class="text-[11px] text-stone-400 font-medium">TejAish Pregnancy Ledger • Optimized View</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+            🖨️ Print Report
+          </button>
+          <button onclick="closeReportWindow()" class="bg-stone-100 hover:bg-stone-200/70 text-stone-700 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Close</button>
+        </div>
+      </div>
+      
+      <div class="p-4 sm:p-6 space-y-6 bg-white text-stone-900">
+        <div class="overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
+          <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
+            <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
+              <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
+            </div>
+            <div id="report-rows-hook" class="divide-y divide-stone-100 bg-white"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const START_DATE_STR = "2026-02-26";
+    const TOTAL_WEEKS = 41;
+    const STORAGE_KEY = "tej_aish_pregnancy_local_db";
+    const lmpDateObj = new Date(START_DATE_STR);
+
+    let masterDB = {
+      journal: "", boy: "", girl: "", unisex: "", weeks: {}
+    };
+
+    const historicalPresets = {
+      1: { event: "Last Menstrual Period" },
+      3: { event: "Transfer on 17/03/2026" },
+      5: { event: "Pregnancy Confirmed by BHCG on 31/03", blood: "BHCG Confirmed (31-Mar)" },
+      7: { event: "Spotting noticed on 12/04; twins confirmed on 13/04", sono: "Bhate (13/04)" },
+      8: { event: "Second Sono to check internal injury", sono: "Bhate (20/04)" },
+      9: { event: "Aaditee Clinic appt 28/04 NPB and TMP" },
+      10: { event: "Regular 10th W sono at Arya Clinic and BT at Dhande", sono: "Arya Clinic (05/05 7:30 PM)", blood: "Dhande (05-May)" },
+      13: { event: "NT Scan and NIPT and Glucose, report takes 10 days", sono: "At Arya", blood: "Green Array" },
+      16: { event: "Taaka at Neo with 2 Day Hospitalisation maybe 15th June" },
+      20: { event: "Anomaly Scan at Arya", sono: "At Arya" },
+      36: { event: "Tentative Delivery" }
+    };
+
+    function initDatabase() {
+      let localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        try { masterDB = JSON.parse(localData); } catch(e) {}
+      }
+      if (!masterDB.weeks) masterDB.weeks = {};
+      for (let i = 1; i <= TOTAL_WEEKS; i++) {
+        if (!masterDB.weeks['w' + i]) {
+          let preset = historicalPresets[i] || {};
+          masterDB.weeks['w' + i] = {
+            event: preset.event || "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: preset.blood || "", doctor: "", sono: preset.sono || ""
+          };
+        }
+      }
+      syncToLocalStorage();
+    }
+
+    function syncToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(masterDB));
+    }
+
+    window.onload = () => {
+      initDatabase();
+      calculateMetricsDashboard();
+      generateTimelineRows();
+    };
+
+    function toggleReportMenuDropdown() {
+      document.getElementById("report-dropdown-menu").classList.toggle("hidden");
+    }
+
+    function calculateMetricsDashboard() {
+      const today = new Date();
+      const elapsedMs = today - lmpDateObj;
+      const totalDaysElapsed = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+      
+      const trackingWeek = Math.max(1, Math.floor(totalDaysElapsed / 7) + 1);
+      const dayOffset = (totalDaysElapsed % 7) + 1;
+
+      const twinTargetDate = new Date(lmpDateObj);
+      twinTargetDate.setDate(twinTargetDate.getDate() + 259);
+      const daysRemainingToTwins = Math.max(0, Math.floor((twinTargetDate - today) / (1000 * 60 * 60 * 24)));
+
+      const standardEddDate = new Date(lmpDateObj);
+      standardEddDate.setDate(standardEddDate.getDate() + 280);
+      const calculationPercentage = Math.min(100, Math.round((totalDaysElapsed / 259) * 100));
+
+      document.getElementById("summary-metrics").innerHTML = `
+        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
+          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Current Progress</span>
+          <span class="text-sm font-extrabold text-stone-900">Week ${trackingWeek} <span class="text-[11px] text-[#D98895] font-semibold">(Day ${dayOffset}/7)</span></span>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
+          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Days to Twins Target</span>
+          <span class="text-sm font-extrabold text-stone-900">${daysRemainingToTwins} Days Left</span>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
+          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Twin Delivery Windows (37W)</span>
+          <span class="text-xs font-bold text-stone-800">${twinTargetDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'})}</span>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
+          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Standard Full-Term EDD (40W)</span>
+          <span class="text-xs font-bold text-stone-800">${standardEddDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'})}</span>
+        </div>
+      `;
+
+      document.getElementById("progress-gauge").style.width = calculationPercentage + "%";
+      document.getElementById("progress-percent-label").innerText = calculationPercentage + "%";
+      document.getElementById("journal-input").value = masterDB.journal || "";
+      document.getElementById("names-boy").value = masterDB.boy || "";
+      document.getElementById("names-girl").value = masterDB.girl || "";
+      document.getElementById("names-unisex").value = masterDB.unisex || "";
+    }
+
+    function generateTimelineRows() {
+      const rowHook = document.getElementById("timeline-row-terminal");
+      rowHook.innerHTML = "";
+
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        let rowBaseDate = new Date(lmpDateObj);
+        rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
+
+        let weekKey = 'w' + w;
+        let rowData = masterDB.weeks[weekKey] || {};
+
+        let phaseStyle = "phase-3";
+        if (w <= 12) phaseStyle = "phase-1";
+        else if (w <= 26) phaseStyle = "phase-2";
+
+        let displayEvent = rowData.event || '<span class="text-stone-300 font-normal">Tap to log milestone...</span>';
+        let displayFeeling = rowData.feeling || '<span class="text-stone-300">—</span>';
+        
+        let twinALog = (rowData.aheight || rowData.ahb) ? 'A: ' + (rowData.aheight ? rowData.aheight + 'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb + ' bpm' : '—') : '';
+        let twinBLog = (rowData.bheight || rowData.bhb) ? 'B: ' + (rowData.bheight ? rowData.bheight + 'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb + ' bpm' : '—') : '';
+        
+        let twinsLayoutBlock = '<span class="text-stone-300">—</span>';
+        if (twinALog || twinBLog) {
+          twinsLayoutBlock = '<div class="space-y-0.5 font-medium text-stone-700 text-[10px] text-left">';
+          if(twinALog) twinsLayoutBlock += '<div>' + twinALog + '</div>';
+          if(twinBLog) twinsLayoutBlock += '<div>' + twinBLog + '</div>';
+          twinsLayoutBlock += '</div>';
+        }
+
+        let diagnosticItems = [];
+        if (rowData.vaccine) diagnosticItems.push("💉 " + rowData.vaccine);
+        if (rowData.blood) diagnosticItems.push("🧪 " + rowData.blood);
+        if (rowData.doctor) diagnosticItems.push("🩺 " + rowData.doctor);
+        if (rowData.sono) diagnosticItems.push("🖼️ " + rowData.sono);
+        let diagnosticsLayoutBlock = diagnosticItems.length > 0 ? '<div class="space-y-0.5 text-[10px] text-stone-600 font-semibold">' + diagnosticItems.join('<br>') + '</div>' : '<span class="text-stone-300">—</span>';
+
+        let htmlRowString = '<div onclick="launchWeekEditorModal(' + w + ')" class="grid grid-cols-12 py-3 px-3 items-center hover:bg-stone-50/80 cursor-pointer transition text-center items-stretch divide-x divide-transparent">' +
+            '<div class="col-span-1 text-left flex items-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + phaseStyle + '">W' + w + '</span></div>' +
+            '<div class="col-span-2 text-stone-400 font-semibold text-left flex items-center">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'}) + '</div>' +
+            '<div class="col-span-3 text-left px-2 font-bold text-stone-900 flex flex-col justify-center">' + displayEvent + '</div>' +
+            '<div class="col-span-2 text-left px-2 font-medium text-stone-600 flex flex-col justify-center italic text-[11px]">' + displayFeeling + '</div>' +
+            '<div class="col-span-2 text-left px-2 flex flex-col justify-center">' + twinsLayoutBlock + '</div>' +
+            '<div class="col-span-2 text-left pl-2 flex flex-col justify-center">' + diagnosticsLayoutBlock + '</div>' +
+          '</div>';
+
+        rowHook.insertAdjacentHTML('beforeend', htmlRowString);
+      }
+    }
+
+    function launchWeekEditorModal(weekNum) {
+      let weekKey = 'w' + weekNum;
+      let rowData = masterDB.weeks[weekKey] || {};
+      let rowBaseDate = new Date(lmpDateObj);
+      rowBaseDate.setDate(lmpDateObj.getDate() + ((weekNum - 1) * 7));
+
+      document.getElementById("target-week-key").value = weekNum;
+      document.getElementById("modal-header-title").innerText = "Week " + weekNum + " Configuration Panel";
+      document.getElementById("modal-header-subtitle").innerText = "Timeline Date Base: " + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'long', year:'numeric'});
+
+      document.getElementById("form-event").value = rowData.event || "";
+      document.getElementById("form-feeling").value = rowData.feeling || "";
+      document.getElementById("form-aheight").value = rowData.aheight || "";
+      document.getElementById("form-ahb").value = rowData.ahb || "";
+      document.getElementById("form-aobs").value = rowData.aobs || "";
+      document.getElementById("form-bheight").value = rowData.bheight || "";
+      document.getElementById("form-bhb").value = rowData.bhb || "";
+      document.getElementById("form-bobs").value = rowData.bobs || "";
+      document.getElementById("form-vaccine").value = rowData.vaccine || "";
+      document.getElementById("form-blood").value = rowData.blood || "";
+      document.getElementById("form-doctor").value = rowData.doctor || "";
+      document.getElementById("form-sono").value = rowData.sono || "";
+
+      let overlay = document.getElementById("editor-backdrop");
+      overlay.classList.remove("hidden");
+      overlay.classList.add("flex");
+    }
+
+    function closeModalWindow() {
+      let overlay = document.getElementById("editor-backdrop");
+      overlay.classList.add("hidden");
+      overlay.classList.remove("flex");
+    }
+
+    function commitModalSavePipeline() {
+      let wNum = document.getElementById("target-week-key").value;
+      let weekKey = 'w' + wNum;
+
+      masterDB.weeks[weekKey].event = document.getElementById("form-event").value;
+      masterDB.weeks[weekKey].feeling = document.getElementById("form-feeling").value;
+      masterDB.weeks[weekKey].aheight = document.getElementById("form-aheight").value;
+      masterDB.weeks[weekKey].ahb = document.getElementById("form-ahb").value;
+      masterDB.weeks[weekKey].aobs = document.getElementById("form-aobs").value;
+      masterDB.weeks[weekKey].bheight = document.getElementById("form-bheight").value;
+      masterDB.weeks[weekKey].bhb = document.getElementById("form-bhb").value;
+      masterDB.weeks[weekKey].bobs = document.getElementById("form-bobs").value;
+      masterDB.weeks[weekKey].vaccine = document.getElementById("form-vaccine").value;
+      masterDB.weeks[weekKey].blood = document.getElementById("form-blood").value;
+      masterDB.weeks[weekKey].doctor = document.getElementById("form-doctor").value;
+      masterDB.weeks[weekKey].sono = document.getElementById("form-sono").value;
+
+      generateTimelineRows();
+      closeModalWindow();
+      syncToLocalStorage();
+    }
+
+    function saveDashboardElements() {
+      masterDB.journal = document.getElementById("journal-input").value;
+      masterDB.boy = document.getElementById("names-boy").value;
+      masterDB.girl = document.getElementById("names-girl").value;
+      masterDB.unisex = document.getElementById("names-unisex").value;
+      
+      syncToLocalStorage();
+      alert("Dashboard details saved locally inside Safari!");
+    }
+
+    function launchReportViewModal() {
+      document.getElementById("report-dropdown-menu").classList.add("hidden");
+      const rowsHook = document.getElementById("report-rows-hook");
+      rowsHook.innerHTML = "";
+      let populatedCount = 0;
+
+      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+        let weekKey = 'w' + w;
+        let rowData = masterDB.weeks[weekKey] || {};
+        
+        if (!rowData.event && !rowData.aheight && !rowData.bheight && !rowData.sono && !rowData.blood && !rowData.vaccine && !rowData.doctor) {
+          continue; 
+        }
+
+        populatedCount++;
+        let rowBaseDate = new Date(lmpDateObj);
+        rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
+
+        let twinA = (rowData.aheight || rowData.ahb || rowData.aobs) ? 'A: ' + (rowData.aheight ? rowData.aheight+'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb+'bpm' : '—') + (rowData.aobs ? ' ('+rowData.aobs+')' : '') : '';
+        let twinB = (rowData.bheight || rowData.bhb || rowData.bobs) ? 'B: ' + (rowData.bheight ? rowData.bheight+'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb+'bpm' : '—') + (rowData.bobs ? ' ('+rowData.bobs+')' : '') : '';
+        let twinsStr = '<span class="text-stone-300">—</span>';
+        if(twinA || twinB) {
+          twinsStr = '<div class="space-y-0.5 text-[10px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
+        }
+
+        let htmlRow = '<div class="report-grid-layout p-3 align-middle divide-x divide-stone-100/70">' +
+            '<div class="font-bold text-stone-900">W' + w + '</div>' +
+            '<div class="text-stone-400 font-semibold">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short'}) + '</div>' +
+            '<div class="px-2 font-bold text-stone-800">' + (rowData.event || '—') + '</div>' +
+            '<div class="px-2">' + twinsStr + '</div>' +
+            '<div class="px-1 font-medium text-stone-600">' + (rowData.vaccine || '<span class="text-stone-300">—</span>') + '</div>' +
+            '<div class="px-1 font-medium text-stone-600">' + (rowData.doctor || '<span class="text-stone-300">—</span>') + '</div>' +
+            '<div class="px-1 font-medium text-stone-600">' + (rowData.sono || '<span class="text-stone-300">—</span>') + '</div>' +
+            '<div class="px-1 font-medium text-stone-600">' + (rowData.blood || '<span class="text-stone-300">—</span>') + '</div>' +
+          '</div>';
+          
+        rowsHook.insertAdjacentHTML('beforeend', htmlRow);
+      }
+
+      if (populatedCount === 0) {
+        rowsHook.innerHTML = '<div class="p-6 text-center text-stone-400 font-medium bg-white">No entries logged yet.</div>';
+      }
+
+      let rBackdrop = document.getElementById("report-backdrop");
+      rBackdrop.classList.remove("hidden");
+      rBackdrop.classList.add("flex");
+    }
+
+    function closeReportWindow() {
+      let rBackdrop = document.getElementById("report-backdrop");
+      rBackdrop.classList.add("hidden");
+      rBackdrop.classList.remove("flex");
+    }
+  </script>
 </body>
 </html>
