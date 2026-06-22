@@ -40,12 +40,12 @@
         print-color-adjust: exact;
       }
 
-      /* Hide all web app components completely */
+      /* Hide all interactive web dashboard elements */
       header, .no-print, button, #editor-backdrop, #report-backdrop-buttons { 
         display: none !important; 
       }
       
-      /* Reset the modal layout container for full-page visibility */
+      /* Reset backdrop wrapper structures for seamless page fit */
       #report-backdrop { 
         position: static !important; 
         display: block !important; 
@@ -62,17 +62,17 @@
         padding: 0 !important;
       }
 
-      /* Premium Elegant Print Typography & Title Header */
+      /* Premium Typography Styles for Family Keepsake */
       .print-title-area {
         display: block !important;
         text-align: center;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
       .print-main-title {
         font-family: 'Playfair Display', Georgia, serif !important;
         font-size: 24px;
         font-weight: 700;
-        color: #4c2d33; /* Elegant Deep Rose Gold tone */
+        color: #4c2d33;
         margin: 0;
         letter-spacing: -0.5px;
       }
@@ -85,16 +85,28 @@
         margin-top: 3px;
       }
 
-      /* Ultra-compacted, high-density 4-column layout matrix to guarantee 1-page budget */
+      /* Print Optimization for Metrics Layout Grid */
+      #report-live-metrics {
+        margin-bottom: 14px !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+      }
+      #report-live-metrics > div {
+        padding: 6px 8px !important;
+        border: 1px solid #e7e5e4 !important;
+        background-color: #fcfbfa !important;
+      }
+
+      /* High-Density Compact Layout Settings to ensure single-page fit */
       .print-matrix-container {
         display: block !important;
       }
       .report-grid-layout {
         display: grid !important;
-        grid-template-columns: 32px 55px 155px 125px 55px 55px 75px 75px !important;
+        grid-template-columns: 35px 55px 165px 135px 50px 50px 70px 70px !important;
         font-size: 8.5px !important;
         line-height: 1.1 !important;
-        padding: 3.5px 4px !important;
+        padding: 4px 5px !important;
         border-bottom: 1px solid #f2f0ea !important;
         page-break-inside: avoid !important;
       }
@@ -108,16 +120,12 @@
         font-weight: 800 !important;
         color: #44403c !important;
       }
-      
-      /* Subtle stylistic touches for a family keepsake */
-      .font-bold.text-stone-900 { font-size: 9px !important; font-weight: 800 !important; }
-      .text-stone-400 { color: #78716c !important; font-weight: 600 !important; }
-      .text-stone-300 { color: #d6d3d1 !important; }
     }
   </style>
 </head>
 <body class="pb-12 text-stone-800 antialiased selection:bg-rose-100">
 
+  <!-- App Header -->
   <header class="bg-white border-b border-stone-200/60 px-5 py-4 flex justify-between items-center shadow-xs">
     <div>
       <h1 class="text-lg font-extrabold tracking-tight text-stone-900">TejAish Pregnancy Tracker</h1>
@@ -134,8 +142,10 @@
     </div>
   </header>
 
+  <!-- Main Grid Workspace -->
   <main class="max-w-4xl mx-auto p-4 space-y-6 no-print">
     
+    <!-- Progress Indicator Bar -->
     <section class="bg-gradient-to-br from-[#FCEFF5] to-[#EBF3FC] rounded-2xl p-5 border border-white/60 shadow-xs">
       <h2 class="text-base font-extrabold text-stone-900 mb-3">Live Timeline Metrics</h2>
       <div id="summary-metrics" class="grid grid-cols-2 gap-4 text-xs font-semibold text-stone-700"></div>
@@ -152,6 +162,7 @@
       </div>
     </section>
 
+    <!-- Side Utilities Panels -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
         <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">✍️ Memory Journal</h3>
@@ -170,6 +181,7 @@
       </div>
     </section>
 
+    <!-- Interactive Data Logging Timeline -->
     <section class="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden">
       <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60">
         <h3 class="text-xs font-extrabold text-stone-900 uppercase tracking-wider">Pregnancy Timeline Map</h3>
@@ -190,6 +202,7 @@
     </section>
   </main>
 
+  <!-- MODAL 1: Week Data Form Configuration Window -->
   <div id="editor-backdrop" class="fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 overflow-y-auto hidden px-3 py-6 items-start justify-center no-print">
     <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-stone-200/60 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/80 flex justify-between items-center">
@@ -256,13 +269,15 @@
     </div>
   </div>
 
+  <!-- MODAL 2: Premium Shared Compilation Matrix View -->
   <div id="report-backdrop" class="fixed inset-0 bg-stone-900/60 backdrop-blur-md z-50 overflow-y-auto hidden p-2 sm:p-4 justify-center items-start">
     <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-stone-200 my-2 overflow-hidden">
       
+      <!-- Native Web App Header Layer Buttons -->
       <div id="report-backdrop-buttons" class="px-6 py-4 bg-gradient-to-r from-[#FAF9F5] to-stone-50 border-b border-stone-200 flex justify-between items-center">
         <div>
           <h2 class="text-base font-extrabold text-stone-900 uppercase tracking-wider">Family Share Report</h2>
-          <p class="text-[11px] text-stone-400 font-medium">TejAish Pregnancy Ledger • Optimized View</p>
+          <p class="text-[11px] text-stone-400 font-medium">TejAish Pregnancy Ledger • Clean Condensed View</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="window.print()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
@@ -272,16 +287,24 @@
         </div>
       </div>
       
-      <div class="p-4 sm:p-6 space-y-6 bg-white text-stone-900">
+      <!-- Printable Structural Canvas Framework Container -->
+      <div class="p-4 sm:p-6 space-y-5 bg-white text-stone-900">
         
+        <!-- Elegant Family Title Section (Hidden on Screen, Activates during Print) -->
         <div class="print-title-area hidden">
           <h1 class="print-main-title">Our Twin Pregnancy Milestone Map</h1>
           <p class="print-subtitle">Aish ❤️ Tejas — Family Archive Edition</p>
         </div>
 
+        <!-- Live Metrics Injection Panel inside Compiled Report View -->
+        <div id="report-live-metrics" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-semibold text-stone-700">
+          <!-- Dynamic metrics are automatically synchronized here via JS -->
+        </div>
+
         <div class="print-matrix-container overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
           <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
             
+            <!-- Headers Mapping Coordinates Row -->
             <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
               <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
             </div>
@@ -293,9 +316,11 @@
     </div>
   </div>
 
+  <!-- Operational Automation Scripts Layer -->
   <script>
     const START_DATE_STR = "2026-02-26";
     const TOTAL_WEEKS = 41;
+    const CUTOFF_REPORT_WEEK = 37; // Strict layout rule to clamp family reports at 37
     const STORAGE_KEY = "tej_aish_pregnancy_local_db";
     const lmpDateObj = new Date(START_DATE_STR);
 
@@ -314,7 +339,7 @@
       13: { event: "NT Scan and NIPT and Glucose, report takes 10 days", sono: "At Arya", blood: "Green Array" },
       16: { event: "Taaka at Neo with 2 Day Hospitalisation maybe 15th June" },
       20: { event: "Anomaly Scan at Arya", sono: "At Arya" },
-      36: { event: "Tentative Delivery" }
+      37: { event: "Tentative Delivery" } // Updated to cleanly fall on Week 37 exactly
     };
 
     function initDatabase() {
@@ -329,6 +354,9 @@
           masterDB.weeks['w' + i] = {
             event: preset.event || "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: preset.blood || "", doctor: "", sono: preset.sono || ""
           };
+        } else if (i === 37 && !masterDB.weeks['w37'].event) {
+          // Fallback check to ensure Week 37 matching title is established
+          masterDB.weeks['w37'].event = "Tentative Delivery";
         }
       }
       syncToLocalStorage();
@@ -364,7 +392,7 @@
       standardEddDate.setDate(standardEddDate.getDate() + 280);
       const calculationPercentage = Math.min(100, Math.round((totalDaysElapsed / 259) * 100));
 
-      document.getElementById("summary-metrics").innerHTML = `
+      const metricsHTMLString = `
         <div class="bg-white p-3 rounded-xl border border-stone-200/50">
           <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Current Progress</span>
           <span class="text-sm font-extrabold text-stone-900">Week ${trackingWeek} <span class="text-[11px] text-[#D98895] font-semibold">(Day ${dayOffset}/7)</span></span>
@@ -382,6 +410,10 @@
           <span class="text-xs font-bold text-stone-800">${standardEddDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'})}</span>
         </div>
       `;
+
+      // Synchronize to both the main entry page and the upcoming preview matrix canvas
+      document.getElementById("summary-metrics").innerHTML = metricsHTMLString;
+      document.getElementById("report-live-metrics").innerHTML = metricsHTMLString;
 
       document.getElementById("progress-gauge").style.width = calculationPercentage + "%";
       document.getElementById("progress-percent-label").innerText = calculationPercentage + "%";
@@ -511,11 +543,24 @@
       const rowsHook = document.getElementById("report-rows-hook");
       rowsHook.innerHTML = "";
 
-      // Output all 41 rows sequentially so it's a full, continuous, complete single page matrix mapping
-      for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      // Ensure metrics block inside the report modal window mirrors current fresh data context state
+      calculateMetricsDashboard();
+
+      // Loop only up to Week 37 (Clamped execution limits)
+      for (let w = 1; w <= CUTOFF_REPORT_WEEK; w++) {
         let weekKey = 'w' + w;
         let rowData = masterDB.weeks[weekKey] || {};
         
+        // Custom Check Validation Rules: Drop lines completely if they do not contain any custom logged user metadata
+        const hasContent = 
+          (rowData.event && rowData.event.trim() !== "") || 
+          (rowData.feeling && rowData.feeling.trim() !== "") ||
+          (rowData.aheight || rowData.ahb || rowData.aobs || rowData.bheight || rowData.bhb || rowData.bobs) ||
+          (rowData.vaccine || rowData.doctor || rowData.sono || rowData.blood);
+
+        // Optimization skip check pipeline
+        if (!hasContent) continue;
+
         let rowBaseDate = new Date(lmpDateObj);
         rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
 
@@ -529,7 +574,7 @@
         let htmlRow = '<div class="report-grid-layout p-3 align-middle divide-x divide-stone-100/70">' +
             '<div class="font-bold text-stone-900">W' + w + '</div>' +
             '<div class="text-stone-400 font-semibold">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short'}) + '</div>' +
-            '<div class="px-2 font-bold text-stone-800">' + (rowData.event || '<span class="text-stone-300">—</span>') + '</div>' +
+            '<div class="px-2 font-bold text-stone-800">' + rowData.event + '</div>' +
             '<div class="px-2">' + twinsStr + '</div>' +
             '<div class="px-1 font-medium text-stone-600">' + (rowData.vaccine || '<span class="text-stone-300">—</span>') + '</div>' +
             '<div class="px-1 font-medium text-stone-600">' + (rowData.doctor || '<span class="text-stone-300">—</span>') + '</div>' +
