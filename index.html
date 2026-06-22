@@ -21,10 +21,6 @@
       text-align: left;
     }
 
-    /* =======================================================
-      PREMIUM ONE-PAGE LANDSCAPE PRINT SPECIFICATIONS
-      =======================================================
-    */
     @media print {
       @page {
         size: letter landscape;
@@ -40,7 +36,7 @@
         print-color-adjust: exact;
       }
 
-      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons { 
+      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons, .admin-panel { 
         display: none !important; 
       }
       
@@ -120,6 +116,7 @@
 </head>
 <body class="pb-12 text-stone-800 antialiased selection:bg-rose-100">
 
+  <!-- App Header -->
   <header class="bg-white border-b border-stone-200/60 px-5 py-4 flex justify-between items-center shadow-xs">
     <div>
       <h1 class="text-lg font-extrabold tracking-tight text-stone-900">TejAish Pregnancy Tracker</h1>
@@ -136,8 +133,10 @@
     </div>
   </header>
 
+  <!-- Main Grid Workspace -->
   <main class="max-w-4xl mx-auto p-4 space-y-6 no-print">
     
+    <!-- Progress Indicator Bar -->
     <section class="bg-gradient-to-br from-[#FCEFF5] to-[#EBF3FC] rounded-2xl p-5 border border-white/60 shadow-xs">
       <h2 class="text-base font-extrabold text-stone-900 mb-3">Live Timeline Metrics</h2>
       <div id="summary-metrics" class="grid grid-cols-2 gap-4 text-xs font-semibold text-stone-700"></div>
@@ -154,6 +153,7 @@
       </div>
     </section>
 
+    <!-- Side Utilities Panels -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
         <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">✍️ Memory Journal</h3>
@@ -161,17 +161,37 @@
         <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition cursor-pointer">Save Thoughts</button>
       </div>
 
-      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
-        <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">👶 Baby Name Planner</h3>
-        <div class="space-y-1.5 text-xs">
-          <input type="text" id="names-boy" placeholder="Boy Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
-          <input type="text" id="names-girl" placeholder="Girl Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
-          <input type="text" id="names-unisex" placeholder="Unisex Picks" class="w-full p-2 border border-stone-200 rounded-lg">
+      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2 flex flex-col justify-between">
+        <div>
+          <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider mb-2">👶 Baby Name Planner</h3>
+          <div class="space-y-1.5 text-xs">
+            <input type="text" id="names-boy" placeholder="Boy Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
+            <input type="text" id="names-girl" placeholder="Girl Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
+            <input type="text" id="names-unisex" placeholder="Unisex Picks" class="w-full p-2 border border-stone-200 rounded-lg">
+          </div>
         </div>
-        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition cursor-pointer">Update Selections</button>
+        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition mt-2 cursor-pointer">Update Selections</button>
       </div>
     </section>
 
+    <!-- DATA EXPORT/IMPORT SECURITY PANEL -->
+    <section class="admin-panel bg-stone-900 text-stone-100 rounded-2xl p-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h3 class="text-xs font-extrabold tracking-wider uppercase text-amber-400">🛡️ App Database Safety Vault</h3>
+        <p class="text-[11px] text-stone-400 mt-0.5">Export manual backups to secure your logs completely outside of your browser storage.</p>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <button onclick="exportDatabaseToJSONFile()" class="bg-stone-800 hover:bg-stone-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition border border-stone-700 cursor-pointer w-1/2 sm:w-auto">
+          📥 Export Backup
+        </button>
+        <label class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer text-center w-1/2 sm:w-auto">
+          📤 Import Backup
+          <input type="file" id="import-file-input" accept=".json" onchange="importDatabaseFromJSONFile(event)" class="hidden">
+        </label>
+      </div>
+    </section>
+
+    <!-- Interactive Data Logging Timeline -->
     <section class="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden">
       <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60">
         <h3 class="text-xs font-extrabold text-stone-900 uppercase tracking-wider">Pregnancy Timeline Map</h3>
@@ -192,6 +212,7 @@
     </section>
   </main>
 
+  <!-- MODAL 1: Week Data Form Configuration Window -->
   <div id="editor-backdrop" class="fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 overflow-y-auto hidden px-3 py-6 items-start justify-center no-print">
     <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-stone-200/60 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/80 flex justify-between items-center">
@@ -258,6 +279,7 @@
     </div>
   </div>
 
+  <!-- MODAL 2: Premium Shared Compilation Matrix View -->
   <div id="report-backdrop" class="fixed inset-0 bg-stone-900/60 backdrop-blur-md z-50 overflow-y-auto hidden p-2 sm:p-4 justify-center items-start">
     <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-stone-200 my-2 overflow-hidden">
       
@@ -275,7 +297,6 @@
       </div>
       
       <div class="p-4 sm:p-6 space-y-5 bg-white text-stone-900">
-        
         <div class="print-title-area hidden">
           <h1 class="print-main-title">Our Twin Pregnancy Milestone Map</h1>
           <p class="print-subtitle">Aish ❤️ Tejas — Family Archive Edition</p>
@@ -285,11 +306,9 @@
 
         <div class="print-matrix-container overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
           <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
-            
             <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
               <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
             </div>
-            
             <div id="report-rows-hook" class="divide-y divide-stone-100 bg-white"></div>
           </div>
         </div>
@@ -297,6 +316,7 @@
     </div>
   </div>
 
+  <!-- Operational Automation Scripts Layer -->
   <script>
     const START_DATE_STR = "2026-02-26";
     const TOTAL_WEEKS = 41;
@@ -304,93 +324,42 @@
     const CURRENT_STORAGE_KEY = "tej_aish_pregnancy_local_db";
     const lmpDateObj = new Date(START_DATE_STR);
 
-    let masterDB = {
-      journal: "", boy: "", girl: "", unisex: "", weeks: {}
-    };
+    // EXACT RECOVERED HISTORICAL DATA DIRECTLY IMMOBILIZED IN CODE BASE FOR PERMANENT RUNTIME INITIALIZATION
+    const hardcodedCoreBackup = {"journal":"","boy":"","girl":"","unisex":"","weeks":{"w1":{"event":"Last Menstrual Period","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w2":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w3":{"event":"Transfer on 17/03/2026","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w4":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w5":{"event":"Pregnancy Confirmed by BHCG on 31/03","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"BHCG Confirmed (31-Mar)","doctor":"","sono":""},"w6":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w7":{"event":"Spotting noticed on 12/04; twins confirmed on 13/04","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (13/04)"},"w8":{"event":"Second Sono to check internal injury","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (20/04)"},"w9":{"event":"Aaditee Clinic appt 28/04 NPB and TMP","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w10":{"event":"Regular 10th W sono at Arya Clinic and BT at Dhande","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Dhande (05-May)","doctor":"","sono":"Arya Clinic (05/05 7:30 PM)"},"w11":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w12":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w13":{"event":"NT Scan and NIPT and Glucose, report takes 10 days","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Green Array","doctor":"","sono":"At Arya"},"w14":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w15":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w16":{"event":"Taaka at Neo with 2 Day Hospitalisation maybe 15th June","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w17":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w18":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w19":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w20":{"event":"Anomaly Scan at Arya","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"At Arya"},"w21":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w22":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w23":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w24":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w25":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w26":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w27":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w28":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w29":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w30":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w31":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w32":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w33":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w34":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w35":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w36":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w37":{"event":"Tentative Delivery","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w38":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w39":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w40":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w41":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""}}};
 
-    const historicalPresets = {
-      1: { event: "Last Menstrual Period" },
-      3: { event: "Transfer on 17/03/2026" },
-      5: { event: "Pregnancy Confirmed by BHCG on 31/03", blood: "BHCG Confirmed (31-Mar)" },
-      7: { event: "Spotting noticed on 12/04; twins confirmed on 13/04", sono: "Bhate (13/04)" },
-      8: { event: "Second Sono to check internal injury", sono: "Bhate (20/04)" },
-      9: { event: "Aaditee Clinic appt 28/04 NPB and TMP" },
-      10: { event: "Regular 10th W sono at Arya Clinic and BT at Dhande", sono: "Arya Clinic (05/05 7:30 PM)", blood: "Dhande (05-May)" },
-      13: { event: "NT Scan and NIPT and Glucose, report takes 10 days", sono: "At Arya", blood: "Green Array" },
-      16: { event: "Taaka at Neo with 2 Day Hospitalisation maybe 15th June" },
-      20: { event: "Anomaly Scan at Arya", sono: "At Arya" },
-      37: { event: "Tentative Delivery" }
-    };
-
-    // PERMANENT AUTO-BRIDGE HOOK ENGINE
-    function runUniversalDataRecoveryBridge() {
-      // List of alternative keys used across older dashboard code iterations
-      const legacyAlternativeKeys = [
-        "pregnancy_tracker_db",
-        "pregnancy_db",
-        "tej_aish_tracker",
-        "tracker_db",
-        "local_db"
-      ];
-
-      let recoveredPayload = null;
-
-      // Scan for explicit alternative storage names
-      for (let oldKey of legacyAlternativeKeys) {
-        let oldData = localStorage.getItem(oldKey);
-        if (oldData && oldData.trim() !== "") {
-          recoveredPayload = oldData;
-          break;
-        }
-      }
-
-      // Deep string pattern scanning fallback if key names were completely modified
-      if (!recoveredPayload) {
-        for (let i = 0; i < localStorage.length; i++) {
-          let genericKey = localStorage.key(i);
-          if (genericKey !== CURRENT_STORAGE_KEY && (genericKey.includes("pregnancy") || genericKey.includes("tracker") || genericKey.includes("tej"))) {
-            let backupVal = localStorage.getItem(genericKey);
-            if (backupVal && backupVal.includes("weeks")) {
-              recoveredPayload = backupVal;
-              break;
-            }
-          }
-        }
-      }
-
-      // Secure link translation layer execution
-      if (recoveredPayload) {
-        try {
-          const parsedCheck = JSON.parse(recoveredPayload);
-          if (parsedCheck && (parsedCheck.weeks || parsedCheck.journal)) {
-            localStorage.setItem(CURRENT_STORAGE_KEY, recoveredPayload);
-            console.log("🔒 Dynamic Engine: Successfully bridged data from a legacy container.");
-          }
-        } catch (e) {
-          console.error("Data bridge parser fallback alert", e);
-        }
-      }
-    }
+    let masterDB = JSON.parse(JSON.stringify(hardcodedCoreBackup));
 
     function initDatabase() {
-      // Execute security bridge checks prior to launching layout views
-      runUniversalDataRecoveryBridge();
-
       let localData = localStorage.getItem(CURRENT_STORAGE_KEY);
       if (localData) {
-        try { masterDB = JSON.parse(localData); } catch(e) {}
+        try { 
+          let parsed = JSON.parse(localData);
+          if (parsed && parsed.weeks) {
+            // Merge local storage updates onto the hardcoded foundation
+            masterDB.journal = parsed.journal || "";
+            masterDB.boy = parsed.boy || "";
+            masterDB.girl = parsed.girl || "";
+            masterDB.unisex = parsed.unisex || "";
+            
+            for (let k in parsed.weeks) {
+              if (parsed.weeks[k]) {
+                // Only overwrite if local storage contains a modification to avoid empty overrides
+                let locW = parsed.weeks[k];
+                if (locW.event || locW.feeling || locW.aheight || locW.ahb || locW.aobs || locW.bheight || locW.bhb || locW.bobs || locW.vaccine || locW.blood || locW.doctor || locW.sono) {
+                  masterDB.weeks[k] = locW;
+                }
+              }
+            }
+          }
+        } catch(e) { console.error("Database initialization merge error:", e); }
       }
       
-      if (!masterDB.weeks) masterDB.weeks = {};
-      
+      // Secondary schema check verification loop
       for (let i = 1; i <= TOTAL_WEEKS; i++) {
         if (!masterDB.weeks['w' + i]) {
-          let preset = historicalPresets[i] || {};
           masterDB.weeks['w' + i] = {
-            event: preset.event || "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: preset.blood || "", doctor: "", sono: preset.sono || ""
+            event: "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: "", doctor: "", sono: ""
           };
-        } else if (i === 37 && !masterDB.weeks['w37'].event) {
-          masterDB.weeks['w37'].event = "Tentative Delivery";
         }
       }
       syncToLocalStorage();
@@ -398,6 +367,40 @@
 
     function syncToLocalStorage() {
       localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(masterDB));
+    }
+
+    // EXPORT FILE SYSTEM HOOK
+    function exportDatabaseToJSONFile() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterDB, null, 2));
+      const downloadAnchor = document.createElement('a');
+      const timestamp = new Date().toISOString().slice(0,10);
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `TejAish_PregnancyBackup_${timestamp}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // IMPORT FILE SYSTEM HOOK
+    function importDatabaseFromJSONFile(event) {
+      const fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        try {
+          const importedJSON = JSON.parse(e.target.result);
+          if (importedJSON && importedJSON.weeks) {
+            masterDB = importedJSON;
+            syncToLocalStorage();
+            calculateMetricsDashboard();
+            generateTimelineRows();
+            alert("🎉 Database backup file successfully verified and loaded!");
+          } else {
+            alert("Invalid data architecture inside file configuration.");
+          }
+        } catch (error) {
+          alert("Error parsing backup data string execution profile.");
+        }
+      };
+      fileReader.readAsText(event.target.files[0]);
     }
 
     window.onload = () => {
