@@ -1,684 +1,1067 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>TejAish Pregnancy Tracker</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <title>TejAish — Twin Pregnancy Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght=0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
-    
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: #FAF9F5; }
-    .phase-1 { background-color: #F4EFE6; color: #705335; }
-    .phase-2 { background-color: #E6EEF4; color: #355370; }
-    .phase-3 { background-color: #EAE6F4; color: #4A3570; }
-    
-    .report-grid-layout {
-      display: grid;
-      grid-template-columns: 55px 65px 210px 170px 90px 90px 135px 135px;
-      align-items: center;
-      text-align: left;
+    :root {
+      --ink:      #1A1614;
+      --ink2:     #2C2420;
+      --gold:     #C9A84C;
+      --gold-lt:  #E8C96A;
+      --gold-dim: #7A6232;
+      --blush:    #D98895;
+      --cream:    #FAF6EE;
+      --cream2:   #F0EAE0;
+      --stone:    #7C7068;
+      --p1-acc:   #E8A87C;
+      --p2-acc:   #7ABDE8;
+      --p3-acc:   #B89EE0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--ink);
+      color: var(--cream);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: var(--ink2); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 10px; }
+
+    /* ── HEADER ── */
+    .app-header {
+      background: linear-gradient(135deg, #1A1614 0%, #2C1F1A 60%, #1A1614 100%);
+      border-bottom: 1px solid rgba(201,168,76,0.22);
+      padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .app-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--gold-lt); letter-spacing: -0.3px;
+    }
+    .app-sub {
+      font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--stone); margin-top: 2px;
+    }
+    .dropdown-wrap { position: relative; }
+    .btn-report {
+      background: linear-gradient(135deg, var(--gold) 0%, #A8722E 100%);
+      color: var(--ink); font-size: 0.68rem; font-weight: 800;
+      padding: 9px 16px; border-radius: 50px; border: none;
+      cursor: pointer; letter-spacing: 0.04em;
+      display: flex; align-items: center; gap: 5px;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-report:active { transform: scale(0.95); }
+    #report-dd {
+      display: none; position: absolute; right: 0; top: calc(100% + 8px);
+      background: var(--ink2); border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 12px; overflow: hidden; min-width: 175px; z-index: 100;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+    }
+    #report-dd button {
+      width: 100%; text-align: left; padding: 11px 16px;
+      font-size: 0.72rem; font-weight: 600; color: var(--cream);
+      background: none; border: none; cursor: pointer; transition: background .15s;
+    }
+    #report-dd button:hover { background: rgba(201,168,76,0.1); }
+
+    /* ── MAIN ── */
+    main { max-width: 960px; margin: 0 auto; padding: 20px 14px 60px; }
+
+    /* ── METRICS ── */
+    .metrics-card {
+      background: linear-gradient(135deg, #261D16 0%, #1E1A27 100%);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 20px; padding: 18px 20px; margin-bottom: 18px;
+    }
+    .section-eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.78rem; font-style: italic;
+      color: var(--gold); margin-bottom: 14px;
+    }
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;
+    }
+    @media(min-width:560px){ .metrics-grid { grid-template-columns: repeat(4,1fr); } }
+    .mc {
+      background: rgba(0,0,0,0.28); border: 1px solid rgba(201,168,76,0.1);
+      border-radius: 12px; padding: 11px 13px;
+    }
+    .mc-lbl {
+      font-size: 0.56rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--stone); display: block; margin-bottom: 4px;
+    }
+    .mc-val {
+      font-size: 1rem; font-weight: 800; color: var(--cream); line-height: 1.15;
+    }
+    .mc-val .acc { color: var(--gold); font-size: 0.72rem; font-weight: 600; }
+    .prog-wrap { margin-top: 14px; }
+    .prog-labels {
+      display: flex; justify-content: space-between;
+      font-size: 0.55rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--stone); margin-bottom: 5px;
+    }
+    .prog-track {
+      height: 6px; background: rgba(255,255,255,0.06);
+      border-radius: 10px; overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blush) 0%, var(--gold) 100%);
+      border-radius: 10px; transition: width .8s cubic-bezier(.4,0,.2,1);
     }
 
+    /* ── TWO PANELS ── */
+    .two-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+    @media(max-width:580px){ .two-panel { grid-template-columns: 1fr; } }
+    .panel {
+      background: #211C19; border: 1px solid rgba(201,168,76,0.13);
+      border-radius: 18px; padding: 16px;
+    }
+    .panel-title {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--gold); margin-bottom: 11px;
+    }
+    .panel textarea, .panel input[type=text] {
+      width: 100%; background: rgba(0,0,0,0.32);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; color: var(--cream);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.73rem; padding: 9px 11px; outline: none;
+      transition: border-color .2s;
+    }
+    .panel textarea { resize: none; margin-bottom: 9px; }
+    .panel textarea:focus, .panel input[type=text]:focus { border-color: rgba(201,168,76,0.45); }
+    .name-stack { display: flex; flex-direction: column; gap: 7px; margin-bottom: 11px; }
+    .btn-save {
+      width: 100%; background: rgba(201,168,76,0.11);
+      border: 1px solid rgba(201,168,76,0.28); color: var(--gold-lt);
+      font-size: 0.67rem; font-weight: 700; padding: 9px;
+      border-radius: 10px; cursor: pointer; transition: background .2s;
+      letter-spacing: 0.05em;
+    }
+    .btn-save:hover { background: rgba(201,168,76,0.2); }
+
+    /* ── VAULT ── */
+    .vault {
+      background: linear-gradient(135deg, #0E0C0A, #1A150E);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 18px; padding: 16px 18px; margin-bottom: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    @media(min-width:560px){ .vault { flex-direction: row; align-items: center; justify-content: space-between; } }
+    .vault-info h3 {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--gold);
+    }
+    .vault-info p { font-size: 0.63rem; color: var(--stone); margin-top: 3px; }
+    .vault-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+    .btn-v {
+      font-size: 0.67rem; font-weight: 700; padding: 9px 15px;
+      border-radius: 10px; border: none; cursor: pointer;
+      transition: opacity .2s; white-space: nowrap;
+    }
+    .btn-v-exp { background: rgba(255,255,255,0.07); color: var(--cream); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-v-imp { background: var(--gold); color: var(--ink); font-weight: 800; }
+    .btn-v:hover { opacity: 0.82; }
+
+    /* ── TIMELINE ── */
+    .tl-section {
+      background: #1C1714; border: 1px solid rgba(201,168,76,0.13);
+      border-radius: 20px; overflow: hidden;
+    }
+    .tl-head {
+      padding: 14px 18px; border-bottom: 1px solid rgba(201,168,76,0.1);
+      background: rgba(0,0,0,0.18);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tl-head h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem; font-weight: 600; color: var(--cream);
+    }
+    .phase-legend { display: flex; gap: 10px; }
+    .leg {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.52rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.09em; color: var(--stone);
+    }
+    .leg span { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .tl-col-hdr {
+      display: grid;
+      grid-template-columns: 50px 88px 1fr 1fr 158px;
+      padding: 8px 16px;
+      font-size: 0.52rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--stone);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: rgba(0,0,0,0.12);
+    }
+    .tl-row {
+      display: grid;
+      grid-template-columns: 50px 88px 1fr 1fr 158px;
+      padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.035);
+      cursor: pointer; transition: background .15s; align-items: start;
+      min-height: 48px;
+    }
+    .tl-row:hover { background: rgba(201,168,76,0.05); }
+    .tl-row:last-child { border-bottom: none; }
+    .tl-row.has-data { background: rgba(255,255,255,0.012); }
+    .tl-row.has-data:hover { background: rgba(201,168,76,0.07); }
+    .tl-row.is-cur { background: rgba(201,168,76,0.055) !important; }
+    .tl-row.is-cur:hover { background: rgba(201,168,76,0.09) !important; }
+    .wpill {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 21px; border-radius: 6px;
+      font-size: 0.6rem; font-weight: 800;
+    }
+    .p1 { background: rgba(232,168,124,0.16); color: var(--p1-acc); }
+    .p2 { background: rgba(122,189,232,0.13); color: var(--p2-acc); }
+    .p3 { background: rgba(184,158,224,0.13); color: var(--p3-acc); }
+    .pcur { box-shadow: 0 0 0 1.5px var(--gold), 0 0 9px rgba(201,168,76,0.38); color: var(--gold) !important; background: rgba(201,168,76,0.14) !important; }
+    .ppast { opacity: 0.48; }
+    .tl-date { font-size: 0.64rem; font-weight: 500; color: var(--stone); padding-top: 2px; }
+    .tl-ev { font-size: 0.7rem; font-weight: 700; color: var(--cream); padding-right: 8px; line-height: 1.4; }
+    .tl-ev.empty { color: rgba(255,255,255,0.13); font-weight: 400; font-style: italic; font-size: 0.63rem; }
+    .tl-feel { font-size: 0.64rem; color: var(--stone); font-style: italic; padding-right: 8px; line-height: 1.4; }
+    .tl-diag { display: flex; flex-direction: column; gap: 3px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.56rem; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+    }
+    .chip-v { background: rgba(232,168,124,0.14); color: var(--p1-acc); }
+    .chip-b { background: rgba(217,136,149,0.14); color: var(--blush); }
+    .chip-d { background: rgba(122,189,232,0.11); color: var(--p2-acc); }
+    .chip-s { background: rgba(184,158,224,0.11); color: var(--p3-acc); }
+    .twin-blk { font-size: 0.6rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+    .ta { color: var(--blush); font-weight: 700; }
+    .tb { color: var(--p2-acc); font-weight: 700; }
+
+    /* ── EDITOR MODAL ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.78); backdrop-filter: blur(6px);
+      z-index: 200; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px 12px; align-items: flex-start; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal-box {
+      background: #1E1814; border: 1px solid rgba(201,168,76,0.22);
+      border-radius: 22px; width: 100%; max-width: 500px;
+      box-shadow: 0 32px 96px rgba(0,0,0,0.72); overflow: hidden;
+      margin: auto;
+    }
+    .modal-hd {
+      padding: 16px 18px;
+      background: linear-gradient(135deg,#261D14,#1E1814);
+      border-bottom: 1px solid rgba(201,168,76,0.13);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-hd-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem; font-weight: 600; color: var(--gold-lt);
+    }
+    .modal-hd-sub { font-size: 0.6rem; color: var(--stone); margin-top: 2px; }
+    .modal-close {
+      width: 27px; height: 27px; border-radius: 50%;
+      background: rgba(255,255,255,0.07); border: none;
+      color: var(--stone); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.13); color: var(--cream); }
+    .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .flbl {
+      font-size: 0.56rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.13em; color: var(--gold-dim); display: block; margin-bottom: 5px;
+    }
+    .fi, .ft {
+      width: 100%; background: rgba(0,0,0,0.38);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; color: var(--cream);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.73rem; padding: 9px 11px; outline: none;
+      transition: border-color .2s;
+    }
+    .fi:focus, .ft:focus { border-color: rgba(201,168,76,0.42); }
+    .ft { resize: vertical; min-height: 58px; }
+    .twin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .twin-panel {
+      background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 11px; display: flex; flex-direction: column; gap: 7px;
+    }
+    .twin-lbl { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.11em; }
+    .twin-lbl.a { color: var(--blush); }
+    .twin-lbl.b { color: var(--p2-acc); }
+    .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .modal-ft {
+      padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.045);
+      display: flex; justify-content: flex-end; gap: 9px;
+    }
+    .btn-cancel {
+      padding: 9px 17px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+      color: var(--stone); font-size: 0.7rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.09); }
+    .btn-primary {
+      padding: 9px 21px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold) 0%, #A8722E 100%);
+      border: none; color: var(--ink);
+      font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: opacity .2s;
+    }
+    .btn-primary:hover { opacity: 0.87; }
+
+    /* ── REPORT MODAL ── */
+    #report-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.84); backdrop-filter: blur(10px);
+      z-index: 300; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 10px;
+    }
+    #report-modal.open { display: block; }
+    .rbox {
+      background: var(--cream); width: 100%; max-width: 860px;
+      border-radius: 20px; overflow: hidden; margin: 0 auto;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.8); color: #1C1714;
+    }
+    .r-mast {
+      background: linear-gradient(135deg,#1A1614 0%,#2C1F1A 100%);
+      padding: 24px 28px 20px; color: var(--cream);
+      border-bottom: 3px solid var(--gold);
+    }
+    .r-eyebrow {
+      font-size: 0.56rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.2em; color: var(--gold-dim); margin-bottom: 5px;
+    }
+    .r-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; font-weight: 700; color: var(--gold-lt);
+      line-height: 1.1; letter-spacing: -0.4px;
+    }
+    .r-title em { font-style: italic; color: var(--blush); }
+    .r-tagline { font-size: 0.65rem; color: var(--stone); margin-top: 7px; }
+    .r-actions {
+      display: flex; gap: 9px; margin-top: 16px; flex-wrap: wrap;
+    }
+    .btn-print {
+      padding: 9px 18px; border-radius: 10px; background: var(--gold);
+      border: none; color: var(--ink); font-size: 0.68rem; font-weight: 800; cursor: pointer;
+    }
+    .btn-close-r {
+      padding: 9px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.14);
+      color: var(--cream); font-size: 0.68rem; font-weight: 600; cursor: pointer;
+    }
+
+    /* report metrics */
+    .r-metrics {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+      padding: 18px 24px; background: var(--cream2);
+      border-bottom: 1px solid rgba(28,23,20,0.09);
+    }
+    @media(max-width:560px){ .r-metrics { grid-template-columns: repeat(2,1fr); } }
+    .rmc {
+      background: white; border-radius: 11px; padding: 11px 13px;
+      border: 1px solid rgba(28,23,20,0.07);
+    }
+    .rmc-lbl {
+      font-size: 0.53rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.11em; color: #9A8A7C; display: block; margin-bottom: 4px;
+    }
+    .rmc-val { font-size: 0.95rem; font-weight: 800; color: #1C1714; line-height: 1.15; }
+    .rmc-val .acc { color: #C9A84C; font-size: 0.68rem; font-weight: 600; }
+
+    /* journal in report */
+    .r-journal {
+      margin: 0 24px 18px;
+      background: linear-gradient(135deg,#261D14,#1E1A27);
+      border-radius: 13px; padding: 18px 20px; color: var(--cream);
+      border: 1px solid rgba(201,168,76,0.18);
+    }
+    .rj-lbl {
+      font-size: 0.56rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--gold); margin-bottom: 9px;
+    }
+    .rj-txt {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 0.85rem; color: rgba(250,246,238,0.72); line-height: 1.75;
+    }
+
+    /* names */
+    .r-names { margin: 0 24px 18px; display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    @media(max-width:480px){ .r-names { grid-template-columns: 1fr; } }
+    .rnc {
+      background: white; border: 1px solid rgba(28,23,20,0.07);
+      border-radius: 11px; padding: 11px 13px; text-align: center;
+    }
+    .rnc-lbl {
+      font-size: 0.52rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.11em; color: #9A8A7C; display: block; margin-bottom: 5px;
+    }
+    .rnc-val { font-size: 0.76rem; font-weight: 700; color: #1C1714; }
+
+    /* report table */
+    .r-tbl-wrap { padding: 0 24px 24px; background: var(--cream); overflow-x: auto; }
+    .r-tbl-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.82rem; font-style: italic; color: #7A6232;
+      padding: 14px 0 9px; border-bottom: 2px solid var(--gold);
+      margin-bottom: 0; display: flex; align-items: center; gap: 7px;
+    }
+    .r-hdr {
+      display: grid;
+      grid-template-columns: 38px 64px 1fr 120px 72px 72px 100px 100px;
+      padding: 7px 0; min-width: 680px;
+      font-size: 0.52rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.11em; color: #9A8A7C;
+      border-bottom: 1px solid rgba(28,23,20,0.11);
+    }
+    .r-row {
+      display: grid;
+      grid-template-columns: 38px 64px 1fr 120px 72px 72px 100px 100px;
+      padding: 8px 0; border-bottom: 1px solid rgba(28,23,20,0.055);
+      font-size: 0.68rem; align-items: start; min-width: 680px;
+    }
+    .r-row:last-child { border-bottom: none; }
+    .r-row:nth-child(even) { background: rgba(28,23,20,0.018); }
+    .rw { font-weight: 800; font-size: 0.65rem; }
+    .rw.rp1 { color: #A0531E; } .rw.rp2 { color: #2B6A9A; } .rw.rp3 { color: #5E3D9A; }
+    .rd { color: #7A6A60; font-weight: 500; font-size: 0.63rem; padding-top: 1px; }
+    .rev { font-weight: 700; color: #1C1714; padding-right: 7px; line-height: 1.4; }
+    .rtw { font-size: 0.6rem; line-height: 1.5; padding-right: 5px; }
+    .rtw .rta { color: #A84A5A; font-weight: 700; }
+    .rtw .rtb { color: #2B6A9A; font-weight: 700; }
+    .rcell { color: #4A3C34; font-size: 0.63rem; font-weight: 500; line-height: 1.4; padding-right: 5px; }
+    .rcell.mt { color: #C0B0A0; }
+
+    /* ── PRINT ── */
     @media print {
-      @page {
-        size: letter landscape;
-        margin: 0.2in 0.3in 0.2in 0.3in;
+      @page { size: A4 landscape; margin: 10mm 12mm; }
+      body { background: white !important; color: #1C1714 !important; }
+      .app-header, main, #editor-modal, .r-actions { display: none !important; }
+      #report-modal {
+        display: block !important; position: static !important;
+        background: none !important; padding: 0 !important; overflow: visible !important;
       }
-      
-      body { 
-        background-color: #ffffff !important; 
-        color: #1c1917 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons, .admin-panel { 
-        display: none !important; 
-      }
-      
-      #report-backdrop { 
-        position: static !important; 
-        display: block !important; 
-        background: none !important; 
-        padding: 0 !important; 
-        box-shadow: none !important;
-        border: none !important;
-      }
-      #report-backdrop > div {
-        box-shadow: none !important;
-        border: none !important;
-        max-w: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .print-title-area {
-        display: block !important;
-        text-align: center;
-        margin-bottom: 12px;
-      }
-      .print-main-title {
-        font-family: 'Playfair Display', Georgia, serif !important;
-        font-size: 24px;
-        font-weight: 700;
-        color: #4c2d33;
-        margin: 0;
-        letter-spacing: -0.5px;
-      }
-      .print-subtitle {
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #78716c;
-        margin-top: 3px;
-      }
-
-      #report-live-metrics {
-        margin-bottom: 14px !important;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-        gap: 8px !important;
-      }
-      #report-live-metrics > div {
-        padding: 6px 8px !important;
-        border: 1px solid #e7e5e4 !important;
-        background-color: #fcfbfa !important;
-      }
-
-      .print-matrix-container {
-        display: block !important;
-      }
-      .report-grid-layout {
-        display: grid !important;
-        grid-template-columns: 35px 55px 165px 135px 50px 50px 70px 70px !important;
-        font-size: 8.5px !important;
-        line-height: 1.1 !important;
-        padding: 4px 5px !important;
-        border-bottom: 1px solid #f2f0ea !important;
-        page-break-inside: avoid !important;
-      }
-      .report-grid-layout div {
-        padding-left: 2px !important;
-        padding-right: 2px !important;
-      }
-      .bg-stone-50 {
-        background-color: #fcfbfa !important;
-        border-bottom: 1.5px solid #d6d3d1 !important;
-        font-weight: 800 !important;
-        color: #44403c !important;
-      }
+      .rbox { box-shadow: none !important; max-width: 100% !important; border-radius: 0 !important; }
+      .r-mast, .r-metrics, .rmc { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .r-row { page-break-inside: avoid; }
+      .r-tbl-wrap { overflow: visible !important; }
+      .r-hdr, .r-row { min-width: unset !important; }
+      .btn-print, .btn-close-r { display: none !important; }
     }
   </style>
 </head>
-<body class="pb-12 text-stone-800 antialiased selection:bg-rose-100">
+<body>
 
-  <!-- App Header -->
-  <header class="bg-white border-b border-stone-200/60 px-5 py-4 flex justify-between items-center shadow-xs">
-    <div>
-      <h1 class="text-lg font-extrabold tracking-tight text-stone-900">TejAish Pregnancy Tracker</h1>
-      <p class="text-[10px] font-bold text-stone-400 tracking-wider uppercase mt-0.5">Aish ❤️ Tejas • Twin Miracle Edition</p>
+<!-- HEADER -->
+<header class="app-header">
+  <div>
+    <div class="app-title">TejAish</div>
+    <div class="app-sub">Aish ❤️ Tejas — Twin Miracle Journal</div>
+  </div>
+  <div class="dropdown-wrap">
+    <button class="btn-report" onclick="toggleDD()">✦ View Report ▾</button>
+    <div id="report-dd">
+      <button onclick="openReport()">👨‍👩‍👧‍👦 Family Share Report</button>
     </div>
-    
-    <div class="relative inline-block text-left">
-      <button onclick="toggleReportMenuDropdown()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-5 py-2.5 rounded-full transition active:scale-95 shadow-sm flex items-center gap-1 cursor-pointer">
-        View Compiled Report ▾
-      </button>
-      <div id="report-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-stone-100">
-        <button onclick="launchReportViewModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition flex items-center gap-2 cursor-pointer">👨‍👩‍👧‍👦 Family Share View</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- METRICS -->
+  <div class="metrics-card">
+    <div class="section-eyebrow">✦ Live Journey Metrics</div>
+    <div class="metrics-grid" id="metrics"></div>
+    <div class="prog-wrap">
+      <div class="prog-labels">
+        <span>LMP — 26 Feb 2026</span>
+        <span id="prog-lbl">0%</span>
+        <span>Twins Target (37W)</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- JOURNAL + NAMES -->
+  <div class="two-panel">
+    <div class="panel">
+      <div class="panel-title">✍️ Memory Journal</div>
+      <textarea id="journal" rows="5" placeholder="Pour your memories, feelings, moments…"></textarea>
+      <button class="btn-save" onclick="saveDash(event)">Save Thoughts</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">👶 Baby Name Planner</div>
+      <div class="name-stack">
+        <input type="text" id="names-boy" placeholder="Boy contenders…">
+        <input type="text" id="names-girl" placeholder="Girl contenders…">
+        <input type="text" id="names-unisex" placeholder="Unisex picks…">
+      </div>
+      <button class="btn-save" onclick="saveDash(event)">Update Selections</button>
+    </div>
+  </div>
+
+  <!-- VAULT -->
+  <div class="vault">
+    <div class="vault-info">
+      <h3>🛡️ Data Vault</h3>
+      <p>Export backups to Files app · Import to restore on any device.</p>
+    </div>
+    <div class="vault-actions">
+      <button class="btn-v btn-v-exp" onclick="exportDB()">📥 Export Backup</button>
+      <label class="btn-v btn-v-imp" style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+        📤 Import Backup
+        <input type="file" id="import-file" onchange="importDB(event)" style="display:none" accept=".json,.txt">
+      </label>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="tl-section">
+    <div class="tl-head">
+      <h3>Pregnancy Timeline</h3>
+      <div class="phase-legend">
+        <div class="leg"><span style="background:var(--p1-acc)"></span>T1 W1–12</div>
+        <div class="leg"><span style="background:var(--p2-acc)"></span>T2 W13–26</div>
+        <div class="leg"><span style="background:var(--p3-acc)"></span>T3 W27+</div>
       </div>
     </div>
-  </header>
+    <div class="tl-col-hdr">
+      <div>Wk</div><div>Date</div><div>Milestone</div><div>Aish's Log</div><div>Diagnostics</div>
+    </div>
+    <div id="tl-rows"></div>
+  </div>
 
-  <!-- Main Grid Workspace -->
-  <main class="max-w-4xl mx-auto p-4 space-y-6 no-print">
-    
-    <!-- Progress Indicator Bar -->
-    <section class="bg-gradient-to-br from-[#FCEFF5] to-[#EBF3FC] rounded-2xl p-5 border border-white/60 shadow-xs">
-      <h2 class="text-base font-extrabold text-stone-900 mb-3">Live Timeline Metrics</h2>
-      <div id="summary-metrics" class="grid grid-cols-2 gap-4 text-xs font-semibold text-stone-700"></div>
-      
-      <div class="mt-4">
-        <div class="flex justify-between text-[9px] font-extrabold text-stone-400 uppercase mb-1 tracking-wider">
-          <span>LMP Base</span>
-          <span id="progress-percent-label">0%</span>
-          <span>Twins Delivery (37W)</span>
-        </div>
-        <div class="w-full h-2.5 bg-stone-200/60 rounded-full overflow-hidden p-0.5">
-          <div id="progress-gauge" class="h-full bg-gradient-to-r from-rose-300 to-sky-300 rounded-full transition-all duration-500" style="width: 0%"></div>
-        </div>
-      </div>
-    </section>
+</main>
 
-    <!-- Side Utilities Panels -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2">
-        <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider">✍️ Memory Journal</h3>
-        <textarea id="journal-input" rows="4" class="w-full text-xs p-3 border border-stone-200/80 rounded-xl focus:border-stone-900 outline-hidden transition resize-none bg-stone-50/50" placeholder="Pour your memories down..."></textarea>
-        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition cursor-pointer">Save Thoughts</button>
-      </div>
-
-      <div class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-2 flex flex-col justify-between">
-        <div>
-          <h3 class="text-xs font-extrabold text-stone-900 flex items-center gap-1.5 uppercase tracking-wider mb-2">👶 Baby Name Planner</h3>
-          <div class="space-y-1.5 text-xs">
-            <input type="text" id="names-boy" placeholder="Boy Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
-            <input type="text" id="names-girl" placeholder="Girl Contenders" class="w-full p-2 border border-stone-200 rounded-lg">
-            <input type="text" id="names-unisex" placeholder="Unisex Picks" class="w-full p-2 border border-stone-200 rounded-lg">
-          </div>
-        </div>
-        <button onclick="saveDashboardElements()" class="w-full text-xs font-bold bg-stone-100 hover:bg-stone-200/70 py-2 rounded-xl transition mt-2 cursor-pointer">Update Selections</button>
-      </div>
-    </section>
-
-    <!-- DATA EXPORT/IMPORT SECURITY PANEL -->
-    <section class="admin-panel bg-stone-900 text-stone-100 rounded-2xl p-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- EDITOR MODAL -->
+<div id="editor-modal" class="overlay">
+  <div class="modal-box">
+    <div class="modal-hd">
       <div>
-        <h3 class="text-xs font-extrabold tracking-wider uppercase text-amber-400">🛡️ App Database Safety Vault</h3>
-        <p class="text-[11px] text-stone-400 mt-0.5">Export manual backups to secure your logs completely outside of your browser storage.</p>
+        <div class="modal-hd-title" id="m-title">Week Editor</div>
+        <div class="modal-hd-sub" id="m-sub"></div>
       </div>
-      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-        <button onclick="exportDatabaseToJSONFile()" class="bg-stone-800 hover:bg-stone-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition border border-stone-700 cursor-pointer w-1/2 sm:w-auto">
-          📥 Export Backup
-        </button>
-        <label class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer text-center w-1/2 sm:w-auto">
-          📤 Import Backup File
-          <input type="file" id="import-file-input" onchange="importDatabaseFromJSONFile(event)" class="hidden">
-        </label>
+      <button class="modal-close" onclick="closeEditor()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ew">
+      <div>
+        <label class="flbl">Milestone / Key Event</label>
+        <input type="text" class="fi" id="fe" placeholder="What happened this week?">
       </div>
-    </section>
-
-    <!-- Interactive Data Logging Timeline -->
-    <section class="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden">
-      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60">
-        <h3 class="text-xs font-extrabold text-stone-900 uppercase tracking-wider">Pregnancy Timeline Map</h3>
+      <div>
+        <label class="flbl">How is Aish Feeling?</label>
+        <textarea class="ft" id="ff" placeholder="Symptoms, mood, notes…"></textarea>
       </div>
-      <div class="overflow-x-auto relative">
-        <div class="min-w-[850px] divide-y divide-stone-200 text-xs">
-          <div class="grid grid-cols-12 bg-stone-50 text-[9px] font-extrabold tracking-wider text-stone-400 uppercase py-3 px-3 text-center border-b border-stone-200">
-            <div class="col-span-1 text-left pl-1">Week</div>
-            <div class="col-span-2 text-left">Calendar Date</div>
-            <div class="col-span-3 text-left px-2">Key Events & Milestones</div>
-            <div class="col-span-2 text-left px-2">Aish's Log</div>
-            <div class="col-span-2 text-left px-2">Twin Developmental Specs</div>
-            <div class="col-span-2 text-left pl-2">Clinical Diagnostics</div>
+      <div>
+        <label class="flbl">Twin Development</label>
+        <div class="twin-grid">
+          <div class="twin-panel">
+            <span class="twin-lbl a">Twin A</span>
+            <input type="text" class="fi" id="fah" placeholder="Height (cm)">
+            <input type="text" class="fi" id="fahb" placeholder="Heartbeat (bpm)">
+            <input type="text" class="fi" id="fao" placeholder="Observations">
           </div>
-          <div id="timeline-row-terminal" class="divide-y divide-stone-100"></div>
+          <div class="twin-panel">
+            <span class="twin-lbl b">Twin B</span>
+            <input type="text" class="fi" id="fbh" placeholder="Height (cm)">
+            <input type="text" class="fi" id="fbhb" placeholder="Heartbeat (bpm)">
+            <input type="text" class="fi" id="fbo" placeholder="Observations">
+          </div>
         </div>
       </div>
-    </section>
-  </main>
-
-  <!-- MODAL 1: Week Data Form Configuration Window -->
-  <div id="editor-backdrop" class="fixed inset-0 bg-stone-900/40 backdrop-blur-xs z-50 overflow-y-auto hidden px-3 py-6 items-start justify-center no-print">
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-stone-200/60 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/80 flex justify-between items-center">
-        <div>
-          <h2 id="modal-header-title" class="text-sm font-extrabold text-stone-900 uppercase tracking-wider">Edit Records</h2>
-          <p id="modal-header-subtitle" class="text-[11px] text-stone-400 mt-0.5"></p>
-        </div>
-        <button onclick="closeModalWindow()" class="text-stone-400 hover:text-stone-900 text-base p-1 px-2.5 bg-stone-100 rounded-full transition cursor-pointer">&times;</button>
-      </div>
-
-      <div class="p-5 space-y-4 text-xs">
-        <input type="hidden" id="target-week-key">
-        <div>
-          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">Key Event / Milestone Specifics</label>
-          <input type="text" id="form-event" class="w-full p-2.5 border border-stone-200 rounded-xl font-semibold text-stone-900 bg-stone-50/30">
-        </div>
-        <div>
-          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">How is Aish Feeling?</label>
-          <textarea id="form-feeling" rows="2" class="w-full p-2.5 border border-stone-200 rounded-xl font-medium text-stone-800 resize-none" placeholder="Symptoms, notes..."></textarea>
-        </div>
-
-        <div class="bg-stone-50/80 border border-stone-200/60 rounded-xl p-3.5 space-y-3">
-          <h4 class="font-extrabold text-stone-900 text-xs tracking-wider uppercase flex items-center gap-1">👶 Twin Development Log</h4>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-white p-2.5 border border-stone-200/50 rounded-lg space-y-2">
-              <span class="block text-[9px] font-extrabold text-rose-500 uppercase tracking-wider">Twin A</span>
-              <input type="text" id="form-aheight" placeholder="Height (cm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-              <input type="text" id="form-ahb" placeholder="Heartbeat (bpm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-              <input type="text" id="form-aobs" placeholder="Observations" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-            </div>
-            <div class="bg-white p-2.5 border border-stone-200/50 rounded-lg space-y-2">
-              <span class="block text-[9px] font-extrabold text-sky-500 uppercase tracking-wider">Twin B</span>
-              <input type="text" id="form-bheight" placeholder="Height (cm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-              <input type="text" id="form-bhb" placeholder="Heartbeat (bpm)" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-              <input type="text" id="form-bobs" placeholder="Observations" class="w-full p-1.5 text-xs border border-stone-200 rounded-md">
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🛡️ Vaccine</label>
-            <input type="text" id="form-vaccine" class="w-full p-2 border border-stone-200 rounded-lg">
-          </div>
-          <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🧪 Blood Lab Screening</label>
-            <input type="text" id="form-blood" class="w-full p-2 border border-stone-200 rounded-lg">
-          </div>
-          <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🩺 Dr Adkar Consult</label>
-            <input type="text" id="form-doctor" class="w-full p-2 border border-stone-200 rounded-lg">
-          </div>
-          <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🖼️ Sonography Scan</label>
-            <input type="text" id="form-sono" class="w-full p-2 border border-stone-200 rounded-lg">
-          </div>
-        </div>
-
-        <div class="pt-2 border-t border-stone-100 flex justify-end gap-2">
-          <button onclick="closeModalWindow()" class="px-4 py-2 text-stone-500 font-bold rounded-xl transition hover:bg-stone-50 cursor-pointer">Cancel</button>
-          <button onclick="commitModalSavePipeline()" class="px-5 py-2 bg-stone-900 text-white font-bold rounded-xl shadow-md transition cursor-pointer">Save Entry</button>
-        </div>
+      <div class="form-2col">
+        <div><label class="flbl">💉 Vaccine</label><input type="text" class="fi" id="fv"></div>
+        <div><label class="flbl">🧪 Blood Test</label><input type="text" class="fi" id="fbl"></div>
+        <div><label class="flbl">🩺 Dr Adkar</label><input type="text" class="fi" id="fd"></div>
+        <div><label class="flbl">🖼️ Sonography</label><input type="text" class="fi" id="fs"></div>
       </div>
     </div>
-  </div>
-
-  <!-- MODAL 2: Premium Shared Compilation Matrix View -->
-  <div id="report-backdrop" class="fixed inset-0 bg-stone-900/60 backdrop-blur-md z-50 overflow-y-auto hidden p-2 sm:p-4 justify-center items-start">
-    <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-stone-200 my-2 overflow-hidden">
-      
-      <div id="report-backdrop-buttons" class="px-6 py-4 bg-gradient-to-r from-[#FAF9F5] to-stone-50 border-b border-stone-200 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-extrabold text-stone-900 uppercase tracking-wider">Family Share Report</h2>
-          <p class="text-[11px] text-stone-400 font-medium">TejAish Pregnancy Ledger • Clean Condensed View</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="window.print()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-            🖨️ Print / Save PDF
-          </button>
-          <button onclick="closeReportWindow()" class="bg-stone-100 hover:bg-stone-200/70 text-stone-700 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Close</button>
-        </div>
-      </div>
-      
-      <div class="p-4 sm:p-6 space-y-5 bg-white text-stone-900">
-        <div class="print-title-area hidden">
-          <h1 class="print-main-title">Our Twin Pregnancy Milestone Map</h1>
-          <p class="print-subtitle">Aish ❤️ Tejas — Family Archive Edition</p>
-        </div>
-
-        <div id="report-live-metrics" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-semibold text-stone-700"></div>
-
-        <div class="print-matrix-container overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
-          <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
-            <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
-              <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
-            </div>
-            <div id="report-rows-hook" class="divide-y divide-stone-100 bg-white"></div>
-          </div>
-        </div>
-      </div>
+    <div class="modal-ft">
+      <button class="btn-cancel" onclick="closeEditor()">Cancel</button>
+      <button class="btn-primary" onclick="saveWeek()">Save Entry</button>
     </div>
   </div>
+</div>
 
-  <!-- Operational Automation Scripts Layer -->
-  <script>
-    const START_DATE_STR = "2026-02-26";
-    const TOTAL_WEEKS = 41;
-    const CUTOFF_REPORT_WEEK = 37; 
-    const CURRENT_STORAGE_KEY = "tej_aish_pregnancy_local_db";
-    const lmpDateObj = new Date(START_DATE_STR);
+<!-- REPORT MODAL -->
+<div id="report-modal">
+  <div class="rbox">
+    <div class="r-mast">
+      <div class="r-eyebrow">TejAish Pregnancy Archive — Twin Miracle Edition</div>
+      <div class="r-title">Our Twin Journey<br><em>Milestone Chronicle</em></div>
+      <div class="r-tagline">Aish ❤️ Tejas &nbsp;·&nbsp; LMP 26 Feb 2026 &nbsp;·&nbsp; Twin Target 37 Weeks</div>
+      <div class="r-actions">
+        <button class="btn-print" onclick="doPrint()">🖨️ Print / Save PDF</button>
+        <button class="btn-close-r" onclick="closeReport()">Close</button>
+      </div>
+    </div>
+    <div class="r-metrics" id="r-metrics"></div>
+    <div id="r-journal-wrap" style="display:none">
+      <div class="r-journal">
+        <div class="rj-lbl">✦ Memory Journal</div>
+        <div class="rj-txt" id="r-journal-txt"></div>
+      </div>
+    </div>
+    <div id="r-names-wrap" style="display:none">
+      <div class="r-names" id="r-names"></div>
+    </div>
+    <div class="r-tbl-wrap">
+      <div class="r-tbl-title"><span style="color:var(--gold);font-style:normal">✦</span> Week-by-Week Log (W1 – W37)</div>
+      <div class="r-hdr">
+        <div>Wk</div><div>Date</div><div>Milestone</div><div>Twins</div>
+        <div>Vaccine</div><div>Dr Adkar</div><div>Sono</div><div>Blood</div>
+      </div>
+      <div id="r-rows"></div>
+    </div>
+  </div>
+</div>
 
-    // COMPLETELY RESTORED DATA RECORD ARCHIVE HARDCODED LAYER
-    const hardcodedCoreBackup = {
-      "journal": "",
-      "boy": "",
-      "girl": "",
-      "unisex": "",
-      "weeks": {
-        "w1": {"event":"Last Menstrual Period","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w2": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w3": {"event":"Transfer on 17/03/2026","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w4": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w5": {"event":"Pregnancy Confirmed by BHCG on 31/03","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"BHCG Confirmed (31-Mar)","doctor":"","sono":""},
-        "w6": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w7": {"event":"Spotting noticed on 12/04; twins confirmed on 13/04","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (13/04)"},
-        "w8": {"event":"Second Sono to check internal injury","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (20/04)"},
-        "w9": {"event":"Aaditee Clinic appt 28/04 NPB and TMP","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w10": {"event":"Regular 10th W sono at Arya Clinic and BT at Dhande","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Dhande (05-May)","doctor":"","sono":"Arya Clinic (05/05 7:30 PM)"},
-        "w11": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w12": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w13": {"event":"NT Scan and NIPT and Glucose, report takes 10 days","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Green Array","doctor":"","sono":"At Arya"},
-        "w14": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w15": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w16": {"event":"Taaka at Neo with 2 Day Hospitalisation maybe 15th June","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w17": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w18": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w19": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w20": {"event":"Anomaly Scan at Arya","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"At Arya"},
-        "w21": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w22": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w23": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w24": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w25": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w26": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w27": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w28": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w29": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w30": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w31": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w32": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w33": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w34": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w35": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w36": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w37": {"event":"Tentative Delivery","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w38": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w39": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w40": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
-        "w41": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""}
-      }
-    };
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const DB_KEY   = "tej_aish_pregnancy_local_db"; // same key as old app — existing data loads instantly
+const LMP_STR  = "26-02-2026";                  // DD-MM-YYYY — no UTC shift
+const TOT_WKS  = 41;
+const RPT_WKS  = 37;
 
-    let masterDB = JSON.parse(JSON.stringify(hardcodedCoreBackup));
+/* ═══════════════════════════════════════════════════════════
+   DATE HELPERS — never use new Date("YYYY-MM-DD")
+═══════════════════════════════════════════════════════════ */
+function parseDMY(s) {
+  const [d,m,y] = s.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function addDays(date, n) {
+  const d = new Date(date); d.setDate(d.getDate() + n); return d;
+}
+function fmt(d, opts) {
+  return d.toLocaleDateString('en-IN', opts || {day:'numeric', month:'short', year:'numeric'});
+}
+function today() {
+  const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+const LMP = parseDMY(LMP_STR);
 
-    function initDatabase() {
-      let localData = localStorage.getItem(CURRENT_STORAGE_KEY);
-      if (localData) {
-        try { 
-          let parsed = JSON.parse(localData);
-          if (parsed && parsed.weeks) {
-            if (parsed.journal) masterDB.journal = parsed.journal;
-            if (parsed.boy) masterDB.boy = parsed.boy;
-            if (parsed.girl) masterDB.girl = parsed.girl;
-            if (parsed.unisex) masterDB.unisex = parsed.unisex;
-            
-            for (let k in parsed.weeks) {
-              let pW = parsed.weeks[k];
-              if (pW && (pW.event || pW.feeling || pW.sono || pW.blood || pW.doctor || pW.vaccine || pW.aheight || pW.ahb)) {
-                masterDB.weeks[k] = pW;
-              }
-            }
+/* ═══════════════════════════════════════════════════════════
+   HARDCODED BASE — events/scans/blood that are always known
+   These seed any week that has NO user-entered value yet.
+   They do NOT overwrite manually entered data.
+═══════════════════════════════════════════════════════════ */
+const BASE_WEEKS = {
+  w1:  { event:"Last Menstrual Period" },
+  w3:  { event:"Transfer on 17/03/2026" },
+  w5:  { event:"Pregnancy Confirmed by BHCG on 31/03", blood:"BHCG Confirmed (31-Mar)" },
+  w7:  { event:"Spotting noticed on 12/04; twins confirmed on 13/04", sono:"Bhate (13/04)" },
+  w8:  { event:"Second Sono to check internal injury", sono:"Bhate (20/04)" },
+  w9:  { event:"Aaditee Clinic appt 28/04 NPB and TMP" },
+  w10: { event:"Regular 10th W sono at Arya Clinic and BT at Dhande", sono:"Arya Clinic (05/05 7:30 PM)", blood:"Dhande (05-May)" },
+  w13: { event:"NT Scan and NIPT and Glucose, report takes 10 days", sono:"At Arya", blood:"Green Array" },
+  w16: { event:"Taaka at Neo with 2 Day Hospitalisation maybe 15th June" },
+  w20: { event:"Anomaly Scan at Arya", sono:"At Arya" },
+  w37: { event:"Tentative Delivery" }
+};
+
+const BLANK_WEEK = () => ({
+  event:"", feeling:"", aheight:"", ahb:"", aobs:"",
+  bheight:"", bhb:"", bobs:"", vaccine:"", blood:"", doctor:"", sono:""
+});
+
+/* ═══════════════════════════════════════════════════════════
+   DATABASE
+═══════════════════════════════════════════════════════════ */
+let db = { journal:"", boy:"", girl:"", unisex:"", weeks:{} };
+
+function initDB() {
+  /* Step 1 — load whatever is in localStorage (old or new data) */
+  const raw = localStorage.getItem(DB_KEY);
+  if (raw) {
+    try {
+      const saved = JSON.parse(raw);
+      if (saved && typeof saved === 'object') {
+        db.journal = saved.journal || "";
+        db.boy     = saved.boy     || "";
+        db.girl    = saved.girl    || "";
+        db.unisex  = saved.unisex  || "";
+        if (saved.weeks) {
+          /* Copy every week that exists in saved data */
+          for (const k in saved.weeks) {
+            db.weeks[k] = Object.assign(BLANK_WEEK(), saved.weeks[k]);
           }
-        } catch(e) { console.error(e); }
-      }
-      
-      // Ensure all weeks exist and force-restore hardcoded items if they were somehow left empty
-      for (let i = 1; i <= TOTAL_WEEKS; i++) {
-        let wk = 'w' + i;
-        if (!masterDB.weeks[wk]) {
-          masterDB.weeks[wk] = { event: "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: "", doctor: "", sono: "" };
-        }
-        if (hardcodedCoreBackup.weeks[wk] && hardcodedCoreBackup.weeks[wk].event && !masterDB.weeks[wk].event) {
-          masterDB.weeks[wk].event = hardcodedCoreBackup.weeks[wk].event;
-          if (hardcodedCoreBackup.weeks[wk].sono) masterDB.weeks[wk].sono = hardcodedCoreBackup.weeks[wk].sono;
-          if (hardcodedCoreBackup.weeks[wk].blood) masterDB.weeks[wk].blood = hardcodedCoreBackup.weeks[wk].blood;
         }
       }
-      syncToLocalStorage();
-    }
+    } catch(e) { console.error("DB parse error:", e); }
+  }
 
-    function syncToLocalStorage() {
-      localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(masterDB));
+  /* Step 2 — ensure all 41 weeks exist, then seed BASE values
+     into any field that is still blank after loading localStorage.
+     This means: manually entered data always wins.
+     BASE only fills genuinely empty slots. */
+  for (let i = 1; i <= TOT_WKS; i++) {
+    const k = 'w' + i;
+    if (!db.weeks[k]) db.weeks[k] = BLANK_WEEK();
+    const bw = BASE_WEEKS[k];
+    if (bw) {
+      if (!db.weeks[k].event   && bw.event)   db.weeks[k].event   = bw.event;
+      if (!db.weeks[k].sono    && bw.sono)     db.weeks[k].sono    = bw.sono;
+      if (!db.weeks[k].blood   && bw.blood)    db.weeks[k].blood   = bw.blood;
+      if (!db.weeks[k].doctor  && bw.doctor)   db.weeks[k].doctor  = bw.doctor;
+      if (!db.weeks[k].vaccine && bw.vaccine)  db.weeks[k].vaccine = bw.vaccine;
     }
+  }
 
-    function exportDatabaseToJSONFile() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterDB, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `TejAish_Pregnancy_Backup.txt`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
+  syncDB();
+}
 
-    function importDatabaseFromJSONFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      const fileReader = new FileReader();
-      fileReader.onload = function(e) {
-        try {
-          const rawText = e.target.result;
-          const importedJSON = JSON.parse(rawText);
-          if (importedJSON && importedJSON.weeks) {
-            // Absolute direct deep copy override to wipe out whatever memory bug was blocking updates
-            masterDB = JSON.parse(JSON.stringify(importedJSON));
-            syncToLocalStorage();
-            
-            // Instantly re-render the screen views
-            calculateMetricsDashboard();
-            generateTimelineRows();
-            alert("🎉 Database successfully imported and updated!");
-          } else {
-            alert("Data format error. Please check your backup text structure.");
+function syncDB() {
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPORT / IMPORT
+═══════════════════════════════════════════════════════════ */
+function exportDB() {
+  const date = fmt(today(), {year:'numeric', month:'2-digit', day:'2-digit'})
+               .split('/').reverse().join('-');
+  const blob = new Blob([JSON.stringify(db, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'TejAish_Backup_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+function importDB(ev) {
+  const file = ev.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imp = JSON.parse(e.target.result);
+      if (imp && imp.weeks) {
+        db = imp;
+        /* After import, re-seed BASE fields that are blank */
+        for (let i = 1; i <= TOT_WKS; i++) {
+          const k = 'w'+i;
+          if (!db.weeks[k]) db.weeks[k] = BLANK_WEEK();
+          const bw = BASE_WEEKS[k];
+          if (bw) {
+            if (!db.weeks[k].event   && bw.event)   db.weeks[k].event   = bw.event;
+            if (!db.weeks[k].sono    && bw.sono)     db.weeks[k].sono    = bw.sono;
+            if (!db.weeks[k].blood   && bw.blood)    db.weeks[k].blood   = bw.blood;
+            if (!db.weeks[k].doctor  && bw.doctor)   db.weeks[k].doctor  = bw.doctor;
+            if (!db.weeks[k].vaccine && bw.vaccine)  db.weeks[k].vaccine = bw.vaccine;
           }
-        } catch (error) {
-          alert("Could not read file data. Ensure you selected the correct file.");
         }
-      };
-      fileReader.readAsText(file);
-    }
+        syncDB(); renderMetrics(); renderTimeline();
+        showToast('✦ Backup imported successfully!');
+      } else { showToast('Invalid backup file format.', true); }
+    } catch { showToast('Could not read file.', true); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+}
 
-    window.onload = () => {
-      initDatabase();
-      calculateMetricsDashboard();
-      generateTimelineRows();
-    };
+/* ═══════════════════════════════════════════════════════════
+   METRICS
+═══════════════════════════════════════════════════════════ */
+function getMetrics() {
+  const now = today();
+  const elapsed = Math.floor((now - LMP) / 86400000);
+  const week = Math.max(1, Math.floor(elapsed / 7) + 1);
+  const dow  = (elapsed % 7) + 1;
+  const tEDD = addDays(LMP, 259);
+  const fEDD = addDays(LMP, 280);
+  const left = Math.max(0, Math.floor((tEDD - now) / 86400000));
+  const pct  = Math.min(100, Math.round((elapsed / 259) * 100));
+  return { week, dow, tEDD, fEDD, left, pct };
+}
 
-    function toggleReportMenuDropdown() {
-      document.getElementById("report-dropdown-menu").classList.toggle("hidden");
-    }
+function metricHTML(m, dark) {
+  const w = dark ? 'rmc' : 'mc';
+  const l = dark ? 'rmc-lbl' : 'mc-lbl';
+  const v = dark ? 'rmc-val' : 'mc-val';
+  return `
+    <div class="${w}"><span class="${l}">Current Week</span>
+      <div class="${v}">Week ${m.week} <span class="acc">Day ${m.dow}/7</span></div></div>
+    <div class="${w}"><span class="${l}">Days to Twin Target</span>
+      <div class="${v}">${m.left} <span class="acc">days left</span></div></div>
+    <div class="${w}"><span class="${l}">Twin EDD (37W)</span>
+      <div class="${v}" style="font-size:.78rem">${fmt(m.tEDD)}</div></div>
+    <div class="${w}"><span class="${l}">Full-Term EDD (40W)</span>
+      <div class="${v}" style="font-size:.78rem">${fmt(m.fEDD)}</div></div>`;
+}
 
-    function calculateMetricsDashboard() {
-      const today = new Date();
-      const elapsedMs = today - lmpDateObj;
-      const totalDaysElapsed = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
-      
-      const trackingWeek = Math.max(1, Math.floor(totalDaysElapsed / 7) + 1);
-      const dayOffset = (totalDaysElapsed % 7) + 1;
+function renderMetrics() {
+  const m = getMetrics();
+  document.getElementById('metrics').innerHTML = metricHTML(m, false);
+  document.getElementById('prog-fill').style.width = m.pct + '%';
+  document.getElementById('prog-lbl').textContent = m.pct + '%';
+  document.getElementById('journal').value    = db.journal || '';
+  document.getElementById('names-boy').value  = db.boy    || '';
+  document.getElementById('names-girl').value = db.girl   || '';
+  document.getElementById('names-unisex').value = db.unisex || '';
+}
 
-      const twinTargetDate = new Date(lmpDateObj);
-      twinTargetDate.setDate(twinTargetDate.getDate() + 259);
-      const daysRemainingToTwins = Math.max(0, Math.floor((twinTargetDate - today) / (1000 * 60 * 60 * 24)));
+/* ═══════════════════════════════════════════════════════════
+   TIMELINE
+═══════════════════════════════════════════════════════════ */
+function hasData(d) {
+  return d.event || d.feeling || d.aheight || d.ahb || d.aobs ||
+         d.bheight || d.bhb || d.bobs || d.vaccine || d.blood || d.doctor || d.sono;
+}
 
-      const standardEddDate = new Date(lmpDateObj);
-      standardEddDate.setDate(standardEddDate.getDate() + 280);
-      const calculationPercentage = Math.min(100, Math.round((totalDaysElapsed / 259) * 100));
+function diagHTML(d) {
+  let h = '';
+  if (d.vaccine) h += `<span class="chip chip-v">💉 ${d.vaccine}</span>`;
+  if (d.blood)   h += `<span class="chip chip-b">🧪 ${d.blood}</span>`;
+  if (d.doctor)  h += `<span class="chip chip-d">🩺 ${d.doctor}</span>`;
+  if (d.sono)    h += `<span class="chip chip-s">🖼️ ${d.sono}</span>`;
+  return h ? `<div class="tl-diag">${h}</div>` : `<span style="color:rgba(255,255,255,0.1);font-size:.6rem">—</span>`;
+}
 
-      const metricsHTMLString = `
-        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
-          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Current Progress</span>
-          <span class="text-sm font-extrabold text-stone-900">Week ${trackingWeek} <span class="text-[11px] text-[#D98895] font-semibold">(Day ${dayOffset}/7)</span></span>
-        </div>
-        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
-          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Days to Twins Target</span>
-          <span class="text-sm font-extrabold text-stone-900">${daysRemainingToTwins} Days Left</span>
-        </div>
-        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
-          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Twin Delivery Windows (37W)</span>
-          <span class="text-xs font-bold text-stone-800">${twinTargetDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'})}</span>
-        </div>
-        <div class="bg-white p-3 rounded-xl border border-stone-200/50">
-          <span class="text-stone-400 block text-[9px] uppercase font-extrabold tracking-wider mb-0.5">Standard Full-Term EDD (40W)</span>
-          <span class="text-xs font-bold text-stone-800">${standardEddDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'})}</span>
-        </div>
-      `;
+function twinInline(d) {
+  const hA = d.aheight || d.ahb || d.aobs;
+  const hB = d.bheight || d.bhb || d.bobs;
+  if (!hA && !hB) return `<span style="color:rgba(255,255,255,0.1);font-size:.6rem">—</span>`;
+  let h = '<div class="twin-blk">';
+  if (hA) {
+    const parts = [d.aheight ? d.aheight+'cm' : '', d.ahb ? d.ahb+' bpm' : '', d.aobs].filter(Boolean);
+    h += `<span class="ta">A</span> ${parts.join(' · ')}<br>`;
+  }
+  if (hB) {
+    const parts = [d.bheight ? d.bheight+'cm' : '', d.bhb ? d.bhb+' bpm' : '', d.bobs].filter(Boolean);
+    h += `<span class="tb">B</span> ${parts.join(' · ')}`;
+  }
+  return h + '</div>';
+}
 
-      document.getElementById("summary-metrics").innerHTML = metricsHTMLString;
-      document.getElementById("report-live-metrics").innerHTML = metricsHTMLString;
+function renderTimeline() {
+  const { week: cur } = getMetrics();
+  const hook = document.getElementById('tl-rows');
+  hook.innerHTML = '';
+  for (let w = 1; w <= TOT_WKS; w++) {
+    const k = 'w' + w;
+    const d = db.weeks[k] || {};
+    const wDate = addDays(LMP, (w-1)*7);
+    const isCur = w === cur;
+    const data  = !!hasData(d);
+    const ph    = w<=12 ? 'p1' : w<=26 ? 'p2' : 'p3';
+    const past  = w < cur ? ' ppast' : '';
+    const pillCls = `wpill ${ph}${past}${isCur ? ' pcur' : ''}`;
+    let rowCls = 'tl-row';
+    if (data)  rowCls += ' has-data';
+    if (isCur) rowCls += ' is-cur';
+    const evHTML = d.event
+      ? `<div class="tl-ev">${isCur ? '✦ ' : ''}${d.event}</div>`
+      : `<div class="tl-ev empty">Tap to log…</div>`;
+    const feelHTML = d.feeling
+      ? `<div class="tl-feel">${d.feeling}</div>`
+      : `<span style="color:rgba(255,255,255,0.1);font-size:.6rem">—</span>`;
+    hook.insertAdjacentHTML('beforeend', `
+      <div class="${rowCls}" onclick="openEditor(${w})">
+        <div><span class="${pillCls}">W${w}</span></div>
+        <div class="tl-date">${fmt(wDate,{day:'numeric',month:'short'})}</div>
+        <div>${evHTML}</div>
+        <div>${feelHTML}</div>
+        <div>${diagHTML(d)}</div>
+      </div>`);
+  }
+}
 
-      document.getElementById("progress-gauge").style.width = calculationPercentage + "%";
-      document.getElementById("progress-percent-label").innerText = calculationPercentage + "%";
-      document.getElementById("journal-input").value = masterDB.journal || "";
-      document.getElementById("names-boy").value = masterDB.boy || "";
-      document.getElementById("names-girl").value = masterDB.girl || "";
-      document.getElementById("names-unisex").value = masterDB.unisex || "";
-    }
+/* ═══════════════════════════════════════════════════════════
+   EDITOR
+═══════════════════════════════════════════════════════════ */
+function openEditor(w) {
+  const d = db.weeks['w'+w] || {};
+  const wDate = addDays(LMP, (w-1)*7);
+  document.getElementById('ew').value = w;
+  document.getElementById('m-title').textContent = 'Week ' + w + ' — Entry';
+  document.getElementById('m-sub').textContent =
+    fmt(wDate, {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const sv = (id, v) => document.getElementById(id).value = v || '';
+  sv('fe', d.event);  sv('ff', d.feeling);
+  sv('fah', d.aheight); sv('fahb', d.ahb); sv('fao', d.aobs);
+  sv('fbh', d.bheight); sv('fbhb', d.bhb); sv('fbo', d.bobs);
+  sv('fv', d.vaccine);  sv('fbl', d.blood);
+  sv('fd', d.doctor);   sv('fs', d.sono);
+  document.getElementById('editor-modal').classList.add('open');
+}
 
-    function generateTimelineRows() {
-      const rowHook = document.getElementById("timeline-row-terminal");
-      rowHook.innerHTML = "";
+function closeEditor() {
+  document.getElementById('editor-modal').classList.remove('open');
+}
 
-      for (let w = 1; w <= TOTAL_WEEKS; w++) {
-        let rowBaseDate = new Date(lmpDateObj);
-        rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
+function saveWeek() {
+  const w = document.getElementById('ew').value;
+  const k = 'w' + w;
+  const g = id => document.getElementById(id).value;
+  db.weeks[k].event   = g('fe');   db.weeks[k].feeling = g('ff');
+  db.weeks[k].aheight = g('fah');  db.weeks[k].ahb     = g('fahb');
+  db.weeks[k].aobs    = g('fao');  db.weeks[k].bheight = g('fbh');
+  db.weeks[k].bhb     = g('fbhb'); db.weeks[k].bobs    = g('fbo');
+  db.weeks[k].vaccine = g('fv');   db.weeks[k].blood   = g('fbl');
+  db.weeks[k].doctor  = g('fd');   db.weeks[k].sono    = g('fs');
+  syncDB(); renderTimeline(); closeEditor();
+}
 
-        let weekKey = 'w' + w;
-        let rowData = masterDB.weeks[weekKey] || {};
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD SAVE
+═══════════════════════════════════════════════════════════ */
+function saveDash(ev) {
+  db.journal = document.getElementById('journal').value;
+  db.boy     = document.getElementById('names-boy').value;
+  db.girl    = document.getElementById('names-girl').value;
+  db.unisex  = document.getElementById('names-unisex').value;
+  syncDB();
+  const btn = ev.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = '✦ Saved!';
+  btn.style.color = 'var(--gold-lt)';
+  setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1600);
+}
 
-        let phaseStyle = "phase-3";
-        if (w <= 12) phaseStyle = "phase-1";
-        else if (w <= 26) phaseStyle = "phase-2";
+/* ═══════════════════════════════════════════════════════════
+   REPORT
+═══════════════════════════════════════════════════════════ */
+function toggleDD() {
+  const dd = document.getElementById('report-dd');
+  dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dropdown-wrap'))
+    document.getElementById('report-dd').style.display = 'none';
+});
 
-        let displayEvent = rowData.event || '<span class="text-stone-300 font-normal">Tap to log milestone...</span>';
-        let displayFeeling = rowData.feeling || '<span class="text-stone-300">—</span>';
-        
-        let twinALog = (rowData.aheight || rowData.ahb) ? 'A: ' + (rowData.aheight ? rowData.aheight + 'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb + ' bpm' : '—') : '';
-        let twinBLog = (rowData.bheight || rowData.bhb) ? 'B: ' + (rowData.bheight ? rowData.bheight + 'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb + ' bpm' : '—') : '';
-        
-        let twinsLayoutBlock = '<span class="text-stone-300">—</span>';
-        if (twinALog || twinBLog) {
-          twinsLayoutBlock = '<div class="space-y-0.5 font-medium text-stone-700 text-[10px] text-left">';
-          if(twinALog) twinsLayoutBlock += '<div>' + twinALog + '</div>';
-          if(twinBLog) twinsLayoutBlock += '<div>' + twinBLog + '</div>';
-          twinsLayoutBlock += '</div>';
-        }
+function openReport() {
+  document.getElementById('report-dd').style.display = 'none';
+  const m = getMetrics();
 
-        let diagnosticItems = [];
-        if (rowData.vaccine) diagnosticItems.push("💉 " + rowData.vaccine);
-        if (rowData.blood) diagnosticItems.push("🧪 " + rowData.blood);
-        if (rowData.doctor) diagnosticItems.push("🩺 " + rowData.doctor);
-        if (rowData.sono) diagnosticItems.push("🖼️ " + rowData.sono);
-        let diagnosticsLayoutBlock = diagnosticItems.length > 0 ? '<div class="space-y-0.5 text-[10px] text-stone-600 font-semibold">' + diagnosticItems.join('<br>') + '</div>' : '<span class="text-stone-300">—</span>';
+  /* Metrics */
+  document.getElementById('r-metrics').innerHTML = metricHTML(m, true);
 
-        let htmlRowString = '<div onclick="launchWeekEditorModal(' + w + ')" class="grid grid-cols-12 py-3 px-3 items-center hover:bg-stone-50/80 cursor-pointer transition text-center items-stretch divide-x divide-transparent">' +
-            '<div class="col-span-1 text-left flex items-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + phaseStyle + '">W' + w + '</span></div>' +
-            '<div class="col-span-2 text-stone-400 font-semibold text-left flex items-center">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'}) + '</div>' +
-            '<div class="col-span-3 text-left px-2 font-bold text-stone-900 flex flex-col justify-center">' + displayEvent + '</div>' +
-            '<div class="col-span-2 text-left px-2 font-medium text-stone-600 flex flex-col justify-center italic text-[11px]">' + displayFeeling + '</div>' +
-            '<div class="col-span-2 text-left px-2 flex flex-col justify-center">' + twinsLayoutBlock + '</div>' +
-            '<div class="col-span-2 text-left pl-2 flex flex-col justify-center">' + diagnosticsLayoutBlock + '</div>' +
-          '</div>';
+  /* Journal */
+  if (db.journal && db.journal.trim()) {
+    document.getElementById('r-journal-wrap').style.display = 'block';
+    document.getElementById('r-journal-txt').textContent = db.journal;
+  } else {
+    document.getElementById('r-journal-wrap').style.display = 'none';
+  }
 
-        rowHook.insertAdjacentHTML('beforeend', htmlRowString);
+  /* Names */
+  if (db.boy || db.girl || db.unisex) {
+    document.getElementById('r-names-wrap').style.display = 'block';
+    document.getElementById('r-names').innerHTML = `
+      <div class="rnc"><span class="rnc-lbl">👦 Boy</span><div class="rnc-val">${db.boy||'—'}</div></div>
+      <div class="rnc"><span class="rnc-lbl">👧 Girl</span><div class="rnc-val">${db.girl||'—'}</div></div>
+      <div class="rnc"><span class="rnc-lbl">✨ Unisex</span><div class="rnc-val">${db.unisex||'—'}</div></div>`;
+  } else {
+    document.getElementById('r-names-wrap').style.display = 'none';
+  }
+
+  /* Table */
+  const hook = document.getElementById('r-rows');
+  hook.innerHTML = '';
+  for (let w = 1; w <= RPT_WKS; w++) {
+    const k = 'w' + w;
+    const d = db.weeks[k] || {};
+    if (!hasData(d)) continue;
+    const wDate = addDays(LMP, (w-1)*7);
+    const ph = w<=12 ? 'rp1' : w<=26 ? 'rp2' : 'rp3';
+
+    /* twins */
+    const hA = d.aheight || d.ahb || d.aobs;
+    const hB = d.bheight || d.bhb || d.bobs;
+    let twStr = '<span style="color:#C0B0A0">—</span>';
+    if (hA || hB) {
+      let t = '<div class="rtw">';
+      if (hA) {
+        const p = [d.aheight?d.aheight+'cm':'', d.ahb?d.ahb+'bpm':'', d.aobs].filter(Boolean);
+        t += `<span class="rta">A</span> ${p.join(' · ')}<br>`;
       }
-    }
-
-    function launchWeekEditorModal(weekNum) {
-      let weekKey = 'w' + weekNum;
-      let rowData = masterDB.weeks[weekKey] || {};
-      let rowBaseDate = new Date(lmpDateObj);
-      rowBaseDate.setDate(lmpDateObj.getDate() + ((weekNum - 1) * 7));
-
-      document.getElementById("target-week-key").value = weekNum;
-      document.getElementById("modal-header-title").innerText = "Week " + weekNum + " Configuration Panel";
-      document.getElementById("modal-header-subtitle").innerText = "Timeline Date Base: " + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'long', year:'numeric'});
-
-      document.getElementById("form-event").value = rowData.event || "";
-      document.getElementById("form-feeling").value = rowData.feeling || "";
-      document.getElementById("form-aheight").value = rowData.aheight || "";
-      document.getElementById("form-ahb").value = rowData.ahb || "";
-      document.getElementById("form-aobs").value = rowData.aobs || "";
-      document.getElementById("form-bheight").value = rowData.bheight || "";
-      document.getElementById("form-bhb").value = rowData.bhb || "";
-      document.getElementById("form-bobs").value = rowData.bobs || "";
-      document.getElementById("form-vaccine").value = rowData.vaccine || "";
-      document.getElementById("form-blood").value = rowData.blood || "";
-      document.getElementById("form-doctor").value = rowData.doctor || "";
-      document.getElementById("form-sono").value = rowData.sono || "";
-
-      let overlay = document.getElementById("editor-backdrop");
-      overlay.classList.remove("hidden");
-      overlay.classList.add("flex");
-    }
-
-    function closeModalWindow() {
-      let overlay = document.getElementById("editor-backdrop");
-      overlay.classList.add("hidden");
-      overlay.classList.remove("flex");
-    }
-
-    function commitModalSavePipeline() {
-      let wNum = document.getElementById("target-week-key").value;
-      let weekKey = 'w' + wNum;
-
-      masterDB.weeks[weekKey].event = document.getElementById("form-event").value;
-      masterDB.weeks[weekKey].feeling = document.getElementById("form-feeling").value;
-      masterDB.weeks[weekKey].aheight = document.getElementById("form-aheight").value;
-      masterDB.weeks[weekKey].ahb = document.getElementById("form-ahb").value;
-      masterDB.weeks[weekKey].aobs = document.getElementById("form-aobs").value;
-      masterDB.weeks[weekKey].bheight = document.getElementById("form-bheight").value;
-      masterDB.weeks[weekKey].bhb = document.getElementById("form-bhb").value;
-      masterDB.weeks[weekKey].bobs = document.getElementById("form-bobs").value;
-      masterDB.weeks[weekKey].vaccine = document.getElementById("form-vaccine").value;
-      masterDB.weeks[weekKey].blood = document.getElementById("form-blood").value;
-      masterDB.weeks[weekKey].doctor = document.getElementById("form-doctor").value;
-      masterDB.weeks[weekKey].sono = document.getElementById("form-sono").value;
-
-      generateTimelineRows();
-      closeModalWindow();
-      syncToLocalStorage();
-    }
-
-    function saveDashboardElements() {
-      masterDB.journal = document.getElementById("journal-input").value;
-      masterDB.boy = document.getElementById("names-boy").value;
-      masterDB.girl = document.getElementById("names-girl").value;
-      masterDB.unisex = document.getElementById("names-unisex").value;
-      
-      syncToLocalStorage();
-      alert("Dashboard details saved successfully!");
-    }
-
-    function launchReportViewModal() {
-      document.getElementById("report-dropdown-menu").classList.add("hidden");
-      const rowsHook = document.getElementById("report-rows-hook");
-      rowsHook.innerHTML = "";
-
-      calculateMetricsDashboard();
-
-      for (let w = 1; w <= CUTOFF_REPORT_WEEK; w++) {
-        let weekKey = 'w' + w;
-        let rowData = masterDB.weeks[weekKey] || {};
-        
-        const hasContent = 
-          (rowData.event && rowData.event.trim() !== "") || 
-          (rowData.feeling && rowData.feeling.trim() !== "") ||
-          (rowData.aheight || rowData.ahb || rowData.aobs || rowData.bheight || rowData.bhb || rowData.bobs) ||
-          (rowData.vaccine || rowData.doctor || rowData.sono || rowData.blood);
-
-        if (!hasContent) continue;
-
-        let rowBaseDate = new Date(lmpDateObj);
-        rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
-
-        let twinA = (rowData.aheight || rowData.ahb || rowData.aobs) ? 'A: ' + (rowData.aheight ? rowData.aheight+'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb+'bpm' : '—') + (rowData.aobs ? ' ('+rowData.aobs+')' : '') : '';
-        let twinB = (rowData.bheight || rowData.bhb || rowData.bobs) ? 'B: ' + (rowData.bheight ? rowData.bheight+'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb+'bpm' : '—') + (rowData.bobs ? ' ('+rowData.bobs+')' : '') : '';
-        let twinsStr = '<span class="text-stone-300">—</span>';
-        if(twinA || twinB) {
-          twinsStr = '<div class="space-y-0.5 text-[7.5px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
-        }
-
-        let htmlRow = '<div class="report-grid-layout p-3 align-middle divide-x divide-stone-100/70">' +
-            '<div class="font-bold text-stone-900">W' + w + '</div>' +
-            '<div class="text-stone-400 font-semibold">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short'}) + '</div>' +
-            '<div class="px-2 font-bold text-stone-800">' + rowData.event + '</div>' +
-            '<div class="px-2">' + twinsStr + '</div>' +
-            '<div class="px-1 font-medium text-stone-600">' + (rowData.vaccine || '<span class="text-stone-300">—</span>') + '</div>' +
-            '<div class="px-1 font-medium text-stone-600">' + (rowData.doctor || '<span class="text-stone-300">—</span>') + '</div>' +
-            '<div class="px-1 font-medium text-stone-600">' + (rowData.sono || '<span class="text-stone-300">—</span>') + '</div>' +
-            '<div class="px-1 font-medium text-stone-600">' + (rowData.blood || '<span class="text-stone-300">—</span>') + '</div>' +
-          '</div>';
-          
-        rowsHook.insertAdjacentHTML('beforeend', htmlRow);
+      if (hB) {
+        const p = [d.bheight?d.bheight+'cm':'', d.bhb?d.bhb+'bpm':'', d.bobs].filter(Boolean);
+        t += `<span class="rtb">B</span> ${p.join(' · ')}`;
       }
-
-      let rBackdrop = document.getElementById("report-backdrop");
-      rBackdrop.classList.remove("hidden");
-      rBackdrop.classList.add("flex");
+      twStr = t + '</div>';
     }
 
-    function closeReportWindow() {
-      let rBackdrop = document.getElementById("report-backdrop");
-      rBackdrop.classList.add("hidden");
-      rBackdrop.classList.remove("flex");
-    }
-  </script>
+    const cell = v => v
+      ? `<div class="rcell">${v}</div>`
+      : `<div class="rcell mt">—</div>`;
+
+    hook.insertAdjacentHTML('beforeend', `
+      <div class="r-row">
+        <div class="rw ${ph}">W${w}</div>
+        <div class="rd">${fmt(wDate,{day:'numeric',month:'short'})}</div>
+        <div class="rev">${d.event || '<span style="color:#C0B0A0;font-weight:400">—</span>'}</div>
+        <div>${twStr}</div>
+        ${cell(d.vaccine)}${cell(d.doctor)}${cell(d.sono)}${cell(d.blood)}
+      </div>`);
+  }
+
+  document.getElementById('report-modal').classList.add('open');
+}
+
+function closeReport() {
+  document.getElementById('report-modal').classList.remove('open');
+}
+
+/* Print — window.print() for desktop/Mac,
+   navigator.share for iOS Share Sheet → Print */
+function doPrint() {
+  if (navigator.share && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+    navigator.share({ title: 'TejAish Pregnancy Report', url: window.location.href })
+      .catch(() => window.print());
+  } else {
+    window.print();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════ */
+function showToast(msg, err) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+      padding:10px 20px;border-radius:50px;font-size:.72rem;font-weight:700;
+      z-index:9999;transition:opacity .4s;white-space:nowrap;
+      box-shadow:0 8px 24px rgba(0,0,0,0.4)`;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = err ? '#7A2020' : 'var(--gold)';
+  t.style.color = err ? 'var(--cream)' : 'var(--ink)';
+  t.style.opacity = '1';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.style.opacity = '0'; }, 2600);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════ */
+window.onload = () => {
+  initDB();
+  renderMetrics();
+  renderTimeline();
+};
+</script>
 </body>
 </html>
