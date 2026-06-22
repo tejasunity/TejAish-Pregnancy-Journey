@@ -6,23 +6,113 @@
   <title>TejAish Pregnancy Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
-    * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background-color: #FAF9F5; }
     .phase-1 { background-color: #F4EFE6; color: #705335; }
     .phase-2 { background-color: #E6EEF4; color: #355370; }
     .phase-3 { background-color: #EAE6F4; color: #4A3570; }
+    
     .report-grid-layout {
       display: grid;
       grid-template-columns: 55px 65px 210px 170px 90px 90px 135px 135px;
       align-items: center;
       text-align: left;
     }
+
+    /* =======================================================
+      PREMIUM ONE-PAGE LANDSCAPE PRINT SPECIFICATIONS
+      =======================================================
+    */
     @media print {
-      body { background-color: #ffffff; padding: 0; }
-      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons { display: none !important; }
-      #report-backdrop { position: relative !important; display: block !important; background: none !important; padding: 0 !important; }
-      .report-grid-layout { page-break-inside: avoid; }
+      @page {
+        size: letter landscape;
+        margin: 0.2in 0.3in 0.2in 0.3in;
+      }
+      
+      body { 
+        background-color: #ffffff !important; 
+        color: #1c1917 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Hide all web app components completely */
+      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons { 
+        display: none !important; 
+      }
+      
+      /* Reset the modal layout container for full-page visibility */
+      #report-backdrop { 
+        position: static !important; 
+        display: block !important; 
+        background: none !important; 
+        padding: 0 !important; 
+        box-shadow: none !important;
+        border: none !important;
+      }
+      #report-backdrop > div {
+        box-shadow: none !important;
+        border: none !important;
+        max-w: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Premium Elegant Print Typography & Title Header */
+      .print-title-area {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 14px;
+      }
+      .print-main-title {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 24px;
+        font-weight: 700;
+        color: #4c2d33; /* Elegant Deep Rose Gold tone */
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+      .print-subtitle {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #78716c;
+        margin-top: 3px;
+      }
+
+      /* Ultra-compacted, high-density 4-column layout matrix to guarantee 1-page budget */
+      .print-matrix-container {
+        display: block !important;
+      }
+      .report-grid-layout {
+        display: grid !important;
+        grid-template-columns: 32px 55px 155px 125px 55px 55px 75px 75px !important;
+        font-size: 8.5px !important;
+        line-height: 1.1 !important;
+        padding: 3.5px 4px !important;
+        border-bottom: 1px solid #f2f0ea !important;
+        page-break-inside: avoid !important;
+      }
+      .report-grid-layout div {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+      }
+      .bg-stone-50 {
+        background-color: #fcfbfa !important;
+        border-bottom: 1.5px solid #d6d3d1 !important;
+        font-weight: 800 !important;
+        color: #44403c !important;
+      }
+      
+      /* Subtle stylistic touches for a family keepsake */
+      .font-bold.text-stone-900 { font-size: 9px !important; font-weight: 800 !important; }
+      .text-stone-400 { color: #78716c !important; font-weight: 600 !important; }
+      .text-stone-300 { color: #d6d3d1 !important; }
     }
   </style>
 </head>
@@ -168,6 +258,7 @@
 
   <div id="report-backdrop" class="fixed inset-0 bg-stone-900/60 backdrop-blur-md z-50 overflow-y-auto hidden p-2 sm:p-4 justify-center items-start">
     <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl border border-stone-200 my-2 overflow-hidden">
+      
       <div id="report-backdrop-buttons" class="px-6 py-4 bg-gradient-to-r from-[#FAF9F5] to-stone-50 border-b border-stone-200 flex justify-between items-center">
         <div>
           <h2 class="text-base font-extrabold text-stone-900 uppercase tracking-wider">Family Share Report</h2>
@@ -175,18 +266,26 @@
         </div>
         <div class="flex items-center gap-2">
           <button onclick="window.print()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-            🖨️ Print Report
+            🖨️ Print / Save PDF
           </button>
           <button onclick="closeReportWindow()" class="bg-stone-100 hover:bg-stone-200/70 text-stone-700 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Close</button>
         </div>
       </div>
       
       <div class="p-4 sm:p-6 space-y-6 bg-white text-stone-900">
-        <div class="overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
+        
+        <div class="print-title-area hidden">
+          <h1 class="print-main-title">Our Twin Pregnancy Milestone Map</h1>
+          <p class="print-subtitle">Aish ❤️ Tejas — Family Archive Edition</p>
+        </div>
+
+        <div class="print-matrix-container overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
           <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
+            
             <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
               <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
             </div>
+            
             <div id="report-rows-hook" class="divide-y divide-stone-100 bg-white"></div>
           </div>
         </div>
@@ -411,17 +510,12 @@
       document.getElementById("report-dropdown-menu").classList.add("hidden");
       const rowsHook = document.getElementById("report-rows-hook");
       rowsHook.innerHTML = "";
-      let populatedCount = 0;
 
+      // Output all 41 rows sequentially so it's a full, continuous, complete single page matrix mapping
       for (let w = 1; w <= TOTAL_WEEKS; w++) {
         let weekKey = 'w' + w;
         let rowData = masterDB.weeks[weekKey] || {};
         
-        if (!rowData.event && !rowData.aheight && !rowData.bheight && !rowData.sono && !rowData.blood && !rowData.vaccine && !rowData.doctor) {
-          continue; 
-        }
-
-        populatedCount++;
         let rowBaseDate = new Date(lmpDateObj);
         rowBaseDate.setDate(lmpDateObj.getDate() + ((w - 1) * 7));
 
@@ -429,13 +523,13 @@
         let twinB = (rowData.bheight || rowData.bhb || rowData.bobs) ? 'B: ' + (rowData.bheight ? rowData.bheight+'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb+'bpm' : '—') + (rowData.bobs ? ' ('+rowData.bobs+')' : '') : '';
         let twinsStr = '<span class="text-stone-300">—</span>';
         if(twinA || twinB) {
-          twinsStr = '<div class="space-y-0.5 text-[10px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
+          twinsStr = '<div class="space-y-0.5 text-[7.5px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
         }
 
         let htmlRow = '<div class="report-grid-layout p-3 align-middle divide-x divide-stone-100/70">' +
             '<div class="font-bold text-stone-900">W' + w + '</div>' +
             '<div class="text-stone-400 font-semibold">' + rowBaseDate.toLocaleDateString('en-US', {day:'numeric', month:'short'}) + '</div>' +
-            '<div class="px-2 font-bold text-stone-800">' + (rowData.event || '—') + '</div>' +
+            '<div class="px-2 font-bold text-stone-800">' + (rowData.event || '<span class="text-stone-300">—</span>') + '</div>' +
             '<div class="px-2">' + twinsStr + '</div>' +
             '<div class="px-1 font-medium text-stone-600">' + (rowData.vaccine || '<span class="text-stone-300">—</span>') + '</div>' +
             '<div class="px-1 font-medium text-stone-600">' + (rowData.doctor || '<span class="text-stone-300">—</span>') + '</div>' +
@@ -444,10 +538,6 @@
           '</div>';
           
         rowsHook.insertAdjacentHTML('beforeend', htmlRow);
-      }
-
-      if (populatedCount === 0) {
-        rowsHook.innerHTML = '<div class="p-6 text-center text-stone-400 font-medium bg-white">No entries logged yet.</div>';
       }
 
       let rBackdrop = document.getElementById("report-backdrop");
