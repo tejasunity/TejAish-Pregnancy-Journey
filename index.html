@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Data Rescue - TejAish Tracker</title>
+  <title>Frozen Rescue - TejAish Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -13,92 +13,66 @@
 </head>
 <body class="p-4 text-stone-800 antialiased">
 
-  <!-- EMERGENCY RESCUE PANEL -->
-  <div class="max-w-4xl mx-auto mb-6 bg-amber-50 border-2 border-amber-300 rounded-2xl p-5 shadow-md">
-    <h2 class="text-base font-extrabold text-amber-900 flex items-center gap-2">⚠️ Data Rescue Kit</h2>
-    <p class="text-xs text-amber-800 mt-1 mb-4">
-      If your data went missing after a code update, it is likely hiding under an older database name in your browser's memory. Click the buttons below to scan your device and force-restore your data.
+  <!-- EMERGENCY FREEZE-FRAME RESCUE PANEL -->
+  <div class="max-w-4xl mx-auto mb-6 bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-5 shadow-md">
+    <h2 class="text-base font-extrabold text-emerald-900 flex items-center gap-2">🛡️ Data Freeze-Frame Rescue</h2>
+    <p class="text-xs text-emerald-800 mt-1 mb-4">
+      The automatic page refresh has been disabled. Click the button below, copy any recovered text that appears in the box, and paste it to a safe place!
     </p>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-      <button onclick="scanAllLocalStorage()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-3 px-4 rounded-xl transition shadow-xs cursor-pointer">
-        🔍 Step 1: Scan for Hidden Data Keys
-      </button>
-      <button onclick="forceTryOlderKeys()" class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs py-3 px-4 rounded-xl transition shadow-xs cursor-pointer">
-        🔄 Step 2: Force Try Universal Key Names
+    <div class="mb-4">
+      <button onclick="freezeFrameScanAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 px-4 rounded-xl transition shadow-xs cursor-pointer">
+        🔍 Run Frozen Data Extraction Scan
       </button>
     </div>
 
-    <div id="rescue-status" class="bg-white border border-amber-200 rounded-xl p-3 text-xs font-mono text-stone-600 max-h-40 overflow-y-auto whitespace-pre-wrap">
-      Status: Ready to scan...
-    </button>
+    <!-- The text here will stay permanently visible now -->
+    <div id="rescue-status" class="bg-white border border-emerald-200 rounded-xl p-3 text-xs font-mono text-stone-600 max-h-96 overflow-y-auto whitespace-pre-wrap select-all">
+      Status: Ready. Click the button above to safely extract data...
+    </div>
   </div>
 
-  <!-- Main App Placeholder so nothing breaks -->
-  <main class="max-w-4xl mx-auto opacity-40 pointer-events-none">
+  <!-- Main App Placeholder -->
+  <main class="max-w-4xl mx-auto opacity-30 pointer-events-none">
     <div class="bg-white p-6 rounded-2xl border border-stone-200">
-      <p class="text-xs font-bold text-stone-400 uppercase">Tracker Interface (Locked during rescue)</p>
+      <p class="text-xs font-bold text-stone-400 uppercase">Tracker Locked for Safety</p>
     </div>
   </main>
 
   <script>
     const CURRENT_KEY = "tej_aish_pregnancy_local_db";
 
-    function scanAllLocalStorage() {
+    function freezeFrameScanAll() {
       const statusDiv = document.getElementById("rescue-status");
-      statusDiv.innerHTML = "<strong>Scanning browser memory...</strong>\n";
+      statusDiv.innerHTML = "<strong>--- BEGIN DATA EXTRACTION LOG ---</strong>\n\n";
       
       if (localStorage.length === 0) {
-        statusDiv.innerHTML += "❌ No local storage keys found at this URL address.\nTry opening this site in normal Safari vs your Home Screen to see if it changes.";
+        statusDiv.innerHTML += "❌ No local storage keys found at this exact web link address.\n";
         return;
       }
 
-      let foundAnything = false;
+      let matchesFound = false;
       for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
         let val = localStorage.getItem(key);
-        foundAnything = true;
-        statusDiv.innerHTML += ` Found Key: "${key}" (${val.length} characters of data)\n`;
         
-        // If we find an old key that looks like pregnancy data, let's copy it over!
-        if (key.includes("pregnancy") || key.includes("tracker") || key.includes("tej")) {
-          statusDiv.innerHTML += `✨ <strong>Found potential match!</strong> Copying data from "${key}" to the new layout...\n`;
+        statusDiv.innerHTML += `👉 FOUND STORAGE DRAWER: "${key}"\n`;
+        statusDiv.innerHTML += `📋 RAW VAULT DATA:\n${val}\n\n`;
+        statusDiv.innerHTML += `----------------------------------------\n\n`;
+
+        // Automatically bind it behind the scenes, but DO NOT refresh the web page!
+        if (key.includes("pregnancy") || key.includes("tracker") || key.includes("tej") || key === "local_db") {
           localStorage.setItem(CURRENT_KEY, val);
-          statusDiv.innerHTML += "✅ Success! Please refresh your page now to view your recovered data.";
-          alert("Data recovered from " + key + "! Refreshing page...");
-          window.location.reload();
-          return;
+          matchesFound = true;
         }
       }
       
-      if (!foundAnything) {
-        statusDiv.innerHTML += "No specific keys matched. Try Step 2.";
+      statusDiv.innerHTML += "<strong>--- END OF LOG ---</strong>\n\n";
+      if (matchesFound) {
+        statusDiv.innerHTML += "✨ SUCCESS! The hidden data has been linked to the new layout behind the scenes.\n\n⚠️ INSTRUCTIONS:\n1. Select and COPY all the text inside this white box right now as a backup.\n2. Once you have saved it somewhere safe, tell your AI assistant, and we will restore the real dashboard app layout!";
+      } else {
+        statusDiv.innerHTML += "No specific key matched, but check if your text is visible in the raw values above!";
       }
-    }
-
-    function forceTryOlderKeys() {
-      const statusDiv = document.getElementById("rescue-status");
-      // Common fallback database names we might have used in previous iterations
-      const alternativeKeys = [
-        "pregnancy_tracker_db",
-        "pregnancy_db",
-        "tej_aish_tracker",
-        "tracker_db",
-        "local_db"
-      ];
-
-      for (let oldKey of alternativeKeys) {
-        let oldData = localStorage.getItem(oldKey);
-        if (oldData) {
-          localStorage.setItem(CURRENT_KEY, oldData);
-          statusDiv.innerHTML = `🎉 Success! Found data under old key: "${oldKey}" and restored it!\n`;
-          alert("Found older data drawer! Refreshing page to load...");
-          window.location.reload();
-          return;
-        }
-      }
-      
-      statusDiv.innerHTML = "❌ Force-try didn't find those specific names.\n\nPlease look closely at the URL bar: Are you viewing the page in private/incognito mode? Or did you open it in a different browser app (Chrome vs Safari)?";
     }
   </script>
 </body>
