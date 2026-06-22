@@ -324,8 +324,56 @@
     const CURRENT_STORAGE_KEY = "tej_aish_pregnancy_local_db";
     const lmpDateObj = new Date(START_DATE_STR);
 
-    // LOCKED RAW BACKUP INLINE LAYER
-    const hardcodedCoreBackup = {"journal":"","boy":"","girl":"","unisex":"","weeks":{"w1":{"event":"Last Menstrual Period","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w2":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w3":{"event":"Transfer on 17/03/2026","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w4":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w5":{"event":"Pregnancy Confirmed by BHCG on 31/03","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"BHCG Confirmed (31-Mar)","doctor":"","sono":""},"w6":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w7":{"event":"Spotting noticed on 12/04; twins confirmed on 13/04","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (13/04)"},"w8":{"event":"Second Sono to check internal injury","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (20/04)"},"w9":{"event":"Aaditee Clinic appt 28/04 NPB and TMP","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w10":{"event":"Regular 10th W sono at Arya Clinic and BT at Dhande","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Dhande (05-May)","doctor":"","sono":"Arya Clinic (05/05 7:30 PM)"},"w11":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w12":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w13":{"event":"NT Scan and NIPT and Glucose, report takes 10 days","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Green Array","doctor":"","sono":"At Arya"},"w14":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w15":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w16":{"event":"Taaka at Neo with 2 Day Hospitalisation maybe 15th June","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w17":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w18":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w19":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w20":{"event":"Anomaly Scan at Arya","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"At Arya"},"w21":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w22":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w23":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w24":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w25":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w26":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w27":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w28":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w29":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w30":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w31":{"event":"","feeling":"","aheight":"","ahb":"","aobs @@ tracking-wider ml-1":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w32":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w33":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w34":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w35":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w36":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w37":{"event":"Tentative Delivery","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w38":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w39":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w40":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},"w41":{"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""}}};
+    // COMPLETELY RESTORED DATA RECORD ARCHIVE HARDCODED LAYER
+    const hardcodedCoreBackup = {
+      "journal": "",
+      "boy": "",
+      "girl": "",
+      "unisex": "",
+      "weeks": {
+        "w1": {"event":"Last Menstrual Period","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w2": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w3": {"event":"Transfer on 17/03/2026","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w4": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w5": {"event":"Pregnancy Confirmed by BHCG on 31/03","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"BHCG Confirmed (31-Mar)","doctor":"","sono":""},
+        "w6": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w7": {"event":"Spotting noticed on 12/04; twins confirmed on 13/04","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (13/04)"},
+        "w8": {"event":"Second Sono to check internal injury","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"Bhate (20/04)"},
+        "w9": {"event":"Aaditee Clinic appt 28/04 NPB and TMP","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w10": {"event":"Regular 10th W sono at Arya Clinic and BT at Dhande","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Dhande (05-May)","doctor":"","sono":"Arya Clinic (05/05 7:30 PM)"},
+        "w11": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w12": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w13": {"event":"NT Scan and NIPT and Glucose, report takes 10 days","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"Green Array","doctor":"","sono":"At Arya"},
+        "w14": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w15": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w16": {"event":"Taaka at Neo with 2 Day Hospitalisation maybe 15th June","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w17": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w18": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w19": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w20": {"event":"Anomaly Scan at Arya","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":"At Arya"},
+        "w21": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w22": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w23": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w24": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w25": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w26": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w27": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w28": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w29": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w30": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w31": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w32": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w33": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w34": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w35": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w36": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w37": {"event":"Tentative Delivery","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w38": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w39": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w40": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
+        "w41": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""}
+      }
+    };
 
     let masterDB = JSON.parse(JSON.stringify(hardcodedCoreBackup));
 
@@ -335,7 +383,6 @@
         try { 
           let parsed = JSON.parse(localData);
           if (parsed && parsed.weeks) {
-            // Priority check: Ensure we fill entries safely without wiping core
             if (parsed.journal) masterDB.journal = parsed.journal;
             if (parsed.boy) masterDB.boy = parsed.boy;
             if (parsed.girl) masterDB.girl = parsed.girl;
@@ -351,15 +398,16 @@
         } catch(e) { console.error(e); }
       }
       
-      // Secondary fallback loop for safety confirmation
+      // Ensure all weeks exist and force-restore hardcoded items if they were somehow left empty
       for (let i = 1; i <= TOTAL_WEEKS; i++) {
         let wk = 'w' + i;
         if (!masterDB.weeks[wk]) {
           masterDB.weeks[wk] = { event: "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: "", doctor: "", sono: "" };
         }
-        // Reinforce historical items directly at init to break sticky empty browser values
-        if (hardcodedCoreBackup.weeks[wk] && hardcodedCoreBackup.weeks[wk].event && (!masterDB.weeks[wk].event)) {
-          masterDB.weeks[wk] = JSON.parse(JSON.stringify(hardcodedCoreBackup.weeks[wk]));
+        if (hardcodedCoreBackup.weeks[wk] && hardcodedCoreBackup.weeks[wk].event && !masterDB.weeks[wk].event) {
+          masterDB.weeks[wk].event = hardcodedCoreBackup.weeks[wk].event;
+          if (hardcodedCoreBackup.weeks[wk].sono) masterDB.weeks[wk].sono = hardcodedCoreBackup.weeks[wk].sono;
+          if (hardcodedCoreBackup.weeks[wk].blood) masterDB.weeks[wk].blood = hardcodedCoreBackup.weeks[wk].blood;
         }
       }
       syncToLocalStorage();
@@ -389,8 +437,11 @@
           const rawText = e.target.result;
           const importedJSON = JSON.parse(rawText);
           if (importedJSON && importedJSON.weeks) {
-            masterDB = importedJSON;
+            // Absolute direct deep copy override to wipe out whatever memory bug was blocking updates
+            masterDB = JSON.parse(JSON.stringify(importedJSON));
             syncToLocalStorage();
+            
+            // Instantly re-render the screen views
             calculateMetricsDashboard();
             generateTimelineRows();
             alert("🎉 Database successfully imported and updated!");
