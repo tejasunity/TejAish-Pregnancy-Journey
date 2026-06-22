@@ -3,118 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TejAish Pregnancy Journey</title>
+<title>TejAish Pregnancy Journey V6</title>
 <style>
-body{font-family:-apple-system;background:#FFFDF8;margin:0;padding:16px}
-.hero{background:linear-gradient(135deg,#F6D7E5,#DDEFFD);padding:24px;border-radius:24px;text-align:center}
-.card{background:#fff;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.stats{display:flex;gap:10px;margin-top:12px}
-.stats .card{flex:1;text-align:center}
-button{padding:10px 14px;border:none;border-radius:12px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center}
-.modalContent{background:white;width:92%;max-height:90vh;overflow:auto;padding:16px;border-radius:20px}
-input,textarea{width:100%;box-sizing:border-box;margin:6px 0 12px;padding:10px}
+body{font-family:-apple-system;margin:0;background:#FFFDF8;color:#333}
+.hero{padding:28px;text-align:center;background:linear-gradient(135deg,#F6D7E5,#DDEFFD)}
+.wrap{max-width:1000px;margin:auto;padding:16px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:12px;padding:10px 14px}
+.timeline{display:flex;overflow-x:auto;gap:12px;padding:10px 0}
+.card{min-width:220px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center}
+.box{background:#fff;width:92%;max-width:700px;max-height:90vh;overflow:auto;padding:16px;border-radius:18px}
+input,textarea{width:100%;box-sizing:border-box;padding:10px;margin:6px 0 12px}
 </style>
 </head>
 <body>
 <div class="hero">
 <h1>✨ TejAish Pregnancy Journey</h1>
-<div>Aish ❤️ Tejas • Twin Miracle Journey</div>
-<div class="stats">
-<div class="card"><div id="cw">--</div><small>Current Week</small></div>
-<div class="card"><div id="dr">--</div><small>Days Remaining</small></div>
-</div>
+<p>Aish ❤️ Tejas • Twin Miracle Luxury Edition</p>
+<h2 id="summary"></h2>
 </div>
 
-<h2>Weekly Journey</h2>
-<div id="weeks"></div>
+<div class="wrap">
+<div class="toolbar">
+<button onclick="exportBackup()">Backup</button>
+<button onclick="exportFamily()">Family Report</button>
+<button onclick="downloadICS()">Calendar Reminder File</button>
+<button onclick="window.print()">PDF</button>
+</div>
 
-<div id="modal" class="modal">
-<div class="modalContent">
+<h3>Journey Timeline</h3>
+<div class="timeline" id="timeline"></div>
+</div>
+
+<div class="modal" id="modal">
+<div class="box">
 <h2 id="title"></h2>
-<label>Key Event</label>
-<input id="keyEvent">
-<label>How Is Aish Feeling</label>
-<textarea id="feeling"></textarea>
-<label>Vaccine</label>
-<input id="vaccine">
-<label>Blood Test</label>
-<input id="bloodTest">
-<label>Dr Adkar Appointment</label>
-<input id="doctor">
-<label>Sonography</label>
-<input id="sono">
+<input id="event" placeholder="Key Event">
+<textarea id="feeling" placeholder="How is Aish feeling?"></textarea>
+<input id="vaccine" placeholder="Vaccine">
+<input id="vaccineDate" type="date">
+<input id="blood" placeholder="Blood Test">
+<input id="bloodDate" type="date">
+<input id="doctor" placeholder="Dr Adkar Appointment">
+<input id="doctorDate" type="date">
+<input id="sono" placeholder="Sonography">
+<input id="sonoDate" type="date">
+<input id="photo" placeholder="Photo / Scan filename note">
 <button onclick="saveWeek()">Save</button>
 <button onclick="closeModal()">Close</button>
 </div>
 </div>
 
 <script>
-const milestones={
-1:"Last Menstrual Period",
-3:"Transfer on 17/03/2026",
-5:"Pregnancy Confirmed by BHCG",
-7:"Twins Confirmed",
-8:"Second Sono Check",
-9:"Aaditee Clinic Appointment",
-10:"Regular 10 Week Sono & Blood Test",
-13:"NT Scan + NIPT + Glucose",
-16:"Taaka at Neo",
-20:"Anomaly Scan at Arya",
-22:"Home Visit Week",
-36:"Tentative Delivery"
-};
-
+const milestones={1:"LMP",5:"Pregnancy Confirmed",13:"NT Scan",16:"Neo Visit",20:"Anomaly Scan",36:"Delivery Planning"};
 const LMP=new Date("2026-02-26");
 const due=new Date(LMP); due.setDate(due.getDate()+280);
-const today=new Date();
+summary.innerText="EDD: "+due.toDateString();
 
-document.getElementById("cw").innerText=Math.floor((today-LMP)/86400000/7)+1;
-document.getElementById("dr").innerText=Math.floor((due-today)/86400000);
-
-let db=JSON.parse(localStorage.getItem("tejAishData")||"{}");
-let activeWeek=1;
-
-const weeks=document.getElementById("weeks");
+let db=JSON.parse(localStorage.getItem("tejAishV6")||"{}");
+let active=1;
 
 for(let w=1;w<=40;w++){
- let d=new Date(LMP);
- d.setDate(d.getDate()+((w-1)*7));
- let card=document.createElement("div");
- card.className="card";
- let txt=(db["week"+w]?.keyEvent)||milestones[w]||"Tap to add details";
- card.innerHTML="<b>Week "+w+"</b><br>"+d.toDateString()+"<br>"+txt;
- card.onclick=()=>openWeek(w);
- weeks.appendChild(card);
+ let d=new Date(LMP); d.setDate(d.getDate()+((w-1)*7));
+ let div=document.createElement("div");
+ div.className="card";
+ div.innerHTML="<b>Week "+w+"</b><br>"+d.toDateString()+"<br>"+((db['w'+w]?.event)||milestones[w]||"Add details");
+ div.onclick=()=>openWeek(w);
+ timeline.appendChild(div);
 }
 
 function openWeek(w){
- activeWeek=w;
- let x=db["week"+w]||{};
+ active=w;
+ let x=db['w'+w]||{};
  title.innerText="Week "+w;
- keyEvent.value=x.keyEvent||milestones[w]||"";
- feeling.value=x.feeling||"";
- vaccine.value=x.vaccine||"";
- bloodTest.value=x.bloodTest||"";
- doctor.value=x.doctor||"";
- sono.value=x.sono||"";
- modal.style.display="flex";
+ ['event','feeling','vaccine','vaccineDate','blood','bloodDate','doctor','doctorDate','sono','sonoDate','photo'].forEach(id=>{
+  document.getElementById(id).value=x[id]||'';
+ });
+ modal.style.display='flex';
 }
-
-function closeModal(){ modal.style.display="none"; }
-
+function closeModal(){modal.style.display='none';}
 function saveWeek(){
- db["week"+activeWeek]={
-  keyEvent:keyEvent.value,
-  feeling:feeling.value,
-  vaccine:vaccine.value,
-  bloodTest:bloodTest.value,
-  doctor:doctor.value,
-  sono:sono.value
- };
- localStorage.setItem("tejAishData",JSON.stringify(db));
- alert("Saved");
+ db['w'+active]={};
+ ['event','feeling','vaccine','vaccineDate','blood','bloodDate','doctor','doctorDate','sono','sonoDate','photo'].forEach(id=>{
+  db['w'+active][id]=document.getElementById(id).value;
+ });
+ localStorage.setItem("tejAishV6",JSON.stringify(db));
  location.reload();
+}
+function exportBackup(){
+ const b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='TejAishV6Backup.json';a.click();
+}
+function exportFamily(){
+ let txt="TejAish Pregnancy Journey\n\n";
+ Object.keys(db).forEach(k=>txt+=k+" - "+(db[k].event||"")+"\n");
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+ a.download='FamilyReport.txt';a.click();
+}
+function downloadICS(){
+ const text="BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:Pregnancy Reminder\nDESCRIPTION:Review upcoming appointments\nEND:VEVENT\nEND:VCALENDAR";
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([text],{type:'text/calendar'}));
+ a.download='PregnancyReminder.ics';
+ a.click();
 }
 </script>
 </body>
