@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TejAish Pregnancy Journey</title>
+<style>
+body{font-family:-apple-system;background:#FFFDF8;margin:0;padding:16px}
+.hero{background:linear-gradient(135deg,#F6D7E5,#DDEFFD);padding:24px;border-radius:24px;text-align:center}
+.card{background:#fff;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.stats{display:flex;gap:10px;margin-top:12px}
+.stats .card{flex:1;text-align:center}
+button{padding:10px 14px;border:none;border-radius:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center}
+.modalContent{background:white;width:92%;max-height:90vh;overflow:auto;padding:16px;border-radius:20px}
+input,textarea{width:100%;box-sizing:border-box;margin:6px 0 12px;padding:10px}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>✨ TejAish Pregnancy Journey</h1>
+<div>Aish ❤️ Tejas • Twin Miracle Journey</div>
+<div class="stats">
+<div class="card"><div id="cw">--</div><small>Current Week</small></div>
+<div class="card"><div id="dr">--</div><small>Days Remaining</small></div>
+</div>
+</div>
+
+<h2>Weekly Journey</h2>
+<div id="weeks"></div>
+
+<div id="modal" class="modal">
+<div class="modalContent">
+<h2 id="title"></h2>
+<label>Key Event</label>
+<input id="keyEvent">
+<label>How Is Aish Feeling</label>
+<textarea id="feeling"></textarea>
+<label>Vaccine</label>
+<input id="vaccine">
+<label>Blood Test</label>
+<input id="bloodTest">
+<label>Dr Adkar Appointment</label>
+<input id="doctor">
+<label>Sonography</label>
+<input id="sono">
+<button onclick="saveWeek()">Save</button>
+<button onclick="closeModal()">Close</button>
+</div>
+</div>
+
+<script>
+const milestones={
+1:"Last Menstrual Period",
+3:"Transfer on 17/03/2026",
+5:"Pregnancy Confirmed by BHCG",
+7:"Twins Confirmed",
+8:"Second Sono Check",
+9:"Aaditee Clinic Appointment",
+10:"Regular 10 Week Sono & Blood Test",
+13:"NT Scan + NIPT + Glucose",
+16:"Taaka at Neo",
+20:"Anomaly Scan at Arya",
+22:"Home Visit Week",
+36:"Tentative Delivery"
+};
+
+const LMP=new Date("2026-02-26");
+const due=new Date(LMP); due.setDate(due.getDate()+280);
+const today=new Date();
+
+document.getElementById("cw").innerText=Math.floor((today-LMP)/86400000/7)+1;
+document.getElementById("dr").innerText=Math.floor((due-today)/86400000);
+
+let db=JSON.parse(localStorage.getItem("tejAishData")||"{}");
+let activeWeek=1;
+
+const weeks=document.getElementById("weeks");
+
+for(let w=1;w<=40;w++){
+ let d=new Date(LMP);
+ d.setDate(d.getDate()+((w-1)*7));
+ let card=document.createElement("div");
+ card.className="card";
+ let txt=(db["week"+w]?.keyEvent)||milestones[w]||"Tap to add details";
+ card.innerHTML="<b>Week "+w+"</b><br>"+d.toDateString()+"<br>"+txt;
+ card.onclick=()=>openWeek(w);
+ weeks.appendChild(card);
+}
+
+function openWeek(w){
+ activeWeek=w;
+ let x=db["week"+w]||{};
+ title.innerText="Week "+w;
+ keyEvent.value=x.keyEvent||milestones[w]||"";
+ feeling.value=x.feeling||"";
+ vaccine.value=x.vaccine||"";
+ bloodTest.value=x.bloodTest||"";
+ doctor.value=x.doctor||"";
+ sono.value=x.sono||"";
+ modal.style.display="flex";
+}
+
+function closeModal(){ modal.style.display="none"; }
+
+function saveWeek(){
+ db["week"+activeWeek]={
+  keyEvent:keyEvent.value,
+  feeling:feeling.value,
+  vaccine:vaccine.value,
+  bloodTest:bloodTest.value,
+  doctor:doctor.value,
+  sono:sono.value
+ };
+ localStorage.setItem("tejAishData",JSON.stringify(db));
+ alert("Saved");
+ location.reload();
+}
+</script>
+</body>
+</html>
