@@ -26,7 +26,6 @@
         size: letter landscape;
         margin: 0.2in 0.3in 0.2in 0.3in;
       }
-      
       body { 
         background-color: #ffffff !important; 
         color: #1c1917 !important;
@@ -35,11 +34,9 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-
-      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons, .admin-panel { 
+      header, .no-print, button, #editor-backdrop, #report-backdrop-buttons, .admin-vault-top { 
         display: none !important; 
       }
-      
       #report-backdrop { 
         position: static !important; 
         display: block !important; 
@@ -55,7 +52,6 @@
         margin: 0 !important;
         padding: 0 !important;
       }
-
       .print-title-area {
         display: block !important;
         text-align: center;
@@ -77,7 +73,6 @@
         color: #78716c;
         margin-top: 3px;
       }
-
       #report-live-metrics {
         margin-bottom: 14px !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -88,7 +83,6 @@
         border: 1px solid #e7e5e4 !important;
         background-color: #fcfbfa !important;
       }
-
       .print-matrix-container {
         display: block !important;
       }
@@ -116,18 +110,33 @@
 </head>
 <body class="pb-12 text-stone-800 antialiased selection:bg-rose-100">
 
-  <header class="bg-white border-b border-stone-200/60 px-5 py-4 flex justify-between items-center shadow-xs">
+  <header class="bg-white border-b border-stone-200/60 px-5 py-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-xs">
     <div>
       <h1 class="text-lg font-extrabold tracking-tight text-stone-900">TejAish Pregnancy Tracker</h1>
       <p class="text-[10px] font-bold text-stone-400 tracking-wider uppercase mt-0.5">Aish ❤️ Tejas • Twin Miracle Edition</p>
     </div>
     
-    <div class="relative inline-block text-left">
-      <button onclick="toggleReportMenuDropdown()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-5 py-2.5 rounded-full transition active:scale-95 shadow-sm flex items-center gap-1 cursor-pointer">
-        View Compiled Report ▾
-      </button>
-      <div id="report-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-stone-100">
-        <button onclick="launchReportViewModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition flex items-center gap-2 cursor-pointer">👨‍👩‍👧‍👦 Family Share View</button>
+    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+      <div class="admin-vault-top bg-stone-900 text-stone-100 rounded-xl p-2 px-3 border border-stone-800 flex items-center gap-3 text-xs shadow-sm">
+        <span class="font-bold tracking-wider text-amber-400 text-[10px] uppercase hidden md:inline">🛡️ Vault:</span>
+        <div class="flex items-center gap-1.5">
+          <button onclick="exportDatabaseToJSONFile()" class="bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-[11px] px-2.5 py-1 rounded-lg transition border border-stone-700 cursor-pointer">
+            📥 Export
+          </button>
+          <label class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-[11px] px-2.5 py-1 rounded-lg transition cursor-pointer text-center">
+            📤 Import
+            <input type="file" id="import-file-input" onchange="importDatabaseFromJSONFile(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <div class="relative inline-block text-left">
+        <button onclick="toggleReportMenuDropdown()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-5 py-2.5 rounded-full transition active:scale-95 shadow-sm flex items-center gap-1 cursor-pointer">
+          View Compiled Report ▾
+        </button>
+        <div id="report-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-stone-100">
+          <button onclick="launchReportViewModal()" class="w-full text-left px-4 py-2.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition flex items-center gap-2 cursor-pointer">👨‍👩‍👧‍👦 Family Share View</button>
+        </div>
       </div>
     </div>
   </header>
@@ -170,25 +179,10 @@
       </div>
     </section>
 
-    <section class="admin-panel bg-stone-900 text-stone-100 rounded-2xl p-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <h3 class="text-xs font-extrabold tracking-wider uppercase text-amber-400">🛡️ App Database Safety Vault</h3>
-        <p class="text-[11px] text-stone-400 mt-0.5">Export manual backups to secure your logs completely outside of your browser storage.</p>
-      </div>
-      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-        <button onclick="exportDatabaseToJSONFile()" class="bg-stone-800 hover:bg-stone-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition border border-stone-700 cursor-pointer w-1/2 sm:w-auto">
-          📥 Export Backup
-        </button>
-        <label class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer text-center w-1/2 sm:w-auto">
-          📤 Import Backup File
-          <input type="file" id="import-file-input" onchange="importDatabaseFromJSONFile(event)" class="hidden">
-        </label>
-      </div>
-    </section>
-
     <section class="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden">
-      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60">
+      <div class="px-5 py-4 border-b border-stone-100 bg-stone-50/60 flex justify-between items-center">
         <h3 class="text-xs font-extrabold text-stone-900 uppercase tracking-wider">Pregnancy Timeline Map</h3>
+        <span class="text-[10px] font-bold text-stone-400 bg-stone-200/50 px-2 py-0.5 rounded-md">Tap rows to expand / share</span>
       </div>
       <div class="overflow-x-auto relative">
         <div class="min-w-[850px] divide-y divide-stone-200 text-xs">
@@ -197,7 +191,7 @@
             <div class="col-span-2 text-left">Calendar Date</div>
             <div class="col-span-3 text-left px-2">Key Events & Milestones</div>
             <div class="col-span-2 text-left px-2">Aish's Log</div>
-            <div class="col-span-2 text-left px-2">Twin Developmental Specs</div>
+            <div class="col-span-2 text-left px-2">Twin Developmental Specs & Media</div>
             <div class="col-span-2 text-left pl-2">Clinical Diagnostics</div>
           </div>
           <div id="timeline-row-terminal" class="divide-y divide-stone-100"></div>
@@ -213,18 +207,40 @@
           <h2 id="modal-header-title" class="text-sm font-extrabold text-stone-900 uppercase tracking-wider">Edit Records</h2>
           <p id="modal-header-subtitle" class="text-[11px] text-stone-400 mt-0.5"></p>
         </div>
-        <button onclick="closeModalWindow()" class="text-stone-400 hover:text-stone-900 text-base p-1 px-2.5 bg-stone-100 rounded-full transition cursor-pointer">&times;</button>
+        <div class="flex items-center gap-2">
+          <button onclick="triggerWhatsAppShareCard()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 cursor-pointer">
+            💬 WhatsApp
+          </button>
+          <button onclick="closeModalWindow()" class="text-stone-400 hover:text-stone-900 text-base p-1 px-2.5 bg-stone-100 rounded-full transition cursor-pointer">&times;</button>
+        </div>
       </div>
 
       <div class="p-5 space-y-4 text-xs">
         <input type="hidden" id="target-week-key">
+        
         <div>
-          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">Key Event / Milestone Specifics</label>
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">Key Event / Milestone Specifics</label>
+            <button onclick="generateSingleCellICS('form-event', 'Milestone')" class="text-[10px] text-sky-600 hover:text-sky-700 font-bold flex items-center gap-0.5 cursor-pointer">📅 Add Reminders</button>
+          </div>
           <input type="text" id="form-event" class="w-full p-2.5 border border-stone-200 rounded-xl font-semibold text-stone-900 bg-stone-50/30">
         </div>
+
         <div>
           <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">How is Aish Feeling?</label>
           <textarea id="form-feeling" rows="2" class="w-full p-2.5 border border-stone-200 rounded-xl font-medium text-stone-800 resize-none" placeholder="Symptoms, notes..."></textarea>
+        </div>
+
+        <div class="border border-stone-200 rounded-xl p-3 bg-stone-50/50 space-y-2">
+          <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">🖼️ Localized Media Linker (Option C)</label>
+          <div class="flex items-center gap-3">
+            <input type="file" id="form-img-file" accept="image/*" onchange="processLocalImageSelection(event)" class="text-[11px] text-stone-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-stone-200 file:text-stone-700 hover:file:bg-stone-300 cursor-pointer">
+            <span id="form-img-status" class="text-[10px] font-semibold text-stone-400 truncate max-w-[200px]">No image pinned</span>
+          </div>
+          <input type="text" id="form-img-caption" placeholder="Image short caption..." class="w-full p-1.5 text-xs border border-stone-200 rounded-md bg-white">
+          <div id="form-img-preview-container" class="hidden h-24 w-auto rounded-lg overflow-hidden border border-stone-200 bg-stone-100">
+            <img id="form-img-preview" src="" class="h-full w-full object-cover">
+          </div>
         </div>
 
         <div class="bg-stone-50/80 border border-stone-200/60 rounded-xl p-3.5 space-y-3">
@@ -247,19 +263,31 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🛡️ Vaccine</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">🛡️ Vaccine</label>
+              <button onclick="generateSingleCellICS('form-vaccine', 'Vaccine')" class="text-[9px] text-sky-600 hover:text-sky-700 font-bold cursor-pointer">📅 Alert</button>
+            </div>
             <input type="text" id="form-vaccine" class="w-full p-2 border border-stone-200 rounded-lg">
           </div>
           <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🧪 Blood Lab Screening</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">🧪 Blood Lab</label>
+              <button onclick="generateSingleCellICS('form-blood', 'Blood Test')" class="text-[9px] text-sky-600 hover:text-sky-700 font-bold cursor-pointer">📅 Alert</button>
+            </div>
             <input type="text" id="form-blood" class="w-full p-2 border border-stone-200 rounded-lg">
           </div>
           <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🩺 Dr Adkar Consult</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">🩺 Dr Adkar</label>
+              <button onclick="generateSingleCellICS('form-doctor', 'Dr Adkar Consult')" class="text-[9px] text-sky-600 hover:text-sky-700 font-bold cursor-pointer">📅 Alert</button>
+            </div>
             <input type="text" id="form-doctor" class="w-full p-2 border border-stone-200 rounded-lg">
           </div>
           <div>
-            <label class="block font-extrabold text-stone-400 uppercase tracking-wider text-[9px] mb-1">🖼️ Sonography Scan</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-extrabold text-stone-400 uppercase tracking-wider text-[9px]">🖼️ Sono Scan</label>
+              <button onclick="generateSingleCellICS('form-sono', 'Sonography Scan')" class="text-[9px] text-sky-600 hover:text-sky-700 font-bold cursor-pointer">📅 Alert</button>
+            </div>
             <input type="text" id="form-sono" class="w-full p-2 border border-stone-200 rounded-lg">
           </div>
         </div>
@@ -282,7 +310,7 @@
         </div>
         <div class="flex items-center gap-2">
           <button onclick="window.print()" class="bg-[#D98895] hover:bg-[#c47380] text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-            🖨️ Print / Save PDF
+            🖨️ Print / Save PDF Book
           </button>
           <button onclick="closeReportWindow()" class="bg-stone-100 hover:bg-stone-200/70 text-stone-700 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Close</button>
         </div>
@@ -299,7 +327,7 @@
         <div class="print-matrix-container overflow-x-auto border border-stone-200/80 rounded-xl shadow-xs">
           <div class="min-w-[950px] divide-y divide-stone-200 text-[11px]">
             <div class="report-grid-layout bg-stone-50 font-bold text-stone-500 p-3 uppercase text-[9px] tracking-wider border-b border-stone-200">
-              <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
+              <div>Week</div><div>Date</div><div class="px-2">Milestone / Event</div><div class="px-2">Twin Progress & Media</div><div class="px-1">Vaccine</div><div class="px-1">Dr Adkar</div><div class="px-1">Sono Scan</div><div class="px-1">Blood Test</div>
             </div>
             <div id="report-rows-hook" class="divide-y divide-stone-100 bg-white"></div>
           </div>
@@ -315,12 +343,11 @@
     const CURRENT_STORAGE_KEY = "tej_aish_pregnancy_local_db";
     const lmpDateObj = new Date(START_DATE_STR);
 
-    // CLEANED, FULLY VERIFIED HARDCODED BASE DATA
+    // Runtime object cache holding standard memory blob pointers mapped dynamically
+    let transientMediaBlobs = {};
+
     const hardcodedCoreBackup = {
-      "journal": "",
-      "boy": "",
-      "girl": "",
-      "unisex": "",
+      "journal": "", "boy": "", "girl": "", "unisex": "",
       "weeks": {
         "w1": {"event":"Last Menstrual Period","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
         "w2": {"event":"","feeling":"","aheight":"","ahb":"","aobs":"","bheight":"","bhb":"","bobs":"","vaccine":"","blood":"","doctor":"","sono":""},
@@ -382,7 +409,6 @@
             for (let k in parsed.weeks) {
               let pW = parsed.weeks[k];
               if (pW) {
-                // Safely merge properties if they exist in local storage
                 if (pW.event) masterDB.weeks[k].event = pW.event;
                 if (pW.feeling) masterDB.weeks[k].feeling = pW.feeling;
                 if (pW.aheight) masterDB.weeks[k].aheight = pW.aheight;
@@ -395,17 +421,20 @@
                 if (pW.blood) masterDB.weeks[k].blood = pW.blood;
                 if (pW.doctor) masterDB.weeks[k].doctor = pW.doctor;
                 if (pW.sono) masterDB.weeks[k].sono = pW.sono;
+                
+                // Retrieve photo metadata structural fields securely
+                if (pW.imgName) masterDB.weeks[k].imgName = pW.imgName;
+                if (pW.imgCaption) masterDB.weeks[k].imgCaption = pW.imgCaption;
               }
             }
           }
-        } catch(e) { console.error("Memory parsing error:", e); }
+        } catch(e) { console.error("Database mismatch bypassed:", e); }
       }
       
-      // Fallback check: force load hardcoded events if fields are blank
       for (let i = 1; i <= TOTAL_WEEKS; i++) {
         let wk = 'w' + i;
         if (!masterDB.weeks[wk]) {
-          masterDB.weeks[wk] = { event: "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: "", doctor: "", sono: "" };
+          masterDB.weeks[wk] = { event: "", feeling: "", aheight: "", ahb: "", aobs: "", bheight: "", bhb: "", bobs: "", vaccine: "", blood: "", doctor: "", sono: "", imgName: "", imgCaption: "" };
         }
         if (hardcodedCoreBackup.weeks[wk].event && !masterDB.weeks[wk].event) {
           masterDB.weeks[wk].event = hardcodedCoreBackup.weeks[wk].event;
@@ -469,7 +498,6 @@
       document.getElementById("report-dropdown-menu").classList.toggle("hidden");
     }
 
-    // DASHBOARD RENDERING PIPELINE
     function calculateMetricsDashboard() {
       const today = new Date();
       const elapsedMs = today - lmpDateObj;
@@ -516,7 +544,6 @@
       document.getElementById("names-unisex").value = masterDB.unisex || "";
     }
 
-    // INTERACTIVE ROWS GENERATION
     function generateTimelineRows() {
       const rowHook = document.getElementById("timeline-row-terminal");
       rowHook.innerHTML = "";
@@ -538,13 +565,30 @@
         let twinALog = (rowData.aheight || rowData.ahb) ? 'A: ' + (rowData.aheight ? rowData.aheight + 'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb + ' bpm' : '—') : '';
         let twinBLog = (rowData.bheight || rowData.bhb) ? 'B: ' + (rowData.bheight ? rowData.bheight + 'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb + ' bpm' : '—') : '';
         
-        let twinsLayoutBlock = '<span class="text-stone-300">—</span>';
+        let twinsLayoutBlock = '<div class="space-y-1">';
         if (twinALog || twinBLog) {
-          twinsLayoutBlock = '<div class="space-y-0.5 font-medium text-stone-700 text-[10px] text-left">';
+          twinsLayoutBlock += '<div class="space-y-0.5 font-medium text-stone-700 text-[10px] text-left">';
           if(twinALog) twinsLayoutBlock += '<div>' + twinALog + '</div>';
           if(twinBLog) twinsLayoutBlock += '<div>' + twinBLog + '</div>';
           twinsLayoutBlock += '</div>';
+        } else {
+          twinsLayoutBlock += '<span class="text-stone-300">—</span>';
         }
+
+        // Option C Visual Match Renderer
+        if (rowData.imgName) {
+          if (transientMediaBlobs[weekKey]) {
+            twinsLayoutBlock += `<div class="mt-1.5 border border-stone-200 rounded-md p-0.5 bg-white max-w-[120px]">
+              <img src="${transientMediaBlobs[weekKey]}" class="h-10 w-full object-cover rounded-sm">
+              <span class="text-[7.5px] font-bold text-stone-500 block truncate mt-0.5 px-0.5">${rowData.imgCaption || 'Pinned Media'}</span>
+            </div>`;
+          } else {
+            twinsLayoutBlock += `<div class="mt-1.5 text-[8.5px] font-bold text-amber-700 bg-amber-50 rounded-md p-1 border border-amber-200/60 max-w-[130px] leading-tight">
+              🖼️ Link file: <span class="block text-stone-500 font-mono truncate text-[7.5px]">${rowData.imgName}</span>
+            </div>`;
+          }
+        }
+        twinsLayoutBlock += '</div>';
 
         let diagnosticItems = [];
         if (rowData.vaccine) diagnosticItems.push("💉 " + rowData.vaccine);
@@ -589,9 +633,50 @@
       document.getElementById("form-doctor").value = rowData.doctor || "";
       document.getElementById("form-sono").value = rowData.sono || "";
 
+      // Track Form Image States
+      document.getElementById("form-img-caption").value = rowData.imgCaption || "";
+      document.getElementById("form-img-file").value = ""; 
+      const statusLbl = document.getElementById("form-img-status");
+      const imgPreviewContainer = document.getElementById("form-img-preview-container");
+      const imgPreview = document.getElementById("form-img-preview");
+
+      if (rowData.imgName) {
+        statusLbl.innerText = "Logged: " + rowData.imgName;
+        if (transientMediaBlobs[weekKey]) {
+          imgPreview.src = transientMediaBlobs[weekKey];
+          imgPreviewContainer.classList.remove("hidden");
+        } else {
+          imgPreviewContainer.classList.add("hidden");
+        }
+      } else {
+        statusLbl.innerText = "No image pinned";
+        imgPreviewContainer.classList.add("hidden");
+      }
+
       let overlay = document.getElementById("editor-backdrop");
       overlay.classList.remove("hidden");
       overlay.classList.add("flex");
+    }
+
+    function processLocalImageSelection(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const wNum = document.getElementById("target-week-key").value;
+      const weekKey = 'w' + wNum;
+
+      // Assign filename pointer safely to database engine records
+      masterDB.weeks[weekKey].imgName = file.name;
+      document.getElementById("form-img-status").innerText = "Selected: " + file.name;
+
+      // Create localized DOM pointer object string
+      const localBlobURL = URL.createObjectURL(file);
+      transientMediaBlobs[weekKey] = localBlobURL;
+
+      const imgPreviewContainer = document.getElementById("form-img-preview-container");
+      const imgPreview = document.getElementById("form-img-preview");
+      imgPreview.src = localBlobURL;
+      imgPreviewContainer.classList.remove("hidden");
     }
 
     function closeModalWindow() {
@@ -616,6 +701,7 @@
       masterDB.weeks[weekKey].blood = document.getElementById("form-blood").value;
       masterDB.weeks[weekKey].doctor = document.getElementById("form-doctor").value;
       masterDB.weeks[weekKey].sono = document.getElementById("form-sono").value;
+      masterDB.weeks[weekKey].imgCaption = document.getElementById("form-img-caption").value;
 
       generateTimelineRows();
       closeModalWindow();
@@ -630,6 +716,108 @@
       
       syncToLocalStorage();
       alert("Dashboard details saved successfully!");
+    }
+
+    // GRANULAR CELL CALENDAR GENERATION PIPELINE (.ics Standard)
+    function generateSingleCellICS(cellInputId, labelType) {
+      const cellVal = document.getElementById(cellInputId).value;
+      if (!cellVal || cellVal.trim() === "") {
+        alert("Please type information inside the field before creating calendar alerts!");
+        return;
+      }
+
+      const wNum = parseInt(document.getElementById("target-week-key").value);
+      
+      // Calculate target baseline date from mapping array 
+      let eventDate = new Date(lmpDateObj);
+      eventDate.setDate(lmpDateObj.getDate() + ((wNum - 1) * 7));
+      
+      const yr = eventDate.getFullYear();
+      const mth = String(eventDate.getMonth() + 1).padStart(2, '0');
+      const dy = String(eventDate.getDate()).padStart(2, '0');
+
+      const cleanSummary = `Pregnancy Tracker: Week ${wNum} ${labelType}`;
+      const cleanDesc = `Details: ${cellVal.replace(/,/g, '\\,')}`;
+
+      // Build out standard RFC-5545 string layout containing explicit 3, 2, and 1-day notification offsets
+      const icsPayloadString = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//TejAish//PregnancyTracker//EN",
+        "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT",
+        `DTSTART;VALUE=DATE:${yr}${mth}${dy}`,
+        `DTEND;VALUE=DATE:${yr}${mth}${dy}`,
+        `SUMMARY:${cleanSummary}`,
+        `DESCRIPTION:${cleanDesc}`,
+        "STATUS:CONFIRMED",
+        
+        // 3-Day Early Alert at 9:00 AM
+        "BEGIN:VALARM",
+        "TRIGGER:-P3D",
+        "ACTION:DISPLAY",
+        `DESCRIPTION:Reminder: 3 Days until ${cleanSummary}`,
+        "END:VALARM",
+        
+        // 2-Day Early Alert at 9:00 AM
+        "BEGIN:VALARM",
+        "TRIGGER:-P2D",
+        "ACTION:DISPLAY",
+        `DESCRIPTION:Reminder: 2 Days until ${cleanSummary}`,
+        "END:VALARM",
+        
+        // 1-Day Early Alert at 9:00 AM
+        "BEGIN:VALARM",
+        "TRIGGER:-P1D",
+        "ACTION:DISPLAY",
+        `DESCRIPTION:Reminder: Tomorrow is ${cleanSummary}`,
+        "END:VALARM",
+        
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([icsPayloadString], { type: "text/calendar;charset=utf-8" });
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = `Week_${wNum}_${labelType.replace(/\s+/g, '_')}_Alert.ics`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    // WHATSAPP GENERATION CARD ENGINE (Option A Implementation)
+    function triggerWhatsAppShareCard() {
+      const wNum = document.getElementById("target-week-key").value;
+      const weekKey = 'w' + wNum;
+      const rowData = masterDB.weeks[weekKey] || {};
+
+      let messageText = `❤️ *TejAish Twin Pregnancy Update — Week ${wNum}* ❤️\n\n`;
+      
+      if (rowData.event) messageText += `✨ *Milestone:* ${rowData.event}\n`;
+      if (rowData.feeling) messageText += `🌸 *Aish's Log:* ${rowData.feeling}\n`;
+      
+      let diag = [];
+      if (rowData.vaccine) diag.push(`💉 Vaccine: ${rowData.vaccine}`);
+      if (rowData.blood) diag.push(`🧪 Blood: ${rowData.blood}`);
+      if (rowData.doctor) diag.push(`🩺 Dr Adkar: ${rowData.doctor}`);
+      if (rowData.sono) diag.push(`🖼️ Scan: ${rowData.sono}`);
+      
+      if (diag.length > 0) {
+        messageText += `\n🩺 *Clinical Details:*\n${diag.join('\n')}\n`;
+      }
+
+      let twinA = (rowData.aheight || rowData.ahb || rowData.aobs) ? `Twin A: ${rowData.aheight ? rowData.aheight+'cm' : '—'} | ${rowData.ahb ? rowData.ahb+'bpm' : '—'} ${rowData.aobs ? '('+rowData.aobs+')':''}` : '';
+      let twinB = (rowData.bheight || rowData.bhb || rowData.bobs) ? `Twin B: ${rowData.bheight ? rowData.bheight+'cm' : '—'} | ${rowData.bhb ? rowData.bhb+'bpm' : '—'} ${rowData.bobs ? '('+rowData.bobs+')':''}` : '';
+
+      if (twinA || twinB) {
+        messageText += `\n👶👶 *Twin Metrics:*\n`;
+        if (twinA) messageText += `${twinA}\n`;
+        if (twinB) messageText += `${twinB}\n`;
+      }
+
+      const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
+      window.open(whatsappURL, '_blank');
     }
 
     function launchReportViewModal() {
@@ -647,7 +835,7 @@
           (rowData.event && rowData.event.trim() !== "") || 
           (rowData.feeling && rowData.feeling.trim() !== "") ||
           (rowData.aheight || rowData.ahb || rowData.aobs || rowData.bheight || rowData.bhb || rowData.bobs) ||
-          (rowData.vaccine || rowData.doctor || rowData.sono || rowData.blood);
+          (rowData.vaccine || rowData.doctor || rowData.sono || rowData.blood) || rowData.imgName;
 
         if (!hasContent) continue;
 
@@ -656,10 +844,21 @@
 
         let twinA = (rowData.aheight || rowData.ahb || rowData.aobs) ? 'A: ' + (rowData.aheight ? rowData.aheight+'cm' : '—') + ' | ' + (rowData.ahb ? rowData.ahb+'bpm' : '—') + (rowData.aobs ? ' ('+rowData.aobs+')' : '') : '';
         let twinB = (rowData.bheight || rowData.bhb || rowData.bobs) ? 'B: ' + (rowData.bheight ? rowData.bheight+'cm' : '—') + ' | ' + (rowData.bhb ? rowData.bhb+'bpm' : '—') + (rowData.bobs ? ' ('+rowData.bobs+')' : '') : '';
-        let twinsStr = '<span class="text-stone-300">—</span>';
+        
+        let twinsStr = '<div class="space-y-1">';
         if(twinA || twinB) {
-          twinsStr = '<div class="space-y-0.5 text-[7.5px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
+          twinsStr += '<div class="space-y-0.5 text-[7.5px] text-left font-semibold text-stone-800">' + (twinA ? '<div>' + twinA + '</div>' : '') + (twinB ? '<div>' + twinB + '</div>' : '') + '</div>';
+        } else {
+          twinsStr += '<span class="text-stone-300">—</span>';
         }
+
+        // Render matching image block inside PDF Book Layout compilation if loaded
+        if (rowData.imgName && transientMediaBlobs[weekKey]) {
+          twinsStr += `<div class="mt-1 max-w-[100px] border border-stone-200 p-0.5 rounded bg-white">
+            <img src="${transientMediaBlobs[weekKey]}" class="h-8 w-full object-cover">
+          </div>`;
+        }
+        twinsStr += '</div>';
 
         let htmlRow = '<div class="report-grid-layout p-3 align-middle divide-x divide-stone-100/70">' +
             '<div class="font-bold text-stone-900">W' + w + '</div>' +
