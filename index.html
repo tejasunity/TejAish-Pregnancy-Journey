@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TejAish — Twin Pregnancy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#18120F;--ink2:#221A16;--ink3:#2E1F1A;
+  --gold:#C9A84C;--goldl:#E6C86A;--goldd:#7A6232;--goldg:rgba(201,168,76,.16);
+  --blush:#D98895;--blushd:rgba(217,136,149,.15);
+  --sky:#7ABDE8;--skyd:rgba(122,189,232,.13);
+  --sage:#8EC4A0;--sagedim:rgba(142,196,160,.13);
+  --cream:#FAF6EE;--cream2:#F0EAE0;
+  --stone:#7C7068;--stone2:#4A3C34;
+  --p1:#E8A87C;--p2:#7ABDE8;--p3:#B89EE0;
+  --rad:18px;--radsm:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--ink);color:var(--cream);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+  padding-bottom:72px;
+}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--goldd);border-radius:10px;}
+
+.app-hdr{
+  background:linear-gradient(160deg,#1E1510,#2A1C16,#1A1310);
+  border-bottom:1px solid rgba(201,168,76,.2);
+  padding:12px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;
+}
+.brand-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--goldl);}
+.brand-tag{font-size:.52rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);margin-top:1px;}
+.hdr-sync{display:flex;align-items:center;gap:6px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#666;transition:background .3s;}
+.sync-dot.online{background:#4CAF50;}
+.sync-dot.syncing{background:var(--gold);animation:blink 1s infinite;}
+.sync-dot.error{background:#E57373;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.sync-lbl{font-size:.55rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.1em;}
+
+.tab-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(24,18,15,.97);
+  border-top:1px solid rgba(201,168,76,.18);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  backdrop-filter:blur(12px);
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 4px 6px;gap:3px;
+  background:none;border:none;cursor:pointer;
+  transition:opacity .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab-btn:active{opacity:.7;}
+.tab-icon{font-size:1.3rem;line-height:1;}
+.tab-lbl{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--stone);transition:color .2s;}
+.tab-btn.active .tab-lbl{color:var(--gold);}
+.tab-btn.active .tab-icon{filter:drop-shadow(0 0 4px rgba(201,168,76,.6));}
+
+.page{display:none;padding:16px 14px;max-width:960px;margin:0 auto;}
+.page.active{display:block;}
+
+.section-card{
+  background:var(--ink2);border:1px solid rgba(201,168,76,.11);
+  border-radius:var(--rad);padding:16px 18px;margin-bottom:14px;
+}
+.section-card.glow{border-color:rgba(201,168,76,.28);}
+.eyebrow{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:.73rem;color:var(--gold);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.25),transparent);}
+.sec-title{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--gold);margin-bottom:10px;}
+.fi,.ft{
+  width:100%;background:rgba(0,0,0,.38);
+  border:1px solid rgba(255,255,255,.07);border-radius:var(--radsm);
+  color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.73rem;padding:10px 12px;outline:none;
+  transition:border-color .2s;-webkit-appearance:none;
+}
+.fi:focus,.ft:focus{border-color:rgba(201,168,76,.4);}
+.ft{resize:vertical;min-height:60px;}
+.flbl{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:var(--goldd);display:block;margin-bottom:5px;}
+.btn{
+  padding:10px 18px;border-radius:var(--radsm);border:none;
+  cursor:pointer;font-size:.7rem;font-weight:700;
+  transition:opacity .2s,transform .15s;-webkit-appearance:none;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.btn:active{transform:scale(.95);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#A8722E);color:var(--ink);}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--cream);border:1px solid rgba(255,255,255,.09);}
+.btn-blush{background:var(--blushd);color:var(--blush);border:1px solid rgba(217,136,149,.25);}
+.btn-sage{background:var(--sagedim);color:var(--sage);border:1px solid rgba(142,196,160,.25);}
+.btn-sky{background:var(--skyd);color:var(--sky);border:1px solid rgba(122,189,232,.25);}
+.btn-full{width:100%;}
+.btn:hover{opacity:.85;}
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:.55rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.cv{background:rgba(232,168,124,.14);color:var(--p1);}
+.cb{background:var(--blushd);color:var(--blush);}
+.cd{background:var(--skyd);color:var(--sky);}
+.cs{background:rgba(184,158,224,.12);color:var(--p3);}
+.cg{background:var(--sagedim);color:var(--sage);}
+
+.week-hero{
+  background:linear-gradient(135deg,#2A1D14,#1C1826);
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:22px;padding:20px;margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.week-hero::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;
+  background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);
+  pointer-events:none;
+}
+.hero-week-num{
+  font-family:'Playfair Display',serif;
+  font-size:3.2rem;font-weight:700;color:var(--goldl);
+  line-height:1;letter-spacing:-2px;
+}
+.hero-week-sub{font-size:.62rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.14em;margin-top:2px;}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:16px;}
+.hero-right{text-align:right;}
+.hero-edd{font-size:.62rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.1em;}
+.hero-edd-val{font-size:.88rem;font-weight:800;color:var(--cream);margin-top:2px;}
+.hero-days{font-size:1.4rem;font-weight:800;color:var(--blush);}
+.hero-days-lbl{font-size:.55rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.1em;}
+
+.prog-track{height:7px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;margin:0 0 12px;}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--blush),var(--gold),var(--goldl));
+  border-radius:10px;transition:width 1s cubic-bezier(.4,0,.2,1);
+  position:relative;
+}
+.prog-fill::after{
+  content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);
+  width:11px;height:11px;border-radius:50%;background:var(--goldl);
+  box-shadow:0 0 8px rgba(232,200,106,.8);
+}
+.prog-labels{display:flex;justify-content:space-between;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--stone);margin-bottom:5px;}
+
+.baby-size-strip{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,.25);border-radius:var(--radsm);padding:9px 12px;
+  margin-top:10px;
+}
+.baby-size-emoji{font-size:1.6rem;}
+.baby-size-text{font-size:.65rem;color:var(--stone);line-height:1.5;}
+.baby-size-text strong{color:var(--cream);font-weight:700;}
+
+.quick-log-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.ql-btn{
+  background:var(--ink2);border:1px solid rgba(201,168,76,.12);
+  border-radius:var(--rad);padding:12px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:background .15s,border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ql-btn:hover,.ql-btn:active{background:var(--goldg);border-color:rgba(201,168,76,.3);}
+.ql-icon{font-size:1.4rem;}
+.ql-lbl{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--stone);}
+
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.vital-card{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:var(--radsm);padding:10px 12px;}
+.vital-lbl{font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;color:var(--stone);margin-bottom:4px;}
+.vital-val{font-size:.85rem;font-weight:700;color:var(--cream);}
+.vital-inp{
+  width:100%;background:transparent;border:none;outline:none;
+  color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.85rem;font-weight:700;padding:0;
+}
+
+.upcoming-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.upcoming-item:last-child{border-bottom:none;}
+.upcoming-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0;}
+.upcoming-text{font-size:.7rem;font-weight:600;color:var(--cream);line-height:1.4;}
+.upcoming-sub{font-size:.58rem;color:var(--stone);margin-top:1px;}
+
+.journey-filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;}
+.journey-filters::-webkit-scrollbar{display:none;}
+.filter-pill{
+  padding:5px 12px;border-radius:20px;font-size:.6rem;font-weight:700;
+  border:1px solid rgba(255,255,255,.09);color:var(--stone);
+  background:none;cursor:pointer;white-space:nowrap;transition:all .15s;
+  -webkit-appearance:none;
+}
+.filter-pill.active{background:var(--goldg);border-color:rgba(201,168,76,.35);color:var(--gold);}
+
+.growth-chart-wrap{background:rgba(0,0,0,.25);border-radius:var(--radsm);padding:14px;margin-bottom:14px;overflow-x:auto;}
+.chart-title{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--stone);margin-bottom:10px;}
+canvas#growthChart{width:100%;max-height:160px;}
+
+.week-card{
+  background:var(--ink2);border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--rad);margin-bottom:8px;overflow:hidden;
+  transition:border-color .2s;
+}
+.week-card.has-data{border-color:rgba(201,168,76,.1);}
+.week-card.is-cur{border-color:rgba(201,168,76,.3);border-left:2px solid var(--gold);}
+.week-card.empty{opacity:.45;}
+.wc-header{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.wc-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:20px;border-radius:6px;
+  font-size:.58rem;font-weight:800;flex-shrink:0;
+}
+.wcp1{background:rgba(232,168,124,.16);color:var(--p1);}
+.wcp2{background:rgba(122,189,232,.13);color:var(--p2);}
+.wcp3{background:rgba(184,158,224,.13);color:var(--p3);}
+.wcpast{opacity:.45;}
+.wccur{box-shadow:0 0 0 1.5px var(--gold),0 0 8px rgba(201,168,76,.35);color:var(--gold)!important;background:rgba(201,168,76,.15)!important;animation:pulse-pill 2.5s ease-in-out infinite;}
+@keyframes pulse-pill{0%,100%{box-shadow:0 0 0 1.5px var(--gold),0 0 8px rgba(201,168,76,.35);}50%{box-shadow:0 0 0 2px var(--goldl),0 0 16px rgba(232,200,106,.55);}}
+.wc-date{font-size:.6rem;font-weight:500;color:var(--stone);flex-shrink:0;min-width:58px;}
+.wc-event{font-size:.7rem;font-weight:700;color:var(--cream);flex:1;line-height:1.3;}
+.wc-event.empty{color:rgba(255,255,255,.15);font-weight:400;font-style:italic;font-size:.62rem;}
+.wc-dots{display:flex;gap:3px;flex-shrink:0;}
+.wc-dot{width:6px;height:6px;border-radius:50%;}
+.wc-expand{display:none;padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.04);}
+.wc-expand.open{display:block;}
+
+.upload-area{
+  border:1.5px dashed rgba(201,168,76,.25);border-radius:var(--radsm);
+  padding:14px;text-align:center;margin-top:10px;
+  cursor:pointer;transition:border-color .2s,background .2s;
+}
+.upload-area:hover{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.04);}
+.upload-area-txt{font-size:.65rem;color:var(--stone);margin-top:4px;}
+
+.ai-summary-box{
+  background:linear-gradient(135deg,rgba(122,189,232,.07),rgba(142,196,160,.05));
+  border:1px solid rgba(122,189,232,.2);
+  border-radius:var(--radsm);padding:12px 14px;margin-top:10px;
+}
+.ai-summary-lbl{font-size:.54rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--sky);margin-bottom:6px;}
+.ai-summary-text{font-size:.7rem;color:var(--cream);line-height:1.6;}
+.ai-thinking{display:flex;align-items:center;gap:8px;font-size:.65rem;color:var(--stone);}
+.ai-spinner{width:14px;height:14px;border:2px solid rgba(122,189,232,.2);border-top-color:var(--sky);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.nest-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.nest-tabs::-webkit-scrollbar{display:none;}
+.nest-tab-btn{
+  padding:6px 14px;border-radius:20px;font-size:.6rem;font-weight:700;
+  border:1px solid rgba(255,255,255,.08);color:var(--stone);
+  background:none;cursor:pointer;white-space:nowrap;transition:all .15s;
+  -webkit-appearance:none;
+}
+.nest-tab-btn.active{background:var(--goldg);border-color:rgba(201,168,76,.3);color:var(--gold);}
+.nest-section{display:none;}
+.nest-section.active{display:block;}
+
+.checklist-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.checklist-item:last-child{border-bottom:none;}
+.check-box{
+  width:20px;height:20px;border-radius:6px;
+  border:1.5px solid rgba(201,168,76,.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;cursor:pointer;transition:all .15s;
+  background:rgba(0,0,0,.2);
+}
+.check-box.checked{background:var(--gold);border-color:var(--gold);}
+.check-box.checked::after{content:'✓';font-size:.65rem;color:var(--ink);font-weight:800;}
+.check-text{font-size:.7rem;color:var(--cream);flex:1;line-height:1.3;}
+.check-text.checked{text-decoration:line-through;color:var(--stone);}
+.check-cat{font-size:.54rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.09em;}
+.check-priority{font-size:.54rem;padding:1px 6px;border-radius:10px;}
+.pri-must{background:rgba(217,136,149,.15);color:var(--blush);}
+.pri-need{background:rgba(201,168,76,.13);color:var(--gold);}
+.pri-nice{background:rgba(122,189,232,.1);color:var(--sky);}
+
+.product-card{
+  background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radsm);padding:12px;margin-bottom:8px;
+}
+.product-name{font-size:.78rem;font-weight:700;color:var(--cream);}
+.product-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.product-tag{font-size:.56rem;padding:2px 7px;border-radius:10px;font-weight:600;}
+.pt-price{background:var(--sagedim);color:var(--sage);}
+.pt-priority{background:var(--goldg);color:var(--gold);}
+.pt-brand{background:rgba(184,158,224,.12);color:var(--p3);}
+
+.dir-card{
+  background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radsm);padding:12px 14px;margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+}
+.dir-name{font-size:.78rem;font-weight:700;color:var(--cream);}
+.dir-role{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--stone);margin-top:1px;}
+.dir-phone{font-size:.68rem;color:var(--sky);font-weight:600;margin-top:4px;}
+.dir-addr{font-size:.62rem;color:var(--stone);margin-top:2px;line-height:1.4;}
+.btn-call{
+  padding:6px 12px;border-radius:10px;
+  background:var(--sagedim);color:var(--sage);
+  border:1px solid rgba(142,196,160,.25);
+  font-size:.62rem;font-weight:700;cursor:pointer;
+  white-space:nowrap;flex-shrink:0;text-decoration:none;
+}
+
+.report-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.rtype-card{
+  background:var(--ink2);border:1px solid rgba(201,168,76,.12);
+  border-radius:var(--rad);padding:16px;cursor:pointer;
+  transition:border-color .2s,background .2s;text-align:center;
+}
+.rtype-card:hover{border-color:rgba(201,168,76,.3);background:var(--goldg);}
+.rtype-icon{font-size:1.8rem;margin-bottom:6px;}
+.rtype-name{font-size:.72rem;font-weight:700;color:var(--cream);}
+.rtype-desc{font-size:.58rem;color:var(--stone);margin-top:3px;line-height:1.4;}
+
+.vault-card{
+  background:linear-gradient(135deg,#0D0B08,#16110D);
+  border:1px solid rgba(201,168,76,.18);
+  border-radius:var(--rad);padding:16px 18px;margin-bottom:14px;
+}
+.vault-title{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--gold);margin-bottom:4px;}
+.vault-sub{font-size:.62rem;color:var(--stone);margin-bottom:12px;line-height:1.5;}
+.vault-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.vault-last{font-size:.58rem;color:var(--stone);margin-top:8px;}
+
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);gap:10px;
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-lbl{font-size:.72rem;font-weight:600;color:var(--cream);}
+.setting-sub{font-size:.58rem;color:var(--stone);margin-top:2px;}
+.setting-inp{
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;color:var(--cream);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.68rem;padding:7px 10px;outline:none;
+  max-width:200px;width:100%;
+  -webkit-appearance:none;
+}
+.setting-inp:focus{border-color:rgba(201,168,76,.4);}
+
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
+  z-index:200;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:16px 12px 40px;
+}
+.overlay.open{display:block;}
+.modal-box{
+  background:#1E1510;border:1px solid rgba(201,168,76,.2);
+  border-radius:22px;max-width:520px;margin:0 auto;
+  box-shadow:0 32px 96px rgba(0,0,0,.75);overflow:hidden;
+}
+.modal-hd{
+  padding:16px 18px;
+  background:linear-gradient(135deg,#2A1C14,#1E1510);
+  border-bottom:1px solid rgba(201,168,76,.12);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--goldl);}
+.modal-sub{font-size:.6rem;color:var(--stone);margin-top:2px;}
+.modal-close{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:none;
+  color:var(--stone);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .15s;
+}
+.modal-close:hover{background:rgba(255,255,255,.14);color:var(--cream);}
+.modal-body{padding:18px;display:flex;flex-direction:column;gap:13px;}
+.modal-ft{
+  padding:13px 18px;border-top:1px solid rgba(255,255,255,.04);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.twin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.twin-panel{
+  background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radsm);padding:11px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.twin-hd{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;}
+.twin-hd.a{color:var(--blush);}.twin-hd.b{color:var(--sky);}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.flbl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.flbl-row .flbl{margin-bottom:0;}
+.btn-ics{font-size:.56rem;font-weight:700;color:var(--sky);background:none;border:none;cursor:pointer;padding:2px;}
+
+#report-view-modal{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(12px);
+  overflow-y:scroll;-webkit-overflow-scrolling:touch;
+  padding:16px 10px 40px;
+}
+#report-view-modal.open{display:block;}
+.rbox{
+  background:var(--cream);color:#1C1714;
+  width:100%;max-width:880px;margin:0 auto;
+  border-radius:22px;overflow:hidden;
+  box-shadow:0 40px 120px rgba(0,0,0,.85);
+}
+.r-mast{
+  background:linear-gradient(135deg,#1A1210,#2C1C16,#1A1220);
+  padding:26px 28px 20px;color:var(--cream);
+  border-bottom:3px solid var(--gold);
+}
+.r-eyebrow{font-size:.53rem;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--goldd);margin-bottom:5px;}
+.r-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--goldl);line-height:1.08;letter-spacing:-.4px;}
+.r-title em{font-style:italic;color:var(--blush);}
+.r-tagline{font-size:.62rem;color:var(--stone);margin-top:7px;}
+.r-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.btn-print{padding:9px 18px;border-radius:11px;background:var(--gold);border:none;color:var(--ink);font-size:.68rem;font-weight:800;cursor:pointer;}
+.btn-close-r{padding:9px 18px;border-radius:11px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:var(--cream);font-size:.68rem;font-weight:600;cursor:pointer;}
+.r-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px 24px;background:var(--cream2);border-bottom:1px solid rgba(28,23,20,.09);}
+@media(max-width:560px){.r-metrics{grid-template-columns:repeat(2,1fr);}}
+.rmc{background:white;border-radius:11px;padding:11px 13px;border:1px solid rgba(28,23,20,.07);}
+.rmc-lbl{font-size:.52rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;color:#9A8A7C;display:block;margin-bottom:4px;}
+.rmc-val{font-size:.92rem;font-weight:800;color:#1C1714;line-height:1.15;}
+.rmc-val .acc{color:#C9A84C;font-size:.66rem;font-weight:600;}
+.r-body{padding:20px 24px;}
+.r-journal{background:linear-gradient(135deg,#261D14,#1C1824);border-radius:13px;padding:16px 20px;margin-bottom:16px;border:1px solid rgba(201,168,76,.18);}
+.rj-lbl{font-size:.53rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:7px;}
+.rj-txt{font-family:'Playfair Display',serif;font-style:italic;font-size:.85rem;color:rgba(250,246,238,.72);line-height:1.8;}
+.r-tbl-title{font-family:'Playfair Display',serif;font-size:.8rem;font-style:italic;color:#7A6232;padding:12px 0 8px;border-bottom:2px solid var(--gold);margin-bottom:0;display:flex;align-items:center;gap:7px;}
+.r-hdr,.r-row{display:grid;grid-template-columns:38px 62px 1fr 110px 68px 68px 95px 95px;min-width:640px;}
+.r-hdr{padding:7px 0;font-size:.5rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;color:#9A8A7C;border-bottom:1px solid rgba(28,23,20,.11);}
+.r-row{padding:8px 0;border-bottom:1px solid rgba(28,23,20,.05);font-size:.66rem;align-items:start;}
+.r-row:last-child{border-bottom:none;}
+.r-row:nth-child(even){background:rgba(28,23,20,.02);}
+.rw{font-weight:800;font-size:.63rem;}.rw.rp1{color:#A0531E;}.rw.rp2{color:#2B6A9A;}.rw.rp3{color:#5E3D9A;}
+.rd{color:#7A6A60;font-weight:500;font-size:.6rem;padding-top:1px;}
+.rev{font-weight:700;color:#1C1714;padding-right:6px;line-height:1.4;}
+.rtw{font-size:.58rem;line-height:1.55;padding-right:5px;}
+.rtw .rta{color:#A84A5A;font-weight:700;}.rtw .rtb{color:#2B6A9A;font-weight:700;}
+.rcell{color:#4A3C34;font-size:.61rem;font-weight:500;line-height:1.4;padding-right:4px;}
+.rcell.mt{color:#C0B0A0;}
+.r-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+#toast{
+  display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  padding:10px 20px;border-radius:50px;font-size:.7rem;font-weight:700;
+  z-index:9999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.5);
+  transition:opacity .35s;pointer-events:none;
+}
+
+.add-row{display:flex;gap:7px;margin-top:10px;}
+
+.kick-counter{text-align:center;padding:16px;}
+.kick-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:700;color:var(--goldl);line-height:1;}
+.kick-sub{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--stone);margin-top:4px;}
+.kick-btn{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blush),#A8566A);
+  border:none;cursor:pointer;margin:16px auto;display:block;
+  font-size:1.8rem;
+  box-shadow:0 8px 24px rgba(217,136,149,.35);
+  transition:transform .1s,box-shadow .1s;
+}
+.kick-btn:active{transform:scale(.92);box-shadow:0 4px 12px rgba(217,136,149,.25);}
+
+@media print{
+  @page{size:A4 landscape;margin:10mm 12mm;}
+  body{background:white!important;color:#1C1714!important;}
+  .app-hdr,.tab-bar,main,#editor-modal,#quicklog-modal,#report-view-modal .r-actions{display:none!important;}
+  #report-view-modal{display:block!important;position:static!important;background:none!important;padding:0!important;overflow:visible!important;}
+  .rbox{box-shadow:none!important;max-width:100%!important;border-radius:0!important;}
+  .r-mast,.r-metrics,.rmc{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .r-row{page-break-inside:avoid;}
+  .r-tbl-scroll{overflow:visible!important;}
+  .r-hdr,.r-row{min-width:unset!important;}
+}
+</style>
+</head>
+<body>
+
+<header class="app-hdr">
+  <div>
+    <div class="brand-name">TejAish</div>
+    <div class="brand-tag">Aish ❤️ Tejas — Twin Miracle</div>
+  </div>
+  <div class="hdr-sync">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span class="sync-lbl" id="sync-lbl">Offline</span>
+  </div>
+</header>
+
+<div class="page active" id="page-today">
+
+  <div class="week-hero">
+    <div class="hero-row">
+      <div>
+        <div class="hero-week-num" id="hero-wk">—</div>
+        <div class="hero-week-sub" id="hero-wk-sub">Loading…</div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-edd">Days to Twin EDD</div>
+        <div class="hero-days" id="hero-days">—</div>
+        <div class="hero-days-lbl">days remaining</div>
+      </div>
+    </div>
+    <div class="prog-labels"><span>LMP 26 Feb</span><span id="prog-lbl">0%</span><span>37W EDD</span></div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="baby-size-strip">
+      <div class="baby-size-emoji" id="baby-emoji">🫐</div>
+      <div class="baby-size-text">Your twins are about <strong id="baby-size-txt">loading…</strong></div>
+    </div>
+  </div>
+
+  <div class="section-card" style="padding:14px;">
+    <div class="sec-title">Quick Log — Week <span id="ql-week-num">—</span></div>
+    <div class="quick-log-grid">
+      <div class="ql-btn" onclick="openQL('feeling')"><div class="ql-icon">🌸</div><div class="ql-lbl">Feeling</div></div>
+      <div class="ql-btn" onclick="openQL('appointment')"><div class="ql-icon">🩺</div><div class="ql-lbl">Appt</div></div>
+      <div class="ql-btn" onclick="openQL('medication')"><div class="ql-icon">💊</div><div class="ql-lbl">Meds</div></div>
+      <div class="ql-btn" onclick="openQL('note')"><div class="ql-icon">📝</div><div class="ql-lbl">Note</div></div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="eyebrow">Today's Vitals</div>
+    <div class="vitals-grid">
+      <div class="vital-card">
+        <div class="vital-lbl">Blood Pressure</div>
+        <input class="vital-inp" id="vital-bp" placeholder="e.g. 120/80" onblur="saveVital('bp',this.value)">
+      </div>
+      <div class="vital-card">
+        <div class="vital-lbl">Weight (kg)</div>
+        <input class="vital-inp" id="vital-wt" placeholder="e.g. 62.5" onblur="saveVital('weight',this.value)">
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="eyebrow">Kick Counter</div>
+    <div class="kick-counter">
+      <div class="kick-num" id="kick-num">0</div>
+      <div class="kick-sub">kicks today</div>
+      <button class="kick-btn" onclick="recordKick()">👣</button>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="btn btn-ghost" style="font-size:.62rem;padding:6px 14px;" onclick="resetKicks()">Reset</button>
+        <button class="btn btn-sage" style="font-size:.62rem;padding:6px 14px;" onclick="saveKickSession()">Save Session</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="eyebrow">Upcoming This Week</div>
+    <div id="upcoming-list"><div style="font-size:.65rem;color:var(--stone)">No upcoming appointments logged.</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-journey">
+  <div class="eyebrow" style="margin-bottom:10px;">Twin Growth Chart</div>
+  <div class="growth-chart-wrap">
+    <div class="chart-title">Size over weeks (mm) — <span style="color:var(--blush)">■ Twin A</span> &nbsp;<span style="color:var(--sky)">■ Twin B</span></div>
+    <canvas id="growthChart"></canvas>
+  </div>
+
+  <div class="journey-filters">
+    <button class="filter-pill active" onclick="filterJourney('all',this)">All Weeks</button>
+    <button class="filter-pill" onclick="filterJourney('data',this)">Has Data</button>
+    <button class="filter-pill" onclick="filterJourney('scan',this)">Scans</button>
+    <button class="filter-pill" onclick="filterJourney('doctor',this)">Doctor</button>
+    <button class="filter-pill" onclick="filterJourney('milestone',this)">Milestones</button>
+  </div>
+
+  <div id="week-cards"></div>
+</div>
+
+<div class="page" id="page-nest">
+  <div class="nest-tabs">
+    <button class="nest-tab-btn active" onclick="switchNest('bag',this)">🏥 Hospital Bag</button>
+    <button class="nest-tab-btn" onclick="switchNest('products',this)">🛒 Baby Wishlist</button>
+    <button class="nest-tab-btn" onclick="switchNest('directory',this)">📋 Directory</button>
+    <button class="nest-tab-btn" onclick="switchNest('birthplan',this)">📝 Birth Plan</button>
+    <button class="nest-tab-btn" onclick="switchNest('kicks',this)">👣 Kick Log</button>
+  </div>
+
+  <div class="nest-section active" id="nest-bag">
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" style="font-size:.62rem;" onclick="filterBag('all')">All</button>
+      <button class="btn btn-blush" style="font-size:.62rem;" onclick="filterBag('Aish')">👩 Aish's Bag</button>
+      <button class="btn btn-sky" style="font-size:.62rem;" onclick="filterBag('Baby')">👶 Baby's Bag</button>
+      <button class="btn btn-sage" style="font-size:.62rem;" onclick="filterBag('Tejas')">👨 Tejas's Bag</button>
+      <button class="btn btn-gold" style="font-size:.62rem;" onclick="exportBagToHomeApp()">📤 Export to Home App</button>
+    </div>
+    <div id="bag-list"></div>
+    <div class="add-row" style="margin-top:14px;">
+      <input type="text" class="fi" id="bag-item-inp" placeholder="Add item…" style="flex:1;">
+      <select class="fi" id="bag-cat-sel" style="width:auto;flex-shrink:0;">
+        <option value="Aish">Aish</option>
+        <option value="Baby">Baby</option>
+        <option value="Tejas">Tejas</option>
+      </select>
+      <select class="fi" id="bag-pri-sel" style="width:auto;flex-shrink:0;">
+        <option value="must">Must</option>
+        <option value="need">Need</option>
+        <option value="nice">Nice</option>
+      </select>
+      <button class="btn btn-gold" onclick="addBagItem()">Add</button>
+    </div>
+  </div>
+
+  <div class="nest-section" id="nest-products">
+    <div id="product-list"></div>
+    <div class="section-card" style="margin-top:10px;">
+      <div class="sec-title">Add to Wishlist</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <input type="text" class="fi" id="prod-name" placeholder="Product name *">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <input type="text" class="fi" id="prod-brand" placeholder="Brand">
+          <input type="text" class="fi" id="prod-price" placeholder="Est. price ₹">
+        </div>
+        <input type="text" class="fi" id="prod-where" placeholder="Where seen / link">
+        <select class="fi" id="prod-pri">
+          <option value="need">Must Have</option>
+          <option value="want">Want</option>
+          <option value="maybe">Maybe</option>
+        </select>
+        <input type="text" class="fi" id="prod-notes" placeholder="Notes…">
+        <button class="btn btn-gold" onclick="addProduct()">Add to Wishlist</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nest-section" id="nest-directory">
+    <div id="directory-list"></div>
+    <div class="section-card" style="margin-top:10px;">
+      <div class="sec-title">Add Contact</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <input type="text" class="fi" id="dir-name" placeholder="Name *">
+          <input type="text" class="fi" id="dir-role" placeholder="Role (e.g. Gynaecologist)">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <input type="text" class="fi" id="dir-phone" placeholder="Phone">
+          <input type="text" class="fi" id="dir-addr" placeholder="Clinic / Hospital">
+        </div>
+        <input type="text" class="fi" id="dir-notes" placeholder="Notes…">
+        <button class="btn btn-gold" onclick="addDirEntry()">Add Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nest-section" id="nest-birthplan">
+    <div class="section-card">
+      <div class="eyebrow">Birth Plan Notes</div>
+      <textarea class="ft" id="birthplan-txt" rows="8" placeholder="Your preferences for delivery, pain management, cord banking, who's in the room, post-delivery wishes…" style="margin-bottom:10px;"></textarea>
+      <button class="btn btn-gold btn-full" onclick="saveBirthPlan()">Save Birth Plan</button>
+    </div>
+  </div>
+
+  <div class="nest-section" id="nest-kicks">
+    <div class="section-card">
+      <div class="eyebrow">Kick Session History</div>
+      <div id="kick-log-list"><div style="font-size:.65rem;color:var(--stone)">No sessions logged yet.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-report">
+
+  <div class="section-card">
+    <div class="eyebrow">Generate Report</div>
+    <div class="report-type-grid">
+      <div class="rtype-card" onclick="openReport('family')">
+        <div class="rtype-icon">👨‍👩‍👧‍👦</div>
+        <div class="rtype-name">Family Share</div>
+        <div class="rtype-desc">Beautiful journey summary with memories & milestones</div>
+      </div>
+      <div class="rtype-card" onclick="openReport('doctor')">
+        <div class="rtype-icon">🩺</div>
+        <div class="rtype-name">Doctor Summary</div>
+        <div class="rtype-desc">Clinical data only — scans, blood tests, measurements</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vault-card">
+    <div class="vault-title">🛡️ Data Vault</div>
+    <div class="vault-sub">Export daily. Import on second iPhone to sync. Both phones use the same Google Sheet when online.</div>
+    <div class="vault-btns">
+      <button class="btn btn-ghost" onclick="exportDB()">📥 Export JSON</button>
+      <label class="btn btn-gold" style="cursor:pointer;">
+        📤 Import JSON
+        <input type="file" id="import-file" accept=".json,.txt" style="display:none;" onchange="importDB(event)">
+      </label>
+    </div>
+    <div class="vault-last" id="vault-last-export"></div>
+  </div>
+
+  <div class="section-card">
+    <div class="eyebrow">Settings</div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-lbl">Google Sheet Script URL</div>
+        <div class="setting-sub">Paste your deployed Apps Script web app URL</div>
+      </div>
+      <input type="text" class="setting-inp" id="gas-url" placeholder="https://script.google.com/…" onblur="saveGasUrl()">
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-lbl">Gemini API Key</div>
+        <div class="setting-sub">For PDF report analysis (free — aistudio.google.com)</div>
+      </div>
+      <input type="password" class="setting-inp" id="gemini-key" placeholder="AIzaSy…" onblur="saveGeminiKey()">
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-lbl">Sync to Google Sheet</div>
+        <div class="setting-sub">Push all local data to Sheet right now</div>
+      </div>
+      <button class="btn btn-gold" style="font-size:.62rem;padding:7px 14px;flex-shrink:0;" onclick="syncAllToSheet()">Sync Now</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('today',this)">
+    <div class="tab-icon">🌸</div><div class="tab-lbl">Today</div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('journey',this)">
+    <div class="tab-icon">📅</div><div class="tab-lbl">Journey</div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('nest',this)">
+    <div class="tab-icon">🏠</div><div class="tab-lbl">Nest</div>
+  </button>
+  <button class="tab-btn" onclick="switchTab('report',this)">
+    <div class="tab-icon">📋</div><div class="tab-lbl">Report</div>
+  </button>
+</nav>
+
+<div id="editor-modal" class="overlay">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title" id="m-title">Week Entry</div>
+        <div class="modal-sub" id="m-sub"></div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:center;">
+        <button class="btn btn-sage" style="font-size:.6rem;padding:6px 11px;" onclick="shareWhatsApp()">💬 Share</button>
+        <button class="modal-close" onclick="closeEditor()">×</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ew">
+      <div>
+        <div class="flbl-row">
+          <label class="flbl">Milestone / Event</label>
+          <button class="btn-ics" onclick="makeICS('fe','Milestone')">📅 Calendar</button>
+        </div>
+        <input type="text" class="fi" id="fe" placeholder="What happened this week?">
+      </div>
+      <div>
+        <label class="flbl">Aish's Journal Entry</label>
+        <textarea class="ft" id="ff" placeholder="Feelings, symptoms, mood, moments…"></textarea>
+      </div>
+      <div>
+        <div class="flbl-row">
+          <label class="flbl">Medical Report / Document</label>
+          <span style="font-size:.55rem;color:var(--stone);">Auto-analysed by Gemini AI</span>
+        </div>
+        <div class="upload-area" onclick="document.getElementById('report-pdf-inp').click()">
+          <div style="font-size:1.5rem;">📄</div>
+          <div class="upload-area-txt">Tap to upload PDF or photo of report<br>Blood test · Scan report · Prescription</div>
+          <input type="file" id="report-pdf-inp" accept=".pdf,image/*" style="display:none;" onchange="analyseReport(event)">
+        </div>
+        <div id="ai-status" style="display:none;" class="ai-thinking">
+          <div class="ai-spinner"></div><span>Analysing report…</span>
+        </div>
+        <div id="ai-result-box" class="ai-summary-box" style="display:none;">
+          <div class="ai-summary-lbl">✦ AI Extracted Summary</div>
+          <div class="ai-summary-text" id="ai-result-text" contenteditable="true" style="outline:none;min-height:40px;"></div>
+          <div style="margin-top:8px;font-size:.56rem;color:var(--stone);">Tap text above to edit before saving</div>
+        </div>
+      </div>
+      <div>
+        <label class="flbl">Twin Development</label>
+        <div class="twin-grid">
+          <div class="twin-panel">
+            <span class="twin-hd a">Twin A</span>
+            <input type="text" class="fi" id="fah" placeholder="Size (cm/mm)">
+            <input type="text" class="fi" id="fahb" placeholder="Heartbeat (bpm)">
+            <input type="text" class="fi" id="fao" placeholder="Observations">
+          </div>
+          <div class="twin-panel">
+            <span class="twin-hd b">Twin B</span>
+            <input type="text" class="fi" id="fbh" placeholder="Size (cm/mm)">
+            <input type="text" class="fi" id="fbhb" placeholder="Heartbeat (bpm)">
+            <input type="text" class="fi" id="fbo" placeholder="Observations">
+          </div>
+        </div>
+      </div>
+      <div class="form-2col">
+        <div>
+          <div class="flbl-row"><label class="flbl">💉 Vaccine</label><button class="btn-ics" onclick="makeICS('fv','Vaccine')">📅</button></div>
+          <input type="text" class="fi" id="fv">
+        </div>
+        <div>
+          <div class="flbl-row"><label class="flbl">🧪 Blood Test</label><button class="btn-ics" onclick="makeICS('fbl','Blood Test')">📅</button></div>
+          <input type="text" class="fi" id="fbl">
+        </div>
+        <div>
+          <div class="flbl-row"><label class="flbl">🩺 Dr Adkar</label><button class="btn-ics" onclick="makeICS('fd','Dr Adkar')">📅</button></div>
+          <input type="text" class="fi" id="fd">
+        </div>
+        <div>
+          <div class="flbl-row"><label class="flbl">🖼️ Sonography</label><button class="btn-ics" onclick="makeICS('fs','Sono Scan')">📅</button></div>
+          <input type="text" class="fi" id="fs">
+        </div>
+      </div>
+      <div>
+        <label class="flbl">Medications This Week</label>
+        <input type="text" class="fi" id="fmeds" placeholder="e.g. Gestojoy 400, Lonopin alt. days">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeEditor()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveWeek()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div id="quicklog-modal" class="overlay">
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-hd">
+      <div><div class="modal-title" id="ql-title">Quick Log</div><div class="modal-sub" id="ql-sub"></div></div>
+      <button class="modal-close" onclick="closeQL()">×</button>
+    </div>
+    <div class="modal-body">
+      <textarea class="ft" id="ql-text" rows="4" placeholder="Type here…"></textarea>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeQL()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveQL()">Log It</button>
+    </div>
+  </div>
+</div>
+
+<div id="report-view-modal">
+  <div class="rbox">
+    <div class="r-mast">
+      <div class="r-eyebrow">TejAish Pregnancy Archive — Twin Miracle Edition</div>
+      <div class="r-title">Our Twin Journey<br><em>Milestone Chronicle</em></div>
+      <div class="r-tagline">Aish ❤️ Tejas &nbsp;·&nbsp; LMP 26 Feb 2026 &nbsp;·&nbsp; Twin Target 37 Weeks</div>
+      <div class="r-actions">
+        <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn btn-sage" style="font-size:.68rem;" onclick="shareReportWhatsApp()">💬 WhatsApp</button>
+        <button class="btn-close-r" onclick="closeReport()">Close</button>
+      </div>
+    </div>
+    <div class="r-metrics" id="r-metrics"></div>
+    <div class="r-body">
+      <div id="r-journal-wrap" style="display:none;">
+        <div class="r-journal">
+          <div class="rj-lbl">✦ Memory Journal</div>
+          <div class="rj-txt" id="r-journal-txt"></div>
+        </div>
+      </div>
+      <div id="r-names-wrap" style="display:none;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="r-names"></div>
+      </div>
+      <div class="r-tbl-title"><span style="color:var(--gold);font-style:normal">✦</span> <span id="r-tbl-heading">Week-by-Week Log</span></div>
+      <div class="r-tbl-scroll">
+        <div class="r-hdr" style="padding:7px 0;">
+          <div>Wk</div><div>Date</div><div>Milestone</div><div>Twins</div>
+          <div>Vaccine</div><div>Dr Adkar</div><div>Sono</div><div>Blood</div>
+        </div>
+        <div id="r-rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const DB_KEY='tej_aish_pregnancy_local_db';
+const LMP_STR='26-02-2026';
+const TOTAL=41;
+const RPT_MAX=37;
+
+let GAS_URL=localStorage.getItem('tej_gas_url')||'https://script.google.com/macros/s/AKfycbwjTUzzLeNyqvU5KTSY6MT4_hsBMHXlZCncvrK0GPpVmyDVLvY8NPCGvJ1D_Qt1rdvA/exec';
+let GEMINI_KEY=localStorage.getItem('tej_gemini_key')||'';
+let currentJourneyFilter='all';
+let kickCount=0;
+let kickStart=null;
+
+function parseDMY(s){const p=s.split('-').map(Number);return new Date(p[2],p[1]-1,p[0]);}
+function addDays(b,n){const d=new Date(b);d.setDate(d.getDate()+n);return d;}
+function fmt(d,o){return d.toLocaleDateString('en-IN',o||{day:'numeric',month:'short',year:'numeric'});}
+function todayMid(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
+const LMP=parseDMY(LMP_STR);
+
+const BABY_SIZES={1:'a poppy seed',2:'a sesame seed',3:'a lentil',4:'a blueberry',5:'an apple seed',6:'a sweet pea',7:'a blueberry',8:'a kidney bean',9:'a grape',10:'a kumquat',11:'a fig',12:'a lime',13:'a peach',14:'a lemon',15:'an apple',16:'an avocado',17:'a turnip',18:'a sweet potato',19:'a mango',20:'a banana',21:'a carrot',22:'a spaghetti squash',23:'a large mango',24:'an ear of corn',25:'a cauliflower',26:'a scallion',27:'a head of lettuce',28:'an eggplant',29:'a butternut squash',30:'a cabbage',31:'a coconut',32:'a jicama',33:'a pineapple',34:'a cantaloupe',35:'a honeydew melon',36:'a head of romaine',37:'a winter melon',38:'a leek',39:'a mini watermelon',40:'a watermelon',41:'a full-term baby'};
+const BABY_EMOJI={1:'🌱',2:'🫘',3:'🌿',4:'🫐',5:'🌱',6:'🫛',7:'🍇',8:'🫘',9:'🍇',10:'🍊',11:'🫐',12:'🍋',13:'🍑',14:'🍋',15:'🍎',16:'🥑',17:'🌿',18:'🍠',19:'🥭',20:'🍌',21:'🥕',22:'🎃',23:'🥭',24:'🌽',25:'🥦',26:'🌿',27:'🥬',28:'🍆',29:'🎃',30:'🥬',31:'🥥',32:'🥔',33:'🍍',34:'🍈',35:'🍈',36:'🥬',37:'🍈',38:'🌿',39:'🍉',40:'🍉',41:'👶'};
+
+const BASE={
+  journal:'Today we leave for Mahabaleshwar',
+  boy:'',girl:'Anandi',unisex:'',
+  birthplan:'',
+  weeks:{
+    w1:{event:'Last Menstrual Period',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w2:{event:'Turning point 11/3 day, Triple BT Rounds',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'3x BTs on 11 March',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w3:{event:'Transfer on 17/03/2026',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w4:{event:'Wait .. .. .. Patience',feeling:'Hopeful yet scared',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w5:{event:'Pregnancy Confirmed by BHCG on 31/03',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'BHCG Confirmed (31-Mar)',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w6:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w7:{event:'Spotting noticed on 12/04; twins confirmed on 13/04',feeling:'',aheight:'6 mm',ahb:'122',aobs:'',bheight:'6 mm',bhb:'120',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (13/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w8:{event:'Second Sono to check internal injury, good recovery',feeling:'',aheight:'12 mm',ahb:'164',aobs:'',bheight:'12 mm',bhb:'158',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (20/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w9:{event:'Aaditee Clinic appt 28/04 NPB and TMP',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w10:{event:'10 W Sono and BT (CBC, B12 etc), all OK',feeling:'',aheight:'29 mm',ahb:'180',aobs:'',bheight:'30 mm',bhb:'182',bobs:'',vaccine:'',blood:'Dhande (05-May)',doctor:'',sono:'Arya Clinic (05/05 7:30 PM)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w11:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w12:{event:'NT Scan 18 May; Taaka 20 May, OGCT and DM BT All OK',feeling:'',aheight:'18 mm BPD',ahb:'173',aobs:'',bheight:'17.6 mm BPD',bhb:'173',bobs:'',vaccine:'',blood:'OGCT & DM at Dhande 18/5',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w13:{event:'Recover from Taaka',feeling:'Slight dizzy one night after dinner',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Green Array',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w14:{event:'NIPT done, All OK, Susten inj. ends and Meds reduced',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'NIPT at GreenArray',doctor:'29/5 at Neo',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w15:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w16:{event:'Dr Adkar Aptmt & Flu Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Influenza',blood:'',doctor:'16 June',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w17:{event:'General Scan on 18/6, saw baby faces; Gayatri Mantra Jap 25/6',feeling:'Very excited, saw baby faces and their movements, also relieved that everything is going very well.\n23 Jun Vishnusahasranam, highly responsive babies',aheight:'34 mm BPD',ahb:'140',aobs:'LowLyingPlacenta',bheight:'34 mm BPD',bhb:'160',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate 18 June',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w18:{event:'Weekend trip to Mahabi (TD+ND & AP+TP)',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w19:{event:'Anomaly postponed to 21 July',feeling:'BP 94/64 good, continue gestojoy 400, lonopin alternating ata; Growth size both together estimated at 22 weeks',aheight:'',ahb:'',aobs:'Growth size at 22 weeks',bheight:'',bhb:'',bobs:'Growth size at 22 weeks',vaccine:'',blood:'As per prescription at Dhande',doctor:'1 July Dr Adkar 6 pm',sono:'Anomaly scheduled at 21 week',report_summary:'',bp:'94/64',weight:'',medications:'Gestojoy 400, Lonopin alt days',kicks:''},
+    w20:{event:'TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Rescheduled',blood:'',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w21:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'TT Vax on 22/07',blood:'',doctor:'22/07',sono:'Arya Anomaly 21/07',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w22:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w23:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w24:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Get prescription',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w25:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w26:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w27:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w28:{event:'Booster TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Booster TT',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w29:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w30:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w31:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w32:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w33:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w34:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w35:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w36:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w37:{event:'Tentative Delivery to be scheduled at Neo',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w38:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w39:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w40:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w41:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''}
+  }
+};
+
+const BASE_BAG=[
+  {id:'b1',category:'Aish',item:'Government ID / Aadhar Card',checked:false,priority:'must',notes:''},
+  {id:'b2',category:'Aish',item:'Insurance documents & hospital card',checked:false,priority:'must',notes:''},
+  {id:'b3',category:'Aish',item:'All pregnancy reports & scan copies',checked:false,priority:'must',notes:''},
+  {id:'b4',category:'Aish',item:'Comfortable nightgown (front-open for feeding)',checked:false,priority:'must',notes:''},
+  {id:'b5',category:'Aish',item:'Nursing bras (2-3)',checked:false,priority:'must',notes:''},
+  {id:'b6',category:'Aish',item:'Maternity pads (heavy)',checked:false,priority:'must',notes:''},
+  {id:'b7',category:'Aish',item:'Toiletries (toothbrush, shampoo, face wash)',checked:false,priority:'need',notes:''},
+  {id:'b8',category:'Aish',item:'Slippers / flip flops',checked:false,priority:'need',notes:''},
+  {id:'b9',category:'Aish',item:'Phone charger + power bank',checked:false,priority:'must',notes:''},
+  {id:'b10',category:'Aish',item:'Healthy snacks for labour',checked:false,priority:'need',notes:''},
+  {id:'b11',category:'Aish',item:'Pillow from home',checked:false,priority:'nice',notes:''},
+  {id:'b12',category:'Baby',item:'Onesies / newborn outfits (4-5 sets)',checked:false,priority:'must',notes:'Twins need double'},
+  {id:'b13',category:'Baby',item:'Receiving blankets (4)',checked:false,priority:'must',notes:''},
+  {id:'b14',category:'Baby',item:'Newborn diapers (pack)',checked:false,priority:'must',notes:''},
+  {id:'b15',category:'Baby',item:'Baby wipes',checked:false,priority:'must',notes:''},
+  {id:'b16',category:'Baby',item:'Baby cap & mittens (2 sets each)',checked:false,priority:'must',notes:''},
+  {id:'b17',category:'Baby',item:'Car seat (for discharge)',checked:false,priority:'must',notes:'Need 2 for twins'},
+  {id:'b18',category:'Baby',item:'Swaddle wraps',checked:false,priority:'need',notes:''},
+  {id:'b19',category:'Tejas',item:'Change of clothes (2 days)',checked:false,priority:'must',notes:''},
+  {id:'b20',category:'Tejas',item:'Charger & earphones',checked:false,priority:'must',notes:''},
+  {id:'b21',category:'Tejas',item:'Cash & UPI app ready',checked:false,priority:'must',notes:''},
+  {id:'b22',category:'Tejas',item:'Camera / phone fully charged',checked:false,priority:'need',notes:'For those first moments'},
+  {id:'b23',category:'Tejas',item:'Snacks & water bottle',checked:false,priority:'need',notes:''}
+];
+
+const BASE_DIR=[
+  {id:'d1',name:'Dr Adkar',role:'Gynaecologist / OB',phone:'',address:'Neo Hospital, Pune',notes:'Primary treating doctor'},
+  {id:'d2',name:'Dr Bhate',role:'Sonography / Radiology',phone:'',address:'Bhate Clinic, Pune',notes:'For scans'},
+  {id:'d3',name:'Arya Clinic',role:'Sonography & Diagnostics',phone:'',address:'Arya Clinic, Pune',notes:'Regular scans — 7:30 PM slots'},
+  {id:'d4',name:'Dhande Lab',role:'Blood Test / Pathology',phone:'',address:'Dhande Diagnostic, Pune',notes:'CBC, B12, OGCT etc'},
+  {id:'d5',name:'Green Array',role:'Genetic Testing / NIPT',phone:'',address:'Pune',notes:'NIPT, Green Array panel'},
+  {id:'d6',name:'Neo Hospital',role:'Delivery Hospital',phone:'',address:'Neo Hospital, Pune',notes:'Tentative delivery — W37'}
+];
+
+const WEEK_FIELDS=['event','feeling','aheight','ahb','aobs','bheight','bhb','bobs','vaccine','blood','doctor','sono','report_summary','bp','weight','medications','kicks'];
+function blankWeek(){const o={};WEEK_FIELDS.forEach(f=>o[f]='');return o;}
+
+let db={};
+
+function initDB(){
+  db=JSON.parse(JSON.stringify(BASE));
+  db.bag=[];db.directory=[];db.products=[];db.kicklog=[];
+
+  const raw=localStorage.getItem(DB_KEY);
+  if(raw){
+    try{
+      const s=JSON.parse(raw);
+      if(s&&typeof s==='object'){
+        ['journal','boy','girl','unisex','birthplan'].forEach(function(k){if(s[k]&&s[k].toString().trim())db[k]=s[k];});
+        if(s.weeks){
+          for(const k in s.weeks){
+            if(!db.weeks[k])db.weeks[k]=blankWeek();
+            const sw=s.weeks[k];
+            WEEK_FIELDS.forEach(function(f){if(sw[f]&&sw[f].toString().trim())db.weeks[k][f]=sw[f];});
+          }
+        }
+        if(s.bag&&s.bag.length)db.bag=s.bag;
+        if(s.directory&&s.directory.length)db.directory=s.directory;
+        if(s.products&&s.products.length)db.products=s.products;
+        if(s.kicklog&&s.kicklog.length)db.kicklog=s.kicklog;
+      }
+    }catch(e){console.error('DB load:',e);}
+  }
+
+  for(let i=1;i<=TOTAL;i++){const k='w'+i;if(!db.weeks[k])db.weeks[k]=blankWeek();}
+  if(!db.bag||!db.bag.length)db.bag=JSON.parse(JSON.stringify(BASE_BAG));
+  if(!db.directory||!db.directory.length)db.directory=JSON.parse(JSON.stringify(BASE_DIR));
+  if(!db.products)db.products=[];
+  if(!db.kicklog)db.kicklog=[];
+
+  syncDB();
+}
+
+function syncDB(){
+  try{localStorage.setItem(DB_KEY,JSON.stringify(db));}
+  catch(e){toast('Storage full — export backup now',true);}
+}
+
+function setSyncStatus(state,lbl){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-lbl');
+  dot.className='sync-dot '+state;
+  txt.textContent=lbl;
+}
+
+function gasPost(payload){
+  if(!GAS_URL)return Promise.resolve({ok:false,error:'No GAS URL'});
+  return fetch(GAS_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .catch(function(e){return {ok:false,error:e.message};});
+}
+
+function gasRead(sheet,cb){
+  if(!GAS_URL){cb([]);return;}
+  const cbName='gasRead_'+Date.now();
+  const s=document.createElement('script');
+  window[cbName]=function(res){
+    delete window[cbName];s.remove();
+    cb(res.ok?res.data:[]);
+  };
+  s.src=GAS_URL+'?action=read&sheet='+sheet+'&callback='+cbName;
+  s.onerror=function(){delete window[cbName];s.remove();cb([]);};
+  document.head.appendChild(s);
+}
+
+async function syncAllToSheet(){
+  if(!GAS_URL){toast('Add your Apps Script URL in Settings first',true);return;}
+  setSyncStatus('syncing','Syncing…');
+  try{
+    const weekRows=[];
+    for(let i=1;i<=TOTAL;i++){
+      const k='w'+i;
+      weekRows.push(Object.assign({week:k},db.weeks[k]));
+    }
+    await gasPost({action:'bulk_weeks',sheet:'weeks',rows:weekRows});
+    const metaRows=[
+      {key:'journal',value:db.journal},
+      {key:'boy',value:db.boy},{key:'girl',value:db.girl},
+      {key:'unisex',value:db.unisex},{key:'birthplan',value:db.birthplan||''}
+    ];
+    for(const m of metaRows)await gasPost({action:'upsert_meta',sheet:'meta',row:m});
+    for(const item of db.bag)await gasPost({action:'upsert_row',sheet:'nest',row:item});
+    for(const p of db.products)await gasPost({action:'upsert_row',sheet:'products',row:p});
+    for(const d of db.directory)await gasPost({action:'upsert_row',sheet:'directory',row:d});
+    setSyncStatus('online','Synced ✓');
+    toast('✦ All data synced to Google Sheet');
+  }catch(e){
+    setSyncStatus('error','Sync failed');
+    toast('Sync error: '+e.message,true);
+  }
+}
+
+function loadFromSheet(){
+  if(!GAS_URL)return;
+  setSyncStatus('syncing','Loading…');
+  gasRead('weeks',function(rows){
+    if(rows.length){
+      rows.forEach(function(r){
+        const k=r.week;
+        if(!k)return;
+        if(!db.weeks[k])db.weeks[k]=blankWeek();
+        WEEK_FIELDS.forEach(function(f){if(r[f]&&r[f].toString().trim())db.weeks[k][f]=r[f];});
+      });
+    }
+    gasRead('meta',function(mrows){
+      mrows.forEach(function(r){
+        if(r.key==='journal'&&r.value)db.journal=r.value;
+        if(r.key==='girl'&&r.value)db.girl=r.value;
+        if(r.key==='boy'&&r.value)db.boy=r.value;
+        if(r.key==='unisex'&&r.value)db.unisex=r.value;
+        if(r.key==='birthplan'&&r.value)db.birthplan=r.value;
+      });
+      syncDB();
+      renderAll();
+      setSyncStatus('online','Synced ✓');
+    });
+  });
+}
+
+function getMetrics(){
+  const now=todayMid();
+  const days=Math.floor((now-LMP)/86400000);
+  const week=Math.max(1,Math.floor(days/7)+1);
+  const dow=(days%7)+1;
+  const tEDD=addDays(LMP,259);
+  const fEDD=addDays(LMP,280);
+  const left=Math.max(0,Math.floor((tEDD-now)/86400000));
+  const pct=Math.min(100,Math.round((days/259)*100));
+  return {week:week,dow:dow,tEDD:tEDD,fEDD:fEDD,left:left,pct:pct,days:days};
+}
+
+function renderAll(){
+  renderToday();
+  renderWeekCards();
+  renderBag();
+  renderDirectory();
+  renderProducts();
+  renderKickLog();
+  renderBirthPlan();
+  drawGrowthChart();
+}
+
+function renderToday(){
+  const m=getMetrics();
+  document.getElementById('hero-wk').textContent=m.week;
+  document.getElementById('hero-wk-sub').textContent='Week '+m.week+' · Day '+m.dow+'/7';
+  document.getElementById('hero-days').textContent=m.left;
+  document.getElementById('prog-fill').style.width=m.pct+'%';
+  document.getElementById('prog-lbl').textContent=m.pct+'%';
+  document.getElementById('ql-week-num').textContent=m.week;
+  const sz=Math.min(m.week,41);
+  document.getElementById('baby-size-txt').textContent=BABY_SIZES[sz]||'growing fast';
+  document.getElementById('baby-emoji').textContent=BABY_EMOJI[sz]||'👶';
+
+  const wd=db.weeks['w'+m.week]||{};
+  if(wd.bp)document.getElementById('vital-bp').value=wd.bp;
+  if(wd.weight)document.getElementById('vital-wt').value=wd.weight;
+
+  const ul=document.getElementById('upcoming-list');
+  const upcoming=[];
+  for(let w=m.week;w<=Math.min(m.week+2,TOTAL);w++){
+    const d=db.weeks['w'+w]||{};
+    if(d.doctor)upcoming.push({label:'🩺 '+d.doctor,sub:'Week '+w,color:'#7ABDE8'});
+    if(d.sono)upcoming.push({label:'🖼️ '+d.sono,sub:'Week '+w+' scan',color:'#B89EE0'});
+    if(d.vaccine)upcoming.push({label:'💉 '+d.vaccine,sub:'Week '+w,color:'#E8A87C'});
+    if(d.blood)upcoming.push({label:'🧪 '+d.blood,sub:'Week '+w+' blood test',color:'#D98895'});
+  }
+  if(upcoming.length){
+    ul.innerHTML=upcoming.map(function(u){
+      return '<div class="upcoming-item"><div class="upcoming-dot" style="background:'+u.color+'"></div><div><div class="upcoming-text">'+u.label+'</div><div class="upcoming-sub">'+u.sub+'</div></div></div>';
+    }).join('');
+  }else{
+    ul.innerHTML='<div style="font-size:.65rem;color:var(--stone)">No upcoming appointments in next 2 weeks.</div>';
+  }
+}
+
+function hasData(d){return WEEK_FIELDS.some(function(f){return d[f]&&d[f].toString().trim();});}
+
+function renderWeekCards(){
+  const m=getMetrics();const cur=m.week;
+  const hook=document.getElementById('week-cards');
+  hook.innerHTML='';
+  for(let w=1;w<=TOTAL;w++){
+    const k='w'+w;
+    const d=db.weeks[k]||{};
+    const data=hasData(d);
+    const isCur=w===cur;
+    if(currentJourneyFilter==='data'&&!data)continue;
+    if(currentJourneyFilter==='scan'&&!d.sono)continue;
+    if(currentJourneyFilter==='doctor'&&!d.doctor)continue;
+    if(currentJourneyFilter==='milestone'&&!d.event)continue;
+
+    const wDate=addDays(LMP,(w-1)*7);
+    const ph=w<=12?'wcp1':w<=26?'wcp2':'wcp3';
+    const past=w<cur&&!isCur?' wcpast':'';
+    const pillCls='wc-pill '+ph+past+(isCur?' wccur':'');
+
+    let cardCls='week-card';
+    if(data)cardCls+=' has-data';
+    if(isCur)cardCls+=' is-cur';
+    if(!data&&!isCur)cardCls+=' empty';
+
+    const dots=[];
+    if(d.feeling)dots.push('<div class="wc-dot" style="background:var(--blush)"></div>');
+    if(d.sono)dots.push('<div class="wc-dot" style="background:var(--p3)"></div>');
+    if(d.doctor)dots.push('<div class="wc-dot" style="background:var(--sky)"></div>');
+    if(d.event)dots.push('<div class="wc-dot" style="background:var(--gold)"></div>');
+
+    const evTxt=d.event||'';
+    const evClass=evTxt?'wc-event':'wc-event empty';
+    const evDisplay=evTxt||(isCur?'Tap to log this week…':'—');
+
+    let expandInner='';
+    if(data){
+      expandInner+='<div style="display:flex;flex-direction:column;gap:6px;padding-top:10px;">';
+      if(d.feeling)expandInner+='<div style="font-size:.67rem;font-style:italic;color:var(--stone);line-height:1.5;">🌸 '+d.feeling+'</div>';
+      if(d.aheight||d.ahb)expandInner+='<div style="font-size:.62rem;"><span style="color:var(--blush);font-weight:700;">A</span> '+[d.aheight,d.ahb?d.ahb+' bpm':''].filter(Boolean).join(' · ')+'</div>';
+      if(d.bheight||d.bhb)expandInner+='<div style="font-size:.62rem;"><span style="color:var(--sky);font-weight:700;">B</span> '+[d.bheight,d.bhb?d.bhb+' bpm':''].filter(Boolean).join(' · ')+'</div>';
+      if(d.report_summary)expandInner+='<div class="ai-summary-box" style="margin-top:4px;"><div class="ai-summary-lbl">Report Summary</div><div class="ai-summary-text">'+d.report_summary+'</div></div>';
+      expandInner+='<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;">';
+      if(d.vaccine)expandInner+='<span class="chip cv">💉 '+d.vaccine+'</span>';
+      if(d.blood)expandInner+='<span class="chip cb">🧪 '+d.blood+'</span>';
+      if(d.doctor)expandInner+='<span class="chip cd">🩺 '+d.doctor+'</span>';
+      if(d.sono)expandInner+='<span class="chip cs">🖼️ '+d.sono+'</span>';
+      if(d.medications)expandInner+='<span class="chip cg">💊 '+d.medications+'</span>';
+      if(d.bp)expandInner+='<span class="chip" style="background:rgba(184,158,224,.12);color:var(--p3);">🫀 BP: '+d.bp+'</span>';
+      expandInner+='</div></div>';
+    }else{
+      expandInner='<div style="font-size:.64rem;color:var(--stone);padding-top:8px;">No data logged yet.</div>';
+    }
+
+    hook.insertAdjacentHTML('beforeend',
+      '<div class="'+cardCls+'" id="wcard-'+w+'">'+
+      '<div class="wc-header" onclick="toggleCard('+w+')">'+
+      '<span class="'+pillCls+'">W'+w+'</span>'+
+      '<span class="wc-date">'+fmt(wDate,{day:'numeric',month:'short'})+'</span>'+
+      '<span class="'+evClass+'">'+evDisplay+'</span>'+
+      '<div class="wc-dots">'+dots.join('')+'</div>'+
+      '<span style="color:var(--stone);font-size:.7rem;flex-shrink:0;">›</span>'+
+      '</div>'+
+      '<div class="wc-expand" id="wexp-'+w+'">'+expandInner+
+      '<button class="btn btn-ghost btn-full" style="margin-top:10px;font-size:.65rem;" onclick="openEditor('+w+');event.stopPropagation();">✏️ '+(data?'Edit':'Log')+' Week '+w+'</button>'+
+      '</div></div>');
+  }
+}
+
+function toggleCard(w){
+  const exp=document.getElementById('wexp-'+w);
+  const card=document.getElementById('wcard-'+w);
+  const isOpen=exp.classList.contains('open');
+  document.querySelectorAll('.wc-expand.open').forEach(function(el){el.classList.remove('open');});
+  if(!isOpen){exp.classList.add('open');card.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+
+function filterJourney(f,btn){
+  currentJourneyFilter=f;
+  document.querySelectorAll('.filter-pill').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderWeekCards();
+}
+
+function drawGrowthChart(){
+  const canvas=document.getElementById('growthChart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||300;
+  const H=150;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+
+  const dataA=[],dataB=[];
+  for(let w=1;w<=TOTAL;w++){
+    const d=db.weeks['w'+w]||{};
+    const parseSize=function(v){if(!v)return null;const n=parseFloat(v);return isNaN(n)?null:n;};
+    const a=parseSize(d.aheight),b=parseSize(d.bheight);
+    if(a!==null)dataA.push({w:w,v:a});
+    if(b!==null)dataB.push({w:w,v:b});
+  }
+
+  if(!dataA.length&&!dataB.length){
+    ctx.fillStyle='rgba(255,255,255,.2)';
+    ctx.font='12px Plus Jakarta Sans';
+    ctx.fillText('Twin size data will appear here as you log measurements',10,H/2);
+    return;
+  }
+
+  const allVals=dataA.map(function(p){return p.v;}).concat(dataB.map(function(p){return p.v;}));
+  const maxV=Math.max.apply(null,allVals.concat([10]));
+  const pad={l:30,r:10,t:10,b:20};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+
+  const toX=function(w){return pad.l+(w-1)/(TOTAL-1)*cW;};
+  const toY=function(v){return pad.t+cH-(v/maxV)*cH;};
+
+  ctx.strokeStyle='rgba(255,255,255,.05)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+(cH/4)*i;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.2)';
+    ctx.font='9px Plus Jakarta Sans';
+    ctx.fillText(Math.round(maxV-(maxV/4)*i)+'mm',0,y+3);
+  }
+
+  function drawLine(data,color){
+    if(data.length<1)return;
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';
+    ctx.beginPath();
+    data.forEach(function(p,i){i===0?ctx.moveTo(toX(p.w),toY(p.v)):ctx.lineTo(toX(p.w),toY(p.v));});
+    ctx.stroke();
+    data.forEach(function(p){
+      ctx.fillStyle=color;ctx.beginPath();
+      ctx.arc(toX(p.w),toY(p.v),3,0,Math.PI*2);ctx.fill();
+    });
+  }
+
+  drawLine(dataA,'#D98895');
+  drawLine(dataB,'#7ABDE8');
+}
+
+function openEditor(w){
+  const d=db.weeks['w'+w]||{};
+  const wDate=addDays(LMP,(w-1)*7);
+  document.getElementById('ew').value=w;
+  document.getElementById('m-title').textContent='Week '+w+' — Entry';
+  document.getElementById('m-sub').textContent=fmt(wDate,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  function sv(id,v){const el=document.getElementById(id);if(el)el.value=v||'';}
+  sv('fe',d.event);sv('ff',d.feeling);
+  sv('fah',d.aheight);sv('fahb',d.ahb);sv('fao',d.aobs);
+  sv('fbh',d.bheight);sv('fbhb',d.bhb);sv('fbo',d.bobs);
+  sv('fv',d.vaccine);sv('fbl',d.blood);sv('fd',d.doctor);sv('fs',d.sono);
+  sv('fmeds',d.medications);
+  document.getElementById('ai-result-box').style.display='none';
+  document.getElementById('ai-status').style.display='none';
+  document.getElementById('report-pdf-inp').value='';
+  if(d.report_summary){
+    document.getElementById('ai-result-box').style.display='block';
+    document.getElementById('ai-result-text').textContent=d.report_summary;
+  }
+  document.getElementById('editor-modal').classList.add('open');
+  document.getElementById('editor-modal').scrollTop=0;
+}
+
+function closeEditor(){document.getElementById('editor-modal').classList.remove('open');}
+
+function saveWeek(){
+  const w=document.getElementById('ew').value;
+  const k='w'+w;
+  function g(id){const el=document.getElementById(id);return el?el.value:'';}
+  db.weeks[k].event=g('fe');db.weeks[k].feeling=g('ff');
+  db.weeks[k].aheight=g('fah');db.weeks[k].ahb=g('fahb');db.weeks[k].aobs=g('fao');
+  db.weeks[k].bheight=g('fbh');db.weeks[k].bhb=g('fbhb');db.weeks[k].bobs=g('fbo');
+  db.weeks[k].vaccine=g('fv');db.weeks[k].blood=g('fbl');
+  db.weeks[k].doctor=g('fd');db.weeks[k].sono=g('fs');
+  db.weeks[k].medications=g('fmeds');
+  const aiBox=document.getElementById('ai-result-text');
+  if(aiBox&&aiBox.textContent.trim())db.weeks[k].report_summary=aiBox.textContent.trim();
+  syncDB();
+  if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
+  renderAll();closeEditor();
+  toast('✦ Week '+w+' saved');
+}
+
+const QL_CONFIG={
+  feeling:{title:'🌸 How is Aish Feeling?',sub:"Saved to this week's journal",field:'feeling'},
+  appointment:{title:'🩺 Appointment / Doctor',sub:"Saved to this week's clinical log",field:'doctor'},
+  medication:{title:'💊 Medications',sub:"Saved to this week's medication log",field:'medications'},
+  note:{title:'📝 Quick Note',sub:"Saved to this week's milestone",field:'event'}
+};
+let currentQL=null;
+
+function openQL(type){
+  currentQL=type;
+  const cfg=QL_CONFIG[type];
+  const m=getMetrics();
+  document.getElementById('ql-title').textContent=cfg.title;
+  document.getElementById('ql-sub').textContent=cfg.sub+' (Week '+m.week+')';
+  const existing=db.weeks['w'+m.week][cfg.field]||'';
+  document.getElementById('ql-text').value=existing;
+  document.getElementById('quicklog-modal').classList.add('open');
+  setTimeout(function(){document.getElementById('ql-text').focus();},100);
+}
+
+function closeQL(){document.getElementById('quicklog-modal').classList.remove('open');currentQL=null;}
+
+function saveQL(){
+  if(!currentQL)return;
+  const m=getMetrics();
+  const k='w'+m.week;
+  const cfg=QL_CONFIG[currentQL];
+  const val=document.getElementById('ql-text').value.trim();
+  if(!val){closeQL();return;}
+  const existing=db.weeks[k][cfg.field]||'';
+  db.weeks[k][cfg.field]=existing?existing+'\n'+val:val;
+  syncDB();
+  if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
+  renderAll();closeQL();
+  toast('✦ Logged to Week '+m.week);
+}
+
+function saveVital(field,val){
+  const m=getMetrics();
+  const k='w'+m.week;
+  db.weeks[k][field]=val;
+  syncDB();
+}
+
+function recordKick(){
+  if(!kickStart)kickStart=new Date();
+  kickCount++;
+  document.getElementById('kick-num').textContent=kickCount;
+  if(navigator.vibrate)navigator.vibrate(50);
+}
+function resetKicks(){kickCount=0;kickStart=null;document.getElementById('kick-num').textContent='0';}
+function saveKickSession(){
+  if(!kickCount){toast('No kicks recorded yet',true);return;}
+  const m=getMetrics();
+  const dur=kickStart?Math.round((new Date()-kickStart)/60000):0;
+  const entry={id:'k'+Date.now(),week:m.week,date:new Date().toLocaleDateString('en-IN'),count:kickCount,duration_mins:dur,notes:''};
+  db.kicklog.unshift(entry);
+  syncDB();
+  renderKickLog();
+  resetKicks();
+  toast('✦ Session saved — '+entry.count+' kicks in '+dur+' min');
+}
+function renderKickLog(){
+  const list=document.getElementById('kick-log-list');
+  if(!db.kicklog||!db.kicklog.length){list.innerHTML='<div style="font-size:.65rem;color:var(--stone)">No sessions logged yet.</div>';return;}
+  list.innerHTML=db.kicklog.slice(0,20).map(function(e){
+    return '<div class="checklist-item"><div style="flex:1;"><div style="font-size:.7rem;font-weight:700;color:var(--cream);">W'+e.week+' — '+e.date+'</div><div style="font-size:.62rem;color:var(--stone);">👣 '+e.count+' kicks · '+e.duration_mins+' min</div></div></div>';
+  }).join('');
+}
+
+async function analyseReport(ev){
+  const file=ev.target.files[0];
+  if(!file)return;
+  const key=GEMINI_KEY||localStorage.getItem('tej_gemini_key')||'';
+  if(!key){
+    toast('Add your Gemini API key in Report → Settings',true);
+    return;
+  }
+  document.getElementById('ai-status').style.display='flex';
+  document.getElementById('ai-result-box').style.display='none';
+  try{
+    const b64=await fileToBase64(file);
+    const isPdf=file.type==='application/pdf';
+    const payload={
+      contents:[{parts:[
+        {text:'You are a medical assistant. This is a pregnancy-related '+(isPdf?'PDF report':'medical document image')+' for Aishwarya, who is carrying twins. Extract ALL key medical information: test names, values, reference ranges, doctor observations, any flags or concerns, medication instructions, and overall conclusion. Format your response as a clear clinical summary in 3-5 sentences that can be saved to a pregnancy tracker. Be specific with numbers. Note any values outside normal range. End with a one-line overall assessment.'},
+        {inline_data:{mime_type:file.type,data:b64}}
+      ]}]
+    };
+    const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data=await resp.json();
+    const text=(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0].text)||'Could not extract summary.';
+    document.getElementById('ai-result-text').textContent=text;
+    document.getElementById('ai-result-box').style.display='block';
+  }catch(e){
+    document.getElementById('ai-result-text').textContent='Error analysing report: '+e.message;
+    document.getElementById('ai-result-box').style.display='block';
+    toast('Analysis error: '+e.message,true);
+  }finally{
+    document.getElementById('ai-status').style.display='none';
+  }
+}
+
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    const r=new FileReader();
+    r.onload=function(){res(r.result.split(',')[1]);};
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+
+let bagFilter='all';
+function filterBag(cat){bagFilter=cat;renderBag();}
+
+function renderBag(){
+  const list=document.getElementById('bag-list');
+  const items=bagFilter==='all'?db.bag:db.bag.filter(function(i){return i.category===bagFilter;});
+  if(!items.length){list.innerHTML='<div style="font-size:.65rem;color:var(--stone);padding:10px 0;">No items yet.</div>';return;}
+  list.innerHTML=items.map(function(item){
+    return '<div class="checklist-item" id="bag-'+item.id+'">'+
+      '<div class="check-box '+(item.checked?'checked':'')+'" onclick="toggleBagItem(\''+item.id+'\')"></div>'+
+      '<div style="flex:1;"><div class="check-text '+(item.checked?'checked':'')+'">'+item.item+'</div>'+
+      '<div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;"><span class="check-cat">'+item.category+'</span>'+
+      '<span class="check-priority pri-'+item.priority+'">'+item.priority+'</span>'+
+      (item.notes?'<span style="font-size:.54rem;color:var(--stone);">'+item.notes+'</span>':'')+'</div></div>'+
+      '<button onclick="deleteBagItem(\''+item.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.8rem;padding:2px 6px;">×</button>'+
+      '</div>';
+  }).join('');
+}
+
+function toggleBagItem(id){
+  const item=db.bag.find(function(i){return i.id===id;});
+  if(item){item.checked=!item.checked;syncDB();renderBag();}
+}
+function deleteBagItem(id){
+  db.bag=db.bag.filter(function(i){return i.id!==id;});syncDB();renderBag();
+}
+function addBagItem(){
+  const inp=document.getElementById('bag-item-inp');
+  const val=inp.value.trim();if(!val)return;
+  const cat=document.getElementById('bag-cat-sel').value;
+  const pri=document.getElementById('bag-pri-sel').value;
+  db.bag.push({id:'b'+Date.now(),category:cat,item:val,checked:false,priority:pri,notes:''});
+  syncDB();renderBag();inp.value='';
+  toast('✦ Added to '+cat+"'s bag");
+}
+
+function exportBagToHomeApp(){
+  const unchecked=db.bag.filter(function(i){return !i.checked;});
+  const homeAppFormat={
+    source:'TejAish Pregnancy App',
+    exportDate:new Date().toLocaleDateString('en-IN'),
+    type:'shopping_reminders',
+    items:unchecked.map(function(i){
+      return {title:i.item,category:'Hospital Bag — '+i.category,priority:i.priority,notes:i.notes||'From TejAish Hospital Bag list',list:'Hospital Bag'};
+    })
+  };
+  const uri='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(homeAppFormat,null,2));
+  const a=document.createElement('a');
+  a.href=uri;a.download='HospitalBag_for_HomeApp_'+new Date().toISOString().split('T')[0]+'.json';
+  a.style.display='none';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('✦ Exported '+unchecked.length+' items for Pathak Home App');
+}
+
+function renderProducts(){
+  const list=document.getElementById('product-list');
+  if(!db.products||!db.products.length){list.innerHTML='<div style="font-size:.65rem;color:var(--stone);margin-bottom:10px;">Your baby product wishlist is empty.</div>';return;}
+  list.innerHTML=db.products.map(function(p){
+    return '<div class="product-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;">'+
+      '<div class="product-name">'+p.name+'</div>'+
+      '<button onclick="deleteProduct(\''+p.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.8rem;">×</button></div>'+
+      '<div class="product-meta">'+
+      (p.brand?'<span class="product-tag pt-brand">'+p.brand+'</span>':'')+
+      (p.price_est?'<span class="product-tag pt-price">₹'+p.price_est+'</span>':'')+
+      '<span class="product-tag pt-priority">'+p.priority+'</span></div>'+
+      (p.where_seen?'<div style="font-size:.6rem;color:var(--stone);margin-top:5px;">📍 '+p.where_seen+'</div>':'')+
+      (p.notes?'<div style="font-size:.62rem;color:var(--stone);margin-top:3px;">'+p.notes+'</div>':'')+
+      '</div>';
+  }).join('');
+}
+
+function addProduct(){
+  const name=document.getElementById('prod-name').value.trim();if(!name){toast('Product name required',true);return;}
+  const p={
+    id:'p'+Date.now(),name:name,
+    brand:document.getElementById('prod-brand').value,
+    price_est:document.getElementById('prod-price').value,
+    where_seen:document.getElementById('prod-where').value,
+    priority:document.getElementById('prod-pri').value,
+    notes:document.getElementById('prod-notes').value
+  };
+  db.products.push(p);syncDB();renderProducts();
+  ['prod-name','prod-brand','prod-price','prod-where','prod-notes'].forEach(function(id){document.getElementById(id).value='';});
+  toast('✦ Added to wishlist');
+}
+function deleteProduct(id){db.products=db.products.filter(function(p){return p.id!==id;});syncDB();renderProducts();}
+
+function renderDirectory(){
+  const list=document.getElementById('directory-list');
+  list.innerHTML=db.directory.map(function(d){
+    return '<div class="dir-card"><div style="flex:1;">'+
+      '<div class="dir-name">'+d.name+'</div><div class="dir-role">'+d.role+'</div>'+
+      (d.phone?'<div class="dir-phone">📞 '+d.phone+'</div>':'')+
+      (d.address?'<div class="dir-addr">📍 '+d.address+'</div>':'')+
+      (d.notes?'<div class="dir-addr" style="margin-top:4px;font-style:italic;">'+d.notes+'</div>':'')+
+      '</div><div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">'+
+      (d.phone?'<a href="tel:'+d.phone+'" class="btn-call">Call</a>':'')+
+      '<button onclick="deleteDirEntry(\''+d.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.7rem;">Remove</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+function addDirEntry(){
+  const name=document.getElementById('dir-name').value.trim();if(!name)return;
+  db.directory.push({
+    id:'d'+Date.now(),name:name,
+    role:document.getElementById('dir-role').value,
+    phone:document.getElementById('dir-phone').value,
+    address:document.getElementById('dir-addr').value,
+    notes:document.getElementById('dir-notes').value
+  });
+  syncDB();renderDirectory();
+  ['dir-name','dir-role','dir-phone','dir-addr','dir-notes'].forEach(function(id){document.getElementById(id).value='';});
+  toast('✦ Contact added');
+}
+function deleteDirEntry(id){db.directory=db.directory.filter(function(d){return d.id!==id;});syncDB();renderDirectory();}
+
+function renderBirthPlan(){document.getElementById('birthplan-txt').value=db.birthplan||'';}
+function saveBirthPlan(){
+  db.birthplan=document.getElementById('birthplan-txt').value;
+  syncDB();
+  if(GAS_URL)gasPost({action:'upsert_meta',sheet:'meta',row:{key:'birthplan',value:db.birthplan}});
+  toast('✦ Birth plan saved');
+}
+
+function openReport(mode){
+  const m=getMetrics();
+  function mcH(cls,lcls,vcls){
+    return '<div class="'+cls+'"><span class="'+lcls+'">Current Week</span><div class="'+vcls+'">Week '+m.week+' <span class="acc">Day '+m.dow+'/7</span></div></div>'+
+    '<div class="'+cls+'"><span class="'+lcls+'">Days to Twin EDD</span><div class="'+vcls+'">'+m.left+' <span class="acc">days</span></div></div>'+
+    '<div class="'+cls+'"><span class="'+lcls+'">Twin EDD (37W)</span><div class="'+vcls+'" style="font-size:.75rem">'+fmt(m.tEDD)+'</div></div>'+
+    '<div class="'+cls+'"><span class="'+lcls+'">Full-Term EDD</span><div class="'+vcls+'" style="font-size:.75rem">'+fmt(m.fEDD)+'</div></div>';
+  }
+  document.getElementById('r-metrics').innerHTML=mcH('rmc','rmc-lbl','rmc-val');
+
+  const journalWrap=document.getElementById('r-journal-wrap');
+  const namesWrap=document.getElementById('r-names-wrap');
+  if(mode==='family'&&db.journal&&db.journal.trim()){
+    journalWrap.style.display='block';
+    document.getElementById('r-journal-txt').textContent=db.journal;
+  }else journalWrap.style.display='none';
+
+  if(mode==='family'&&(db.boy||db.girl||db.unisex)){
+    namesWrap.style.display='block';
+    document.getElementById('r-names').innerHTML=
+      '<div class="rmc"><span class="rmc-lbl">👦 Boy</span><div class="rmc-val" style="font-size:.78rem">'+(db.boy||'—')+'</div></div>'+
+      '<div class="rmc"><span class="rmc-lbl">👧 Girl</span><div class="rmc-val" style="font-size:.78rem">'+(db.girl||'—')+'</div></div>'+
+      '<div class="rmc"><span class="rmc-lbl">✨ Unisex</span><div class="rmc-val" style="font-size:.78rem">'+(db.unisex||'—')+'</div></div>';
+  }else namesWrap.style.display='none';
+
+  document.getElementById('r-tbl-heading').textContent=mode==='doctor'?'Clinical Summary (W1–W'+m.week+')':'Milestone Chronicle (W1–W37)';
+  const maxW=mode==='doctor'?m.week:RPT_MAX;
+  const hook=document.getElementById('r-rows');
+  hook.innerHTML='';
+  for(let w=1;w<=maxW;w++){
+    const k='w'+w;const d=db.weeks[k]||{};
+    const clinical=d.vaccine||d.blood||d.doctor||d.sono||d.aheight||d.ahb||d.bheight||d.bhb;
+    if(mode==='doctor'&&!clinical)continue;
+    if(!hasData(d))continue;
+    const wDate=addDays(LMP,(w-1)*7);
+    const ph=w<=12?'rp1':w<=26?'rp2':'rp3';
+    const hA=d.aheight||d.ahb||d.aobs,hB=d.bheight||d.bhb||d.bobs;
+    let twStr='<span style="color:#C0B0A0">—</span>';
+    if(hA||hB){
+      let t='<div class="rtw">';
+      if(hA)t+='<span class="rta">A</span> '+[d.aheight,d.ahb?d.ahb+' bpm':'',d.aobs].filter(Boolean).join(' · ')+'<br>';
+      if(hB)t+='<span class="rtb">B</span> '+[d.bheight,d.bhb?d.bhb+' bpm':'',d.bobs].filter(Boolean).join(' · ');
+      twStr=t+'</div>';
+    }
+    function cell(v){return '<div class="rcell'+(v?'':' mt')+'">'+(v||'—')+'</div>';}
+    hook.insertAdjacentHTML('beforeend',
+      '<div class="r-row"><div class="rw '+ph+'">W'+w+'</div>'+
+      '<div class="rd">'+fmt(wDate,{day:'numeric',month:'short'})+'</div>'+
+      '<div class="rev">'+(d.event||'<span style="color:#C0B0A0;font-weight:400">—</span>')+
+      (d.report_summary?'<div style="font-size:.58rem;color:#7A6A60;margin-top:2px;font-style:italic;">'+d.report_summary.substring(0,80)+'…</div>':'')+'</div>'+
+      '<div>'+twStr+'</div>'+cell(d.vaccine)+cell(d.doctor)+cell(d.sono)+cell(d.blood)+'</div>');
+  }
+  const modal=document.getElementById('report-view-modal');
+  modal.scrollTop=0;modal.classList.add('open');
+}
+function closeReport(){document.getElementById('report-view-modal').classList.remove('open');}
+
+function shareReportWhatsApp(){
+  const m=getMetrics();
+  let msg='❤️ *TejAish Twin Pregnancy Update* ❤️\n';
+  msg+='Week '+m.week+' · Day '+m.dow+'/7 · '+m.left+' days to EDD\n\n';
+  if(db.journal)msg+='📝 *Journal:* '+db.journal+'\n\n';
+  msg+='*Recent Milestones:*\n';
+  for(let w=Math.max(1,m.week-3);w<=m.week;w++){
+    const d=db.weeks['w'+w]||{};
+    if(d.event)msg+='W'+w+': '+d.event+'\n';
+  }
+  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
+}
+
+function shareWhatsApp(){
+  const w=document.getElementById('ew').value;
+  const d=db.weeks['w'+w]||{};
+  let msg='❤️ *TejAish — Week '+w+' Update* ❤️\n\n';
+  if(d.event)msg+='✨ *Milestone:* '+d.event+'\n';
+  if(d.feeling)msg+='🌸 *Aish\'s Log:* '+d.feeling+'\n';
+  const diag=[];
+  if(d.vaccine)diag.push('💉 Vaccine: '+d.vaccine);
+  if(d.blood)diag.push('🧪 Blood: '+d.blood);
+  if(d.doctor)diag.push('🩺 Dr Adkar: '+d.doctor);
+  if(d.sono)diag.push('🖼️ Scan: '+d.sono);
+  if(diag.length)msg+='\n🩺 *Clinical:*\n'+diag.join('\n')+'\n';
+  const hA=d.aheight||d.ahb,hB=d.bheight||d.bhb;
+  if(hA||hB){
+    msg+='\n👶👶 *Twin Metrics:*\n';
+    if(hA)msg+='A: '+[d.aheight,d.ahb?d.ahb+' bpm':''].filter(Boolean).join(' | ')+'\n';
+    if(hB)msg+='B: '+[d.bheight,d.bhb?d.bhb+' bpm':''].filter(Boolean).join(' | ')+'\n';
+  }
+  if(d.report_summary)msg+='\n📋 *Report Summary:* '+d.report_summary+'\n';
+  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
+}
+
+function makeICS(inputId,label){
+  const inpEl=document.getElementById(inputId);
+  const val=inpEl?inpEl.value.trim():'';
+  if(!val){toast('Enter a value first',true);return;}
+  const w=parseInt(document.getElementById('ew').value);
+  const wDate=addDays(LMP,(w-1)*7);
+  const yr=wDate.getFullYear(),mo=String(wDate.getMonth()+1).padStart(2,'0'),dy=String(wDate.getDate()).padStart(2,'0');
+  const ics=[
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TejAish//EN','CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT','DTSTART;VALUE=DATE:'+yr+mo+dy,'DTEND;VALUE=DATE:'+yr+mo+dy,
+    'SUMMARY:Pregnancy W'+w+' — '+label,'DESCRIPTION:'+val.replace(/,/g,'\\,'),
+    'STATUS:CONFIRMED',
+    'BEGIN:VALARM','TRIGGER:-P3D','ACTION:DISPLAY','DESCRIPTION:3 days — W'+w+' '+label,'END:VALARM',
+    'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:Tomorrow — W'+w+' '+label,'END:VALARM',
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const uri='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+  const a=document.createElement('a');a.href=uri;a.download='W'+w+'_'+label.replace(/\s+/g,'_')+'.ics';
+  a.style.display='none';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('📅 Calendar reminder downloaded');
+}
+
+function exportDB(){
+  const uri='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(db,null,2));
+  const a=document.createElement('a');
+  a.href=uri;a.download='TejAish_Backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.style.display='none';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  localStorage.setItem('tej_last_export',new Date().toLocaleString('en-IN'));
+  document.getElementById('vault-last-export').textContent='Last export: '+new Date().toLocaleString('en-IN');
+  toast('✦ Backup exported — save to Files app');
+}
+
+function importDB(ev){
+  const file=ev.target.files[0];if(!file)return;
+  ev.target.value='';
+  const r=new FileReader();
+  r.onload=function(e){
+    try{
+      const imp=JSON.parse(e.target.result);
+      if(imp&&imp.weeks){
+        db=JSON.parse(JSON.stringify(BASE));
+        db.bag=[];db.directory=[];db.products=[];db.kicklog=[];
+        ['journal','boy','girl','unisex','birthplan'].forEach(function(k){if(imp[k]&&imp[k].toString().trim())db[k]=imp[k];});
+        if(imp.weeks){for(const k in imp.weeks){if(!db.weeks[k])db.weeks[k]=blankWeek();const iw=imp.weeks[k];WEEK_FIELDS.forEach(function(f){if(iw[f]&&iw[f].toString().trim())db.weeks[k][f]=iw[f];});}}
+        if(imp.bag&&imp.bag.length)db.bag=imp.bag;
+        if(imp.directory&&imp.directory.length)db.directory=imp.directory;
+        if(imp.products&&imp.products.length)db.products=imp.products;
+        if(imp.kicklog&&imp.kicklog.length)db.kicklog=imp.kicklog;
+        syncDB();renderAll();
+        toast('✦ Backup restored successfully!');
+      }else toast('Invalid backup file.',true);
+    }catch(e){toast('Could not read file.',true);}
+  };
+  r.readAsText(file);
+}
+
+function saveGasUrl(){
+  GAS_URL=document.getElementById('gas-url').value.trim();
+  localStorage.setItem('tej_gas_url',GAS_URL);
+  if(GAS_URL){setSyncStatus('syncing','Connecting…');loadFromSheet();}
+  toast('✦ Script URL saved');
+}
+function saveGeminiKey(){
+  GEMINI_KEY=document.getElementById('gemini-key').value.trim();
+  localStorage.setItem('tej_gemini_key',GEMINI_KEY);
+  toast('✦ Gemini key saved');
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='journey'){drawGrowthChart();renderWeekCards();}
+}
+
+function switchNest(name,btn){
+  document.querySelectorAll('.nest-section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nest-tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('nest-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toast(msg,err){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=err?'#7A1A1A':'var(--gold)';
+  t.style.color=err?'var(--cream)':'var(--ink)';
+  t.style.display='block';t.style.opacity='1';
+  clearTimeout(t._t);
+  t._t=setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.style.display='none';},400);},2800);
+}
+
+window.onload=function(){
+  initDB();
+  renderAll();
+  const gasUrl=localStorage.getItem('tej_gas_url')||'';
+  const gemKey=localStorage.getItem('tej_gemini_key')||'';
+  if(gasUrl){document.getElementById('gas-url').value=gasUrl;GAS_URL=gasUrl;}
+  if(gemKey){document.getElementById('gemini-key').value=gemKey;GEMINI_KEY=gemKey;}
+  const lastExp=localStorage.getItem('tej_last_export');
+  if(lastExp)document.getElementById('vault-last-export').textContent='Last export: '+lastExp;
+  if(GAS_URL)loadFromSheet();else setSyncStatus('','Offline');
+};
+</script>
+</body>
+</html>
