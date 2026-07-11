@@ -476,23 +476,61 @@ canvas#growthChart{width:100%;max-height:160px;}
 .kick-btn:active{transform:scale(.92);box-shadow:0 4px 12px rgba(232,150,125,.25);}
 
 @media print{
-  @page{size:A4 landscape;margin:10mm 12mm;}
-  html,body{background:white!important;color:#1C1714!important;height:auto!important;padding-bottom:0!important;}
-  body *{visibility:hidden;}
-  #report-view-modal, #report-view-modal *{visibility:visible;}
+  @page{size:A4 landscape;margin:9mm 11mm;}
+  html,body{
+    background:white!important;color:#1C1714!important;
+    height:auto!important;min-height:0!important;
+    padding:0!important;margin:0!important;
+    overflow:visible!important;
+  }
   .app-hdr,.tab-bar,.page,#editor-modal,#quicklog-modal,#toast{display:none!important;}
+  body > *:not(#report-view-modal){display:none!important;}
   #report-view-modal{
-    display:block!important;position:absolute!important;left:0;top:0;
-    width:100%;background:none!important;padding:0!important;
-    margin:0!important;overflow:visible!important;
+    display:block!important;position:static!important;
+    inset:auto!important;left:auto!important;top:auto!important;
+    width:100%!important;height:auto!important;
+    background:none!important;padding:0!important;margin:0!important;
+    overflow:visible!important;z-index:auto!important;
   }
   #report-view-modal .r-actions{display:none!important;}
-  .rbox{box-shadow:none!important;max-width:100%!important;width:100%!important;border-radius:0!important;margin:0!important;}
+  .rbox{
+    box-shadow:none!important;max-width:100%!important;width:100%!important;
+    border-radius:0!important;margin:0!important;overflow:visible!important;
+  }
   .r-mast,.r-metrics,.rmc,.r-journal{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .r-mast{padding:12px 14px 10px!important;}
+  .r-title{font-size:1.25rem!important;line-height:1.1!important;}
+  .r-title br{display:none;}
+  .r-title em{margin-left:5px;}
+  .r-eyebrow{margin-bottom:3px!important;}
+  .r-tagline{margin-top:4px!important;}
+  .r-metrics{padding:8px 14px!important;gap:6px!important;}
+  .rmc{padding:6px 8px!important;}
+  .rmc-val{font-size:.78rem!important;}
+  .r-body{padding:8px 14px!important;}
+  .r-journal{padding:8px 12px!important;margin-bottom:8px!important;}
+  .r-names{margin-bottom:8px!important;}
+  .r-tbl-title{padding:6px 0 5px!important;font-size:.68rem!important;}
+
+  /* Tight, print-optimised table — fixed widths sized for A4 landscape content area */
+  .r-hdr,.r-row{
+    display:grid!important;
+    grid-template-columns:28px 46px 1.5fr 1.3fr 62px 68px 78px 78px!important;
+    min-width:0!important;width:100%!important;
+    column-gap:6px!important;
+  }
+  .r-hdr{padding:4px 0!important;font-size:.46rem!important;}
+  .r-row{
+    padding:3px 0!important;font-size:.58rem!important;
+    line-height:1.25!important;
+  }
+  .rev{font-size:.58rem!important;line-height:1.25!important;}
+  .rtw{font-size:.52rem!important;line-height:1.3!important;}
+  .rcell{font-size:.54rem!important;line-height:1.25!important;}
+  .rd{font-size:.52rem!important;}
+  .rw{font-size:.56rem!important;}
   .r-row{page-break-inside:avoid;}
   .r-tbl-scroll{overflow:visible!important;}
-  .r-hdr,.r-row{min-width:unset!important;}
-  .r-body{padding:16px 20px!important;}
 }
 </style>
 </head>
@@ -862,7 +900,87 @@ canvas#growthChart{width:100%;max-height:160px;}
   </div>
 </div>
 
+<div id="edit-dir-modal" class="overlay">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-hd">
+      <div><div class="modal-title">Edit Contact</div></div>
+      <button class="modal-close" onclick="closeEditDirModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-dir-id">
+      <div><label class="flbl">Name</label><input type="text" class="fi" id="edit-dir-name"></div>
+      <div><label class="flbl">Role</label><input type="text" class="fi" id="edit-dir-role" placeholder="e.g. Gynaecologist"></div>
+      <div><label class="flbl">Phone</label><input type="tel" class="fi" id="edit-dir-phone" placeholder="e.g. 9876543210"></div>
+      <div><label class="flbl">Clinic / Hospital / Address</label><input type="text" class="fi" id="edit-dir-addr"></div>
+      <div><label class="flbl">Notes</label><input type="text" class="fi" id="edit-dir-notes"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeEditDirModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveEditDirEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="edit-bag-modal" class="overlay">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-hd">
+      <div><div class="modal-title">Edit Bag Item</div></div>
+      <button class="modal-close" onclick="closeEditBagModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-bag-id">
+      <div><label class="flbl">Item</label><input type="text" class="fi" id="edit-bag-item"></div>
+      <div class="form-2col">
+        <div><label class="flbl">Bag</label>
+          <select class="fi" id="edit-bag-cat">
+            <option value="Aish">Aish</option><option value="Baby">Baby</option><option value="Tejas">Tejas</option>
+          </select>
+        </div>
+        <div><label class="flbl">Priority</label>
+          <select class="fi" id="edit-bag-pri">
+            <option value="must">Must</option><option value="need">Need</option><option value="nice">Nice</option>
+          </select>
+        </div>
+      </div>
+      <div><label class="flbl">Notes</label><input type="text" class="fi" id="edit-bag-notes"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeEditBagModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveEditBagItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="edit-prod-modal" class="overlay">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-hd">
+      <div><div class="modal-title">Edit Wishlist Item</div></div>
+      <button class="modal-close" onclick="closeEditProdModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-prod-id">
+      <div><label class="flbl">Product Name</label><input type="text" class="fi" id="edit-prod-name"></div>
+      <div class="form-2col">
+        <div><label class="flbl">Brand</label><input type="text" class="fi" id="edit-prod-brand"></div>
+        <div><label class="flbl">Est. Price ₹</label><input type="text" class="fi" id="edit-prod-price"></div>
+      </div>
+      <div><label class="flbl">Where seen / link</label><input type="text" class="fi" id="edit-prod-where"></div>
+      <div><label class="flbl">Priority</label>
+        <select class="fi" id="edit-prod-pri">
+          <option value="need">Must Have</option><option value="want">Want</option><option value="maybe">Maybe</option>
+        </select>
+      </div>
+      <div><label class="flbl">Notes</label><input type="text" class="fi" id="edit-prod-notes"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeEditProdModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveEditProduct()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div id="report-view-modal">
+
   <div class="rbox">
     <div class="r-mast">
       <div class="r-eyebrow">TejAish Pregnancy Archive — Twin Miracle Edition</div>
@@ -893,6 +1011,7 @@ canvas#growthChart{width:100%;max-height:160px;}
         </div>
         <div id="r-rows"></div>
       </div>
+      <div id="r-footnotes" style="margin-top:10px;"></div>
     </div>
   </div>
 </div>
@@ -905,7 +1024,7 @@ const LMP_STR='26-02-2026';
 const TOTAL=41;
 const RPT_MAX=37;
 
-let GAS_URL=localStorage.getItem('tej_gas_url')||'';
+let GAS_URL=localStorage.getItem('tej_gas_url')||'https://script.google.com/macros/s/AKfycbwjTUzzLeNyqvU5KTSY6MT4_hsBMHXlZCncvrK0GPpVmyDVLvY8NPCGvJ1D_Qt1rdvA/exec';
 let GEMINI_KEY=localStorage.getItem('tej_gemini_key')||'';
 let currentJourneyFilter='all';
 let kickCount=0;
@@ -1469,8 +1588,8 @@ async function analyseReport(ev){
         {inline_data:{mime_type:file.type,data:b64}}
       ]}]
     };
-    // gemini-1.5-flash is being retired — use current model with a fallback
-    const models=['gemini-2.0-flash','gemini-1.5-flash-latest'];
+    // Use current Gemini models — 1.5 series is fully retired as of 2026
+    const models=['gemini-flash-latest','gemini-2.5-flash','gemini-3.5-flash'];
     let text=null, lastErr=null;
     for(const model of models){
       try{
@@ -1533,10 +1652,11 @@ function renderBag(){
   list.innerHTML=items.map(function(item){
     return '<div class="checklist-item" id="bag-'+item.id+'">'+
       '<div class="check-box '+(item.checked?'checked':'')+'" onclick="toggleBagItem(\''+item.id+'\')"></div>'+
-      '<div style="flex:1;"><div class="check-text '+(item.checked?'checked':'')+'">'+item.item+'</div>'+
+      '<div style="flex:1;cursor:pointer;" onclick="openEditBagItem(\''+item.id+'\')"><div class="check-text '+(item.checked?'checked':'')+'">'+item.item+'</div>'+
       '<div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;"><span class="check-cat">'+item.category+'</span>'+
       '<span class="check-priority pri-'+item.priority+'">'+item.priority+'</span>'+
       (item.notes?'<span style="font-size:.54rem;color:var(--stone);">'+item.notes+'</span>':'')+'</div></div>'+
+      '<button onclick="openEditBagItem(\''+item.id+'\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:.68rem;font-weight:700;padding:2px 6px;">Edit</button>'+
       '<button onclick="deleteBagItem(\''+item.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.8rem;padding:2px 6px;">×</button>'+
       '</div>';
   }).join('');
@@ -1557,6 +1677,30 @@ function addBagItem(){
   db.bag.push({id:'b'+Date.now(),category:cat,item:val,checked:false,priority:pri,notes:''});
   syncDB();renderBag();inp.value='';
   toast('✦ Added to '+cat+"'s bag");
+}
+
+function openEditBagItem(id){
+  const item=db.bag.find(function(i){return i.id===id;});
+  if(!item)return;
+  document.getElementById('edit-bag-id').value=item.id;
+  document.getElementById('edit-bag-item').value=item.item||'';
+  document.getElementById('edit-bag-cat').value=item.category||'Aish';
+  document.getElementById('edit-bag-pri').value=item.priority||'need';
+  document.getElementById('edit-bag-notes').value=item.notes||'';
+  document.getElementById('edit-bag-modal').classList.add('open');
+}
+function closeEditBagModal(){document.getElementById('edit-bag-modal').classList.remove('open');}
+function saveEditBagItem(){
+  const id=document.getElementById('edit-bag-id').value;
+  const item=db.bag.find(function(i){return i.id===id;});
+  if(!item)return;
+  item.item=document.getElementById('edit-bag-item').value.trim()||item.item;
+  item.category=document.getElementById('edit-bag-cat').value;
+  item.priority=document.getElementById('edit-bag-pri').value;
+  item.notes=document.getElementById('edit-bag-notes').value;
+  syncDB();renderBag();closeEditBagModal();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'nest',row:item});
+  toast('✦ Item updated');
 }
 
 function exportBagToHomeApp(){
@@ -1581,8 +1725,10 @@ function renderProducts(){
   if(!db.products||!db.products.length){list.innerHTML='<div style="font-size:.65rem;color:var(--stone);margin-bottom:10px;">Your baby product wishlist is empty.</div>';return;}
   list.innerHTML=db.products.map(function(p){
     return '<div class="product-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;">'+
-      '<div class="product-name">'+p.name+'</div>'+
-      '<button onclick="deleteProduct(\''+p.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.8rem;">×</button></div>'+
+      '<div class="product-name" style="cursor:pointer;" onclick="openEditProduct(\''+p.id+'\')">'+p.name+'</div>'+
+      '<div style="display:flex;gap:8px;flex-shrink:0;">'+
+      '<button onclick="openEditProduct(\''+p.id+'\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:.68rem;font-weight:700;">Edit</button>'+
+      '<button onclick="deleteProduct(\''+p.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.8rem;">×</button></div></div>'+
       '<div class="product-meta">'+
       (p.brand?'<span class="product-tag pt-brand">'+p.brand+'</span>':'')+
       (p.price_est?'<span class="product-tag pt-price">₹'+p.price_est+'</span>':'')+
@@ -1609,16 +1755,45 @@ function addProduct(){
 }
 function deleteProduct(id){db.products=db.products.filter(function(p){return p.id!==id;});syncDB();renderProducts();}
 
+function openEditProduct(id){
+  const p=db.products.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('edit-prod-id').value=p.id;
+  document.getElementById('edit-prod-name').value=p.name||'';
+  document.getElementById('edit-prod-brand').value=p.brand||'';
+  document.getElementById('edit-prod-price').value=p.price_est||'';
+  document.getElementById('edit-prod-where').value=p.where_seen||'';
+  document.getElementById('edit-prod-pri').value=p.priority||'want';
+  document.getElementById('edit-prod-notes').value=p.notes||'';
+  document.getElementById('edit-prod-modal').classList.add('open');
+}
+function closeEditProdModal(){document.getElementById('edit-prod-modal').classList.remove('open');}
+function saveEditProduct(){
+  const id=document.getElementById('edit-prod-id').value;
+  const p=db.products.find(function(x){return x.id===id;});
+  if(!p)return;
+  p.name=document.getElementById('edit-prod-name').value.trim()||p.name;
+  p.brand=document.getElementById('edit-prod-brand').value;
+  p.price_est=document.getElementById('edit-prod-price').value;
+  p.where_seen=document.getElementById('edit-prod-where').value;
+  p.priority=document.getElementById('edit-prod-pri').value;
+  p.notes=document.getElementById('edit-prod-notes').value;
+  syncDB();renderProducts();closeEditProdModal();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'products',row:p});
+  toast('✦ Product updated');
+}
+
 function renderDirectory(){
   const list=document.getElementById('directory-list');
   list.innerHTML=db.directory.map(function(d){
     return '<div class="dir-card"><div style="flex:1;">'+
-      '<div class="dir-name">'+d.name+'</div><div class="dir-role">'+d.role+'</div>'+
-      (d.phone?'<div class="dir-phone">📞 '+d.phone+'</div>':'')+
+      '<div class="dir-name">'+d.name+'</div><div class="dir-role">'+(d.role||'')+'</div>'+
+      (d.phone?'<div class="dir-phone">📞 '+d.phone+'</div>':'<div class="dir-addr" style="opacity:.5;">No phone added</div>')+
       (d.address?'<div class="dir-addr">📍 '+d.address+'</div>':'')+
       (d.notes?'<div class="dir-addr" style="margin-top:4px;font-style:italic;">'+d.notes+'</div>':'')+
       '</div><div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">'+
       (d.phone?'<a href="tel:'+d.phone+'" class="btn-call">Call</a>':'')+
+      '<button onclick="openEditDirEntry(\''+d.id+'\')" style="background:none;border:none;color:var(--gold);cursor:pointer;font-size:.7rem;font-weight:700;">Edit</button>'+
       '<button onclick="deleteDirEntry(\''+d.id+'\')" style="background:none;border:none;color:var(--stone);cursor:pointer;font-size:.7rem;">Remove</button>'+
       '</div></div>';
   }).join('');
@@ -1638,6 +1813,32 @@ function addDirEntry(){
   toast('✦ Contact added');
 }
 function deleteDirEntry(id){db.directory=db.directory.filter(function(d){return d.id!==id;});syncDB();renderDirectory();}
+
+function openEditDirEntry(id){
+  const d=db.directory.find(function(x){return x.id===id;});
+  if(!d)return;
+  document.getElementById('edit-dir-id').value=d.id;
+  document.getElementById('edit-dir-name').value=d.name||'';
+  document.getElementById('edit-dir-role').value=d.role||'';
+  document.getElementById('edit-dir-phone').value=d.phone||'';
+  document.getElementById('edit-dir-addr').value=d.address||'';
+  document.getElementById('edit-dir-notes').value=d.notes||'';
+  document.getElementById('edit-dir-modal').classList.add('open');
+}
+function closeEditDirModal(){document.getElementById('edit-dir-modal').classList.remove('open');}
+function saveEditDirEntry(){
+  const id=document.getElementById('edit-dir-id').value;
+  const d=db.directory.find(function(x){return x.id===id;});
+  if(!d)return;
+  d.name=document.getElementById('edit-dir-name').value.trim()||d.name;
+  d.role=document.getElementById('edit-dir-role').value;
+  d.phone=document.getElementById('edit-dir-phone').value;
+  d.address=document.getElementById('edit-dir-addr').value;
+  d.notes=document.getElementById('edit-dir-notes').value;
+  syncDB();renderDirectory();closeEditDirModal();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'directory',row:d});
+  toast('✦ Contact updated');
+}
 
 function renderBirthPlan(){document.getElementById('birthplan-txt').value=db.birthplan||'';}
 function saveBirthPlan(){
@@ -1664,7 +1865,7 @@ function openReport(mode){
     document.getElementById('r-journal-txt').textContent=db.journal;
   }else journalWrap.style.display='none';
 
-  if(mode==='family'&&(db.boy||db.girl||db.unisex)){
+  if(db.boy||db.girl||db.unisex){
     namesWrap.style.display='block';
     document.getElementById('r-names').innerHTML=
       '<div class="rmc"><span class="rmc-lbl">👦 Boy</span><div class="rmc-val" style="font-size:.78rem">'+(db.boy||'—')+'</div></div>'+
@@ -1676,30 +1877,50 @@ function openReport(mode){
   const maxW=mode==='doctor'?m.week:RPT_MAX;
   const hook=document.getElementById('r-rows');
   hook.innerHTML='';
+  const footnotes=[];
   for(let w=1;w<=maxW;w++){
     const k='w'+w;const d=db.weeks[k]||{};
     const clinical=d.vaccine||d.blood||d.doctor||d.sono||d.aheight||d.ahb||d.bheight||d.bhb;
     if(mode==='doctor'&&!clinical)continue;
     if(!hasData(d))continue;
+    if(d.report_summary)footnotes.push('<strong>W'+w+':</strong> '+d.report_summary);
     const wDate=addDays(LMP,(w-1)*7);
     const ph=w<=12?'rp1':w<=26?'rp2':'rp3';
     const hA=d.aheight||d.ahb||d.aobs,hB=d.bheight||d.bhb||d.bobs;
     let twStr='<span style="color:#C0B0A0">—</span>';
     if(hA||hB){
       let t='<div class="rtw">';
-      if(hA)t+='<span class="rta">A</span> '+[d.aheight,d.ahb?d.ahb+' bpm':'',d.aobs].filter(Boolean).join(' · ')+'<br>';
-      if(hB)t+='<span class="rtb">B</span> '+[d.bheight,d.bhb?d.bhb+' bpm':'',d.bobs].filter(Boolean).join(' · ');
+      if(hA){
+        const partsA=[d.aheight,d.ahb?d.ahb+'bpm':''].filter(Boolean).join(' · ');
+        t+='<span class="rta">A</span> '+(partsA||d.aobs||'')+'<br>';
+      }
+      if(hB){
+        const partsB=[d.bheight,d.bhb?d.bhb+'bpm':''].filter(Boolean).join(' · ');
+        t+='<span class="rtb">B</span> '+(partsB||d.bobs||'');
+      }
       twStr=t+'</div>';
     }
-    function cell(v){return '<div class="rcell'+(v?'':' mt')+'">'+(v||'—')+'</div>';}
+    function cell(v){
+      const short=v&&v.length>18?v.substring(0,17)+'…':v;
+      return '<div class="rcell'+(v?'':' mt')+'" title="'+(v||'')+'">'+(short||'—')+'</div>';
+    }
+    const evShort=d.event&&d.event.length>60?d.event.substring(0,58)+'…':d.event;
     hook.insertAdjacentHTML('beforeend',
       '<div class="r-row"><div class="rw '+ph+'">W'+w+'</div>'+
       '<div class="rd">'+fmt(wDate,{day:'numeric',month:'short'})+'</div>'+
-      '<div class="rev">'+(d.event||'<span style="color:#C0B0A0;font-weight:400">—</span>')+
-      (d.report_summary?'<div style="font-size:.58rem;color:#7A6A60;margin-top:2px;font-style:italic;">'+d.report_summary.substring(0,80)+'…</div>':'')+'</div>'+
+      '<div class="rev" title="'+(d.event||'')+'">'+(evShort||'<span style="color:#C0B0A0;font-weight:400">—</span>')+'</div>'+
       '<div>'+twStr+'</div>'+cell(d.vaccine)+cell(d.doctor)+cell(d.sono)+cell(d.blood)+'</div>');
   }
   const modal=document.getElementById('report-view-modal');
+  const fnHook=document.getElementById('r-footnotes');
+  if(footnotes.length){
+    fnHook.innerHTML='<div style="border-top:1px solid rgba(28,23,20,.1);padding-top:8px;">'+
+      '<div style="font-size:.6rem;font-weight:700;color:#A85D68;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">Report Notes</div>'+
+      footnotes.map(f=>'<div style="font-size:.62rem;color:#5C3A3F;line-height:1.5;margin-bottom:3px;">'+f+'</div>').join('')+
+      '</div>';
+  }else{
+    fnHook.innerHTML='';
+  }
   modal.scrollTop=0;modal.classList.add('open');
 }
 function closeReport(){document.getElementById('report-view-modal').classList.remove('open');}
