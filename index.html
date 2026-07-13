@@ -1046,7 +1046,7 @@ const LMP_STR='26-02-2026';
 const TOTAL=41;
 const RPT_MAX=37;
 
-let GAS_URL=localStorage.getItem('tej_gas_url')||'https://script.google.com/macros/s/AKfycbwjTUzzLeNyqvU5KTSY6MT4_hsBMHXlZCncvrK0GPpVmyDVLvY8NPCGvJ1D_Qt1rdvA/exec';
+let GAS_URL=localStorage.getItem('tej_gas_url')||'';
 let GEMINI_KEY=localStorage.getItem('tej_gemini_key')||'';
 let currentJourneyFilter='all';
 let kickCount=0;
@@ -1240,6 +1240,7 @@ async function syncAllToSheet(){
     for(const item of db.bag)await gasPost({action:'upsert_row',sheet:'nest',row:item});
     for(const p of db.products)await gasPost({action:'upsert_row',sheet:'products',row:p});
     for(const d of db.directory)await gasPost({action:'upsert_row',sheet:'directory',row:d});
+    for(const kk of db.kicklog)await gasPost({action:'upsert_row',sheet:'kicklog',row:kk});
     setSyncStatus('online','Synced ✓');
     toast('✦ All data synced to Google Sheet');
   }catch(e){
@@ -1296,9 +1297,21 @@ function loadFromSheet(){
                 if(idx>=0)db.directory[idx]=merged;else db.directory.push(merged);
               });
             }
-            syncDB();
-            renderAll();
-            setSyncStatus('online','Synced ✓');
+            gasRead('kicklog',function(krows){
+              if(krows.length){
+                krows.forEach(function(r){
+                  if(!r.id)return;
+                  const idx=db.kicklog.findIndex(function(k){return k.id===r.id;});
+                  const merged={id:r.id,week:r.week||'',date:r.date||'',count:r.count||0,duration_mins:r.duration_mins||0,notes:r.notes||''};
+                  if(idx>=0)db.kicklog[idx]=merged;else db.kicklog.push(merged);
+                });
+                // newest first
+                db.kicklog.sort(function(a,b){return (b.id>a.id)?1:-1;});
+              }
+              syncDB();
+              renderAll();
+              setSyncStatus('online','Synced ✓');
+            });
           });
         });
       });
@@ -1601,6 +1614,7 @@ function saveVital(field,val){
   const k='w'+m.week;
   db.weeks[k][field]=val;
   syncDB();
+  if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
 }
 
 function recordKick(){
@@ -1619,6 +1633,7 @@ function saveKickSession(){
   syncDB();
   renderKickLog();
   resetKicks();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'kicklog',row:entry});
   toast('✦ Session saved — '+entry.count+' kicks in '+dur+' min');
 }
 function renderKickLog(){
@@ -2102,9 +2117,20 @@ function saveGasUrl(){
   GAS_URL=document.getElementById('gas-url').value.trim();
   localStorage.setItem('tej_gas_url',GAS_URL);
   if(GAS_URL){
-    setSyncStatus('syncing','Connecting…');
-    toast('✦ Connecting — pushing your existing data to the Sheet…');
-    syncAllToSheet();
+    setSyncStatus('syncing','Setting up sheet…');
+    toast('✦ Preparing your Google Sheet — this may take a moment…');
+    gasPost({action:'init_headers'}).then(function(res){
+      if(res && res.ok){
+        toast('✦ Sheet ready — pushing your existing data…');
+        syncAllToSheet();
+      } else {
+        setSyncStatus('error','Setup failed');
+        toast('Could not set up Sheet tabs: '+(res&&res.error?res.error:'unknown error — check the Script URL and that it\'s deployed with access "Anyone"'),true);
+      }
+    }).catch(function(e){
+      setSyncStatus('error','Setup failed');
+      toast('Connection error: '+e.message,true);
+    });
   }else{
     toast('✦ Script URL saved');
   }
