@@ -634,6 +634,7 @@ canvas#growthChart{width:100%;max-height:160px;}
   <div class="nest-tabs">
     <button class="nest-tab-btn active" onclick="switchNest('bag',this)">🏥 Hospital Bag</button>
     <button class="nest-tab-btn" onclick="switchNest('products',this)">🛒 Baby Wishlist</button>
+    <button class="nest-tab-btn" onclick="switchNest('names',this)">👶 Baby Names</button>
     <button class="nest-tab-btn" onclick="switchNest('directory',this)">📋 Directory</button>
     <button class="nest-tab-btn" onclick="switchNest('birthplan',this)">📝 Birth Plan</button>
     <button class="nest-tab-btn" onclick="switchNest('kicks',this)">👣 Kick Log</button>
@@ -701,6 +702,27 @@ canvas#growthChart{width:100%;max-height:160px;}
         </div>
         <input type="text" class="fi" id="dir-notes" placeholder="Notes…">
         <button class="btn btn-gold" onclick="addDirEntry()">Add Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nest-section" id="nest-names">
+    <div class="section-card">
+      <div class="eyebrow">👶 Baby Name Contenders</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label class="flbl">👦 Boy Contenders</label>
+          <input type="text" class="fi" id="names-boy" placeholder="e.g. Arjun, Veer, Aarav…">
+        </div>
+        <div>
+          <label class="flbl">👧 Girl Contenders</label>
+          <input type="text" class="fi" id="names-girl" placeholder="e.g. Anandi, Diya…">
+        </div>
+        <div>
+          <label class="flbl">✨ Unisex Picks</label>
+          <input type="text" class="fi" id="names-unisex" placeholder="e.g. Rio, Amaya…">
+        </div>
+        <button class="btn btn-gold btn-full" onclick="saveNames()">Save Names</button>
       </div>
     </div>
   </div>
@@ -1246,9 +1268,40 @@ function loadFromSheet(){
         if(r.key==='unisex'&&r.value)db.unisex=r.value;
         if(r.key==='birthplan'&&r.value)db.birthplan=r.value;
       });
-      syncDB();
-      renderAll();
-      setSyncStatus('online','Synced ✓');
+      gasRead('nest',function(nrows){
+        if(nrows.length){
+          // merge by id: sheet rows update/extend local bag, preserving items only local hasn't pushed yet
+          nrows.forEach(function(r){
+            if(!r.id)return;
+            const idx=db.bag.findIndex(function(b){return b.id===r.id;});
+            const merged={id:r.id,category:r.category||'Aish',item:r.item||'',checked:r.checked==='true'||r.checked===true,priority:r.priority||'need',notes:r.notes||''};
+            if(idx>=0)db.bag[idx]=merged;else db.bag.push(merged);
+          });
+        }
+        gasRead('products',function(prows){
+          if(prows.length){
+            prows.forEach(function(r){
+              if(!r.id)return;
+              const idx=db.products.findIndex(function(p){return p.id===r.id;});
+              const merged={id:r.id,name:r.name||'',brand:r.brand||'',price_est:r.price_est||'',where_seen:r.where_seen||'',priority:r.priority||'want',notes:r.notes||''};
+              if(idx>=0)db.products[idx]=merged;else db.products.push(merged);
+            });
+          }
+          gasRead('directory',function(drows){
+            if(drows.length){
+              drows.forEach(function(r){
+                if(!r.id)return;
+                const idx=db.directory.findIndex(function(d){return d.id===r.id;});
+                const merged={id:r.id,name:r.name||'',role:r.role||'',phone:r.phone||'',address:r.address||'',notes:r.notes||''};
+                if(idx>=0)db.directory[idx]=merged;else db.directory.push(merged);
+              });
+            }
+            syncDB();
+            renderAll();
+            setSyncStatus('online','Synced ✓');
+          });
+        });
+      });
     });
   });
 }
@@ -1273,7 +1326,14 @@ function renderAll(){
   renderProducts();
   renderKickLog();
   renderBirthPlan();
+  renderNames();
   drawGrowthChart();
+}
+
+function renderNames(){
+  document.getElementById('names-boy').value=db.boy||'';
+  document.getElementById('names-girl').value=db.girl||'';
+  document.getElementById('names-unisex').value=db.unisex||'';
 }
 
 function renderToday(){
@@ -1664,18 +1724,24 @@ function renderBag(){
 
 function toggleBagItem(id){
   const item=db.bag.find(function(i){return i.id===id;});
-  if(item){item.checked=!item.checked;syncDB();renderBag();}
+  if(item){
+    item.checked=!item.checked;syncDB();renderBag();
+    if(GAS_URL)gasPost({action:'upsert_row',sheet:'nest',row:item});
+  }
 }
 function deleteBagItem(id){
   db.bag=db.bag.filter(function(i){return i.id!==id;});syncDB();renderBag();
+  if(GAS_URL)gasPost({action:'delete_row',sheet:'nest',id:id});
 }
 function addBagItem(){
   const inp=document.getElementById('bag-item-inp');
   const val=inp.value.trim();if(!val)return;
   const cat=document.getElementById('bag-cat-sel').value;
   const pri=document.getElementById('bag-pri-sel').value;
-  db.bag.push({id:'b'+Date.now(),category:cat,item:val,checked:false,priority:pri,notes:''});
+  const newItem={id:'b'+Date.now(),category:cat,item:val,checked:false,priority:pri,notes:''};
+  db.bag.push(newItem);
   syncDB();renderBag();inp.value='';
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'nest',row:newItem});
   toast('✦ Added to '+cat+"'s bag");
 }
 
@@ -1751,9 +1817,10 @@ function addProduct(){
   };
   db.products.push(p);syncDB();renderProducts();
   ['prod-name','prod-brand','prod-price','prod-where','prod-notes'].forEach(function(id){document.getElementById(id).value='';});
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'products',row:p});
   toast('✦ Added to wishlist');
 }
-function deleteProduct(id){db.products=db.products.filter(function(p){return p.id!==id;});syncDB();renderProducts();}
+function deleteProduct(id){db.products=db.products.filter(function(p){return p.id!==id;});syncDB();renderProducts();if(GAS_URL)gasPost({action:'delete_row',sheet:'products',id:id});}
 
 function openEditProduct(id){
   const p=db.products.find(function(x){return x.id===id;});
@@ -1801,18 +1868,20 @@ function renderDirectory(){
 
 function addDirEntry(){
   const name=document.getElementById('dir-name').value.trim();if(!name)return;
-  db.directory.push({
+  const newDir={
     id:'d'+Date.now(),name:name,
     role:document.getElementById('dir-role').value,
     phone:document.getElementById('dir-phone').value,
     address:document.getElementById('dir-addr').value,
     notes:document.getElementById('dir-notes').value
-  });
+  };
+  db.directory.push(newDir);
   syncDB();renderDirectory();
   ['dir-name','dir-role','dir-phone','dir-addr','dir-notes'].forEach(function(id){document.getElementById(id).value='';});
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'directory',row:newDir});
   toast('✦ Contact added');
 }
-function deleteDirEntry(id){db.directory=db.directory.filter(function(d){return d.id!==id;});syncDB();renderDirectory();}
+function deleteDirEntry(id){db.directory=db.directory.filter(function(d){return d.id!==id;});syncDB();renderDirectory();if(GAS_URL)gasPost({action:'delete_row',sheet:'directory',id:id});}
 
 function openEditDirEntry(id){
   const d=db.directory.find(function(x){return x.id===id;});
@@ -1846,6 +1915,19 @@ function saveBirthPlan(){
   syncDB();
   if(GAS_URL)gasPost({action:'upsert_meta',sheet:'meta',row:{key:'birthplan',value:db.birthplan}});
   toast('✦ Birth plan saved');
+}
+
+function saveNames(){
+  db.boy=document.getElementById('names-boy').value;
+  db.girl=document.getElementById('names-girl').value;
+  db.unisex=document.getElementById('names-unisex').value;
+  syncDB();
+  if(GAS_URL){
+    gasPost({action:'upsert_meta',sheet:'meta',row:{key:'boy',value:db.boy}});
+    gasPost({action:'upsert_meta',sheet:'meta',row:{key:'girl',value:db.girl}});
+    gasPost({action:'upsert_meta',sheet:'meta',row:{key:'unisex',value:db.unisex}});
+  }
+  toast('✦ Baby names saved');
 }
 
 function openReport(mode){
