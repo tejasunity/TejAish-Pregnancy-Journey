@@ -10,11 +10,11 @@
   --ink:#5C3A3F;--ink2:#FFFFFF;--ink3:#FDF2F0;
   --gold:#C97B84;--goldl:#D98895;--goldd:#A85D68;--goldg:rgba(201,123,132,.12);
   --blush:#D98895;--blushd:rgba(217,136,149,.14);
-  --sky:#7FA3C9;--skyd:rgba(127,163,201,.13);
-  --sage:#7FB89E;--sagedim:rgba(127,184,158,.13);
+  --sky:#3E8FD0;--skyd:rgba(62,143,208,.13);
+  --sage:#3FAE7E;--sagedim:rgba(63,174,126,.13);
   --cream:#FFFBF9;--cream2:#FBEFEC;
   --stone:#9C8A87;--stone2:#5C3A3F;
-  --p1:#D9A57B;--p2:#7FA3C9;--p3:#B08FBF;
+  --p1:#D9A57B;--p2:#3E8FD0;--p3:#B08FBF;
   --rad:16px;--radsm:12px;
   --txt:#4A2E32;--txtsoft:#7A5B5E;
 }
@@ -246,6 +246,16 @@ canvas#growthChart{width:100%;max-height:160px;}
 .upload-area:hover{border-color:rgba(201,123,132,.5);background:rgba(201,123,132,.04);}
 .upload-area-txt{font-size:.65rem;color:var(--stone);margin-top:4px;}
 
+.drive-file-item{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(62,143,208,.06);border:1px solid rgba(62,143,208,.15);
+  border-radius:10px;padding:8px 10px;
+}
+.drive-file-icon{font-size:1.1rem;flex-shrink:0;}
+.drive-file-name{flex:1;font-size:.66rem;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.drive-file-open{font-size:.6rem;font-weight:700;color:var(--sky);background:none;border:none;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+.drive-file-del{font-size:.7rem;color:var(--stone);background:none;border:none;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+
 .ai-summary-box{
   background:linear-gradient(135deg,rgba(139,159,232,.07),rgba(127,201,158,.05));
   border:1px solid rgba(139,159,232,.2);
@@ -438,19 +448,56 @@ canvas#growthChart{width:100%;max-height:160px;}
 .r-journal{background:linear-gradient(135deg,#FDF2F0,#FBEFEC);border-radius:13px;padding:16px 20px;margin-bottom:16px;border:1px solid rgba(201,123,132,.2);}
 .rj-lbl{font-size:.53rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:7px;}
 .rj-txt{font-family:'Aptos','Calibri','Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:.85rem;color:#5C3A3F;line-height:1.8;}
+
+.r-latest-card{
+  background:linear-gradient(135deg,#FFF5F3,#FDEDEA);
+  border:1.5px solid rgba(201,123,132,.35);
+  border-radius:14px;padding:16px 20px;
+}
+.r-latest-week{
+  padding:9px 0;border-bottom:1px solid rgba(168,93,104,.12);
+}
+.r-latest-week:last-child{border-bottom:none;padding-bottom:0;}
+.r-latest-week:first-child{padding-top:2px;}
+.r-latest-wk-hd{
+  display:flex;align-items:center;gap:8px;margin-bottom:6px;
+}
+.r-latest-wk-pill{
+  font-size:.6rem;font-weight:800;color:white;background:#A85D68;
+  border-radius:7px;padding:2px 8px;
+}
+.r-latest-wk-date{font-size:.62rem;font-weight:700;color:#8A7674;}
+.r-latest-line{font-size:.76rem;line-height:1.55;color:#3A2226;margin-bottom:3px;}
+.r-latest-line strong{color:#A85D68;}
+.r-latest-line .lbl{font-weight:700;color:#A85D68;}
+.r-latest-empty{font-size:.7rem;color:#8A7674;font-style:italic;}
+
 .r-tbl-title{font-family:'Aptos','Calibri','Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:.8rem;color:#A85D68;padding:12px 0 8px;border-bottom:2px solid var(--gold);margin-bottom:0;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.06em;}
-.r-hdr,.r-row{display:grid;grid-template-columns:38px 62px 1fr 110px 68px 68px 95px 95px;min-width:640px;}
-.r-hdr{padding:7px 0;font-size:.5rem;font-weight:800;text-transform:uppercase;letter-spacing:.11em;color:#9A8A7C;border-bottom:1px solid rgba(28,23,20,.11);}
-.r-row{padding:8px 0;border-bottom:1px solid rgba(28,23,20,.05);font-size:.66rem;align-items:start;}
-.r-row:last-child{border-bottom:none;}
-.r-row:nth-child(even){background:rgba(28,23,20,.02);}
-.rw{font-weight:800;font-size:.63rem;}.rw.rp1{color:#A0531E;}.rw.rp2{color:#2B6A9A;}.rw.rp3{color:#5E3D9A;}
-.rd{color:#7A6A60;font-weight:500;font-size:.6rem;padding-top:1px;}
-.rev{font-weight:700;color:#1C1714;padding-right:6px;line-height:1.4;}
-.rtw{font-size:.58rem;line-height:1.55;padding-right:5px;}
-.rtw .rta{color:#A84A5A;font-weight:700;}.rtw .rtb{color:#2B6A9A;font-weight:700;}
-.rcell{color:#3A3F52;font-size:.61rem;font-weight:500;line-height:1.4;padding-right:4px;}
-.rcell.mt{color:#C0B0A0;}
+
+/* ── STORY SECTION (replaces old plain table) ── */
+.r-story-item{
+  display:grid;grid-template-columns:58px 1fr;gap:22px;
+  padding:9px 0;border-bottom:1px solid rgba(28,23,20,.06);
+}
+.r-story-item:last-child{border-bottom:none;}
+.r-story-wk{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:2px;}
+.r-story-wk-pill{font-size:.68rem;font-weight:800;color:white;background:#A85D68;border-radius:7px;padding:3px 9px;margin-bottom:2px;}
+.r-story-wk-pill.p2{background:#3E8FD0;}
+.r-story-wk-pill.p3{background:#B08FBF;}
+.r-story-wk-date{font-size:.62rem;color:#8A7674;font-weight:600;}
+/* story-content is the ONLY grid item in column 2 — prevents multi-line
+   content (feeling/twins/photo tags) from colliding back into column 1 */
+.r-story-content{display:flex;flex-direction:column;gap:4px;}
+.r-story-text{font-size:.82rem;line-height:1.5;color:#3A2226;padding-top:1px;}
+.r-story-text .highlight{color:#A85D68;font-weight:700;}
+.r-story-feel{font-size:.72rem;color:#7A5B5E;line-height:1.45;padding-left:9px;border-left:2px solid rgba(217,136,149,.35);font-style:italic;}
+.r-story-check{font-size:.72rem;color:#4A2E32;}
+.r-story-baby{font-size:.72rem;color:#2E6FA8;font-weight:600;}
+.r-story-baby .ta{color:#A85D68;}
+.r-story-baby .tb{color:#2E6FA8;}
+.r-story-files{display:flex;gap:6px;flex-wrap:wrap;}
+.r-story-file-tag{display:inline-flex;align-items:center;gap:3px;width:fit-content;font-size:.66rem;font-weight:700;color:#2E6FA8;background:rgba(62,143,208,.12);padding:3px 10px;border-radius:20px;text-decoration:none;}
+
 .r-tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
 #toast{
@@ -462,21 +509,33 @@ canvas#growthChart{width:100%;max-height:160px;}
 
 .add-row{display:flex;gap:7px;margin-top:10px;}
 
-.kick-counter{text-align:center;padding:16px;}
-.kick-num{font-family:'Aptos','Calibri','Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:4rem;color:var(--goldl);line-height:1;}
-.kick-sub{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--stone);margin-top:4px;}
+.kick-counter-dual{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 4px 4px;}
+.kick-twin-col{text-align:center;}
+.kick-twin-lbl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;}
+.kick-twin-lbl.a{color:var(--blush);}
+.kick-twin-lbl.b{color:var(--sky);}
+.kick-num{font-family:'Aptos','Calibri','Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:2.6rem;line-height:1;}
+.kick-num.a{color:var(--blush);}
+.kick-num.b{color:var(--sky);}
+.kick-sub{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--stone);text-align:center;margin-top:4px;}
 .kick-btn{
-  width:90px;height:90px;border-radius:50%;
-  background:linear-gradient(135deg,var(--blush),#A8566A);
-  border:none;cursor:pointer;margin:16px auto;display:block;
-  font-size:1.8rem;
-  box-shadow:0 8px 24px rgba(232,150,125,.35);
+  width:72px;height:72px;border-radius:50%;
+  border:none;cursor:pointer;margin:10px auto 0;display:block;
+  font-size:1.5rem;
   transition:transform .1s,box-shadow .1s;
 }
-.kick-btn:active{transform:scale(.92);box-shadow:0 4px 12px rgba(232,150,125,.25);}
+.kick-btn.a{
+  background:linear-gradient(135deg,var(--blush),#B8586C);
+  box-shadow:0 6px 18px rgba(232,150,125,.4);
+}
+.kick-btn.b{
+  background:linear-gradient(135deg,var(--sky),#4F7FBF);
+  box-shadow:0 6px 18px rgba(95,155,219,.4);
+}
+.kick-btn:active{transform:scale(.9);}
 
 @media print{
-  @page{size:A4 landscape;margin:9mm 11mm;}
+  @page{size:A4 portrait;margin:9mm 11mm;}
   html,body{
     background:white!important;color:#1C1714!important;
     height:auto!important;min-height:0!important;
@@ -509,28 +568,15 @@ canvas#growthChart{width:100%;max-height:160px;}
   .rmc-val{font-size:.78rem!important;}
   .r-body{padding:8px 14px!important;}
   .r-journal{padding:8px 12px!important;margin-bottom:8px!important;}
+  .r-latest-card{padding:9px 12px!important;}
+  .r-latest-week{padding:5px 0!important;}
+  .r-latest-line{font-size:.68rem!important;margin-bottom:2px!important;}
   .r-names{margin-bottom:8px!important;}
-  .r-tbl-title{padding:6px 0 5px!important;font-size:.68rem!important;}
-
-  /* Tight, print-optimised table — fixed widths sized for A4 landscape content area */
-  .r-hdr,.r-row{
-    display:grid!important;
-    grid-template-columns:28px 46px 1.5fr 1.3fr 62px 68px 78px 78px!important;
-    min-width:0!important;width:100%!important;
-    column-gap:6px!important;
-  }
-  .r-hdr{padding:4px 0!important;font-size:.46rem!important;}
-  .r-row{
-    padding:3px 0!important;font-size:.58rem!important;
-    line-height:1.25!important;
-  }
-  .rev{font-size:.58rem!important;line-height:1.25!important;}
-  .rtw{font-size:.52rem!important;line-height:1.3!important;}
-  .rcell{font-size:.54rem!important;line-height:1.25!important;}
-  .rd{font-size:.52rem!important;}
-  .rw{font-size:.56rem!important;}
-  .r-row{page-break-inside:avoid;}
-  .r-tbl-scroll{overflow:visible!important;}
+  .r-tbl-title{padding:6px 0 5px!important;font-size:.75rem!important;}
+  .r-story-item{padding:4px 0!important;}
+  .r-story-wk-pill{padding:2px 7px!important;}
+  .r-story-text{line-height:1.35!important;}
+  .r-story-item{page-break-inside:avoid;}
 }
 </style>
 </head>
@@ -594,15 +640,23 @@ canvas#growthChart{width:100%;max-height:160px;}
   </div>
 
   <div class="section-card">
-    <div class="eyebrow">Kick Counter</div>
-    <div class="kick-counter">
-      <div class="kick-num" id="kick-num">0</div>
-      <div class="kick-sub">kicks today</div>
-      <button class="kick-btn" onclick="recordKick()">👣</button>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button class="btn btn-ghost" style="font-size:.62rem;padding:6px 14px;" onclick="resetKicks()">Reset</button>
-        <button class="btn btn-sage" style="font-size:.62rem;padding:6px 14px;" onclick="saveKickSession()">Save Session</button>
+    <div class="eyebrow">Kick Counter — Twin A &amp; Twin B</div>
+    <div class="kick-counter-dual">
+      <div class="kick-twin-col">
+        <div class="kick-twin-lbl a">Twin A</div>
+        <div class="kick-num a" id="kick-num-a">0</div>
+        <button class="kick-btn a" onclick="recordKick('a')">👣</button>
       </div>
+      <div class="kick-twin-col">
+        <div class="kick-twin-lbl b">Twin B</div>
+        <div class="kick-num b" id="kick-num-b">0</div>
+        <button class="kick-btn b" onclick="recordKick('b')">👣</button>
+      </div>
+    </div>
+    <div class="kick-sub" style="margin-top:2px;">taps this session</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+      <button class="btn btn-ghost" style="font-size:.62rem;padding:6px 14px;" onclick="resetKicks()">Reset</button>
+      <button class="btn btn-sage" style="font-size:.62rem;padding:6px 14px;" onclick="saveKickSession()">Save Session</button>
     </div>
   </div>
 
@@ -638,6 +692,7 @@ canvas#growthChart{width:100%;max-height:160px;}
     <button class="nest-tab-btn" onclick="switchNest('directory',this)">📋 Directory</button>
     <button class="nest-tab-btn" onclick="switchNest('birthplan',this)">📝 Birth Plan</button>
     <button class="nest-tab-btn" onclick="switchNest('kicks',this)">👣 Kick Log</button>
+    <button class="nest-tab-btn" onclick="switchNest('notes',this)">📎 Notes &amp; Drive</button>
   </div>
 
   <div class="nest-section active" id="nest-bag">
@@ -741,6 +796,30 @@ canvas#growthChart{width:100%;max-height:160px;}
       <div id="kick-log-list"><div style="font-size:.65rem;color:var(--stone)">No sessions logged yet.</div></div>
     </div>
   </div>
+
+  <div class="nest-section" id="nest-notes">
+    <div class="section-card">
+      <div class="eyebrow">💭 Memory Journal</div>
+      <div class="setting-sub" style="margin-bottom:10px;">A single current note that appears at the top of the Family Report — dated automatically when you save.</div>
+      <textarea class="ft" id="journal-txt" rows="4" placeholder="A thought, a moment, a feeling worth remembering…" style="margin-bottom:8px;"></textarea>
+      <div id="journal-date-lbl" style="font-size:.62rem;color:var(--stone);margin-bottom:10px;"></div>
+      <button class="btn btn-gold btn-full" onclick="saveJournal()">Save Journal Entry</button>
+    </div>
+    <div class="section-card">
+      <div class="eyebrow">📁 Google Drive Folder</div>
+      <label class="flbl">Scan &amp; report folder link</label>
+      <input type="text" class="fi" id="drive-link" placeholder="https://drive.google.com/drive/folders/…" style="margin-bottom:10px;">
+      <button class="btn btn-gold btn-full" onclick="saveDriveLink()">Save Link</button>
+      <div id="drive-link-open-wrap" style="margin-top:8px;display:none;">
+        <a id="drive-link-open" href="#" target="_blank" class="btn btn-sky btn-full" style="display:block;text-align:center;text-decoration:none;">📂 Open Drive Folder</a>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="eyebrow">📝 Free Notes</div>
+      <textarea class="ft" id="free-notes-txt" rows="8" placeholder="Anything else worth jotting down — reminders, questions for the next appointment, random thoughts…" style="margin-bottom:10px;"></textarea>
+      <button class="btn btn-gold btn-full" onclick="saveFreeNotes()">Save Notes</button>
+    </div>
+  </div>
 </div>
 
 <div class="page" id="page-report">
@@ -778,10 +857,10 @@ canvas#growthChart{width:100%;max-height:160px;}
     <div class="eyebrow">Settings</div>
     <div class="setting-row">
       <div>
-        <div class="setting-lbl">Google Sheet Script URL</div>
-        <div class="setting-sub">Paste your deployed Apps Script web app URL</div>
+        <div class="setting-lbl">Google Sheet Connection</div>
+        <div class="setting-sub">Fixed in code — same for every device, no per-phone setup needed</div>
       </div>
-      <input type="text" class="setting-inp" id="gas-url" placeholder="https://script.google.com/…" onblur="saveGasUrl()">
+      <div style="font-size:.62rem;font-weight:700;color:var(--sage);flex-shrink:0;" id="gas-status-lbl">Checking…</div>
     </div>
     <div class="setting-row">
       <div>
@@ -858,6 +937,21 @@ canvas#growthChart{width:100%;max-height:160px;}
           <div class="ai-summary-text" id="ai-result-text" contenteditable="true" style="outline:none;min-height:40px;"></div>
           <div style="margin-top:8px;font-size:.56rem;color:var(--stone);">Tap text above to edit before saving</div>
         </div>
+      </div>
+      <div>
+        <div class="flbl-row">
+          <label class="flbl">📎 Photos &amp; Scans for This Week</label>
+          <span style="font-size:.55rem;color:var(--stone);" id="drive-upload-count"></span>
+        </div>
+        <div class="upload-area" onclick="document.getElementById('drive-file-inp').click()">
+          <div style="font-size:1.5rem;">📸</div>
+          <div class="upload-area-txt">Tap to save a scan photo or document to Drive<br>Up to 3 files per week</div>
+          <input type="file" id="drive-file-inp" accept=".pdf,image/*" style="display:none;" onchange="uploadWeekFile(event)">
+        </div>
+        <div id="drive-upload-status" style="display:none;" class="ai-thinking">
+          <div class="ai-spinner"></div><span>Saving to Drive…</span>
+        </div>
+        <div id="drive-file-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;"></div>
       </div>
       <div>
         <label class="flbl">Twin Development</label>
@@ -1016,23 +1110,23 @@ canvas#growthChart{width:100%;max-height:160px;}
     </div>
     <div class="r-metrics" id="r-metrics"></div>
     <div class="r-body">
+      <div id="r-latest-wrap" style="display:none;margin-bottom:16px;">
+        <div class="r-latest-card">
+          <div class="rj-lbl" style="color:#A85D68;">✦ Latest Updates</div>
+          <div id="r-latest-content"></div>
+        </div>
+      </div>
       <div id="r-journal-wrap" style="display:none;">
         <div class="r-journal">
-          <div class="rj-lbl">✦ Memory Journal</div>
+          <div class="rj-lbl">✦ Memory Journal <span id="r-journal-date" style="text-transform:none;letter-spacing:normal;font-weight:600;color:#8A7674;"></span></div>
           <div class="rj-txt" id="r-journal-txt"></div>
         </div>
       </div>
       <div id="r-names-wrap" style="display:none;margin-bottom:16px;">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="r-names"></div>
       </div>
-      <div class="r-tbl-title"><span style="color:var(--gold);font-style:normal">✦</span> <span id="r-tbl-heading">Week-by-Week Log</span></div>
-      <div class="r-tbl-scroll">
-        <div class="r-hdr" style="padding:7px 0;">
-          <div>Wk</div><div>Date</div><div>Milestone</div><div>Twins</div>
-          <div>Vaccine</div><div>Dr Adkar</div><div>Sono</div><div>Blood</div>
-        </div>
-        <div id="r-rows"></div>
-      </div>
+      <div class="r-tbl-title"><span style="color:var(--gold);font-style:normal">✦</span> <span id="r-tbl-heading">Our Journey So Far</span></div>
+      <div id="r-story-rows"></div>
       <div id="r-footnotes" style="margin-top:10px;"></div>
     </div>
   </div>
@@ -1041,15 +1135,25 @@ canvas#growthChart{width:100%;max-height:160px;}
 <div id="toast"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════
+   CONFIGURATION — edit these lines directly, then
+   redeploy to GitHub Pages. Both phones read this same
+   hardcoded value on every load, so there's no risk of
+   different devices drifting to different URLs.
+   ═══════════════════════════════════════════════════════ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbz_ewTqEQDQCY-oOdBNI1Ch3_a2NvQ47O-ix7QCzEA9MDgIvNrlcFZY1Pvp8UZX2c4G/exec';
+const DRIVE_FOLDER_ID = '1IYKzlVn8cyuna5nClOq81YIDqPfvqvuT'; // extracted from your shared Drive folder link
+const GEMINI_KEY_DEFAULT = ''; // optional — can still be overridden per-device in Settings if left blank
+
 const DB_KEY='tej_aish_pregnancy_local_db';
 const LMP_STR='26-02-2026';
 const TOTAL=41;
-const RPT_MAX=37;
+const RPT_MAX=36;
 
-let GAS_URL=localStorage.getItem('tej_gas_url')||'';
-let GEMINI_KEY=localStorage.getItem('tej_gemini_key')||'';
+let GEMINI_KEY=localStorage.getItem('tej_gemini_key')||GEMINI_KEY_DEFAULT;
 let currentJourneyFilter='all';
-let kickCount=0;
+let kickCountA=0;
+let kickCountB=0;
 let kickStart=null;
 
 function parseDMY(s){const p=s.split('-').map(Number);return new Date(p[2],p[1]-1,p[0]);}
@@ -1063,37 +1167,41 @@ const BABY_EMOJI={1:'🌱',2:'🫘',3:'🌿',4:'🫐',5:'🌱',6:'🫛',7:'🍇'
 
 const BASE={
   journal:'Today we leave for Mahabaleshwar',
+  journaldate:'',
   boy:'',girl:'Anandi',unisex:'',
   birthplan:'',
+  drivelink:'',
+  freenotes:'',
   weeks:{
-    w1:{event:'Last Menstrual Period',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w2:{event:'Turning point 11/3 day, Triple BT Rounds',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'3x BTs on 11 March',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w3:{event:'Transfer on 17/03/2026',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w4:{event:'Wait .. .. .. Patience',feeling:'Hopeful yet scared',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w5:{event:'Pregnancy Confirmed by BHCG on 31/03',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'BHCG Confirmed (31-Mar)',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w6:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w7:{event:'Spotting noticed on 12/04; twins confirmed on 13/04',feeling:'',aheight:'6 mm',ahb:'122',aobs:'',bheight:'6 mm',bhb:'120',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (13/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w8:{event:'Second Sono to check internal injury, good recovery',feeling:'',aheight:'12 mm',ahb:'164',aobs:'',bheight:'12 mm',bhb:'158',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (20/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w9:{event:'Aaditee Clinic appt 28/04 NPB and TMP',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w10:{event:'10 W Sono and BT (CBC, B12 etc), all OK',feeling:'',aheight:'29 mm',ahb:'180',aobs:'',bheight:'30 mm',bhb:'182',bobs:'',vaccine:'',blood:'Dhande (05-May)',doctor:'',sono:'Arya Clinic (05/05 7:30 PM)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w11:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w12:{event:'NT Scan 18 May; Taaka 20 May, OGCT and DM BT All OK',feeling:'',aheight:'18 mm BPD',ahb:'173',aobs:'',bheight:'17.6 mm BPD',bhb:'173',bobs:'',vaccine:'',blood:'OGCT & DM at Dhande 18/5',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w13:{event:'Recover from Taaka',feeling:'Slight dizzy one night after dinner',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Green Array',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w14:{event:'NIPT done, All OK, Susten inj. ends and Meds reduced',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'NIPT at GreenArray',doctor:'29/5 at Neo',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w15:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w16:{event:'Dr Adkar Aptmt & Flu Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Influenza',blood:'',doctor:'16 June',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w17:{event:'General Scan on 18/6, saw baby faces; Gayatri Mantra Jap 25/6',feeling:'Very excited, saw baby faces and their movements, also relieved that everything is going very well.\n23 Jun Vishnusahasranam, highly responsive babies',aheight:'34 mm BPD',ahb:'140',aobs:'LowLyingPlacenta',bheight:'34 mm BPD',bhb:'160',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate 18 June',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w18:{event:'Weekend trip to Mahabi (TD+ND & AP+TP)',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w19:{event:'Anomaly postponed to 21 July',feeling:'BP 94/64 good, continue gestojoy 400, lonopin alternating ata; Growth size both together estimated at 22 weeks',aheight:'',ahb:'',aobs:'Growth size at 22 weeks',bheight:'',bhb:'',bobs:'Growth size at 22 weeks',vaccine:'',blood:'As per prescription at Dhande',doctor:'1 July Dr Adkar 6 pm',sono:'Anomaly scheduled at 21 week',report_summary:'',bp:'94/64',weight:'',medications:'Gestojoy 400, Lonopin alt days',kicks:''},
-    w20:{event:'TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Rescheduled',blood:'',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w21:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'TT Vax on 22/07',blood:'',doctor:'22/07',sono:'Arya Anomaly 21/07',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w0:{event:'Last Menstrual Period',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w1:{event:'Turning point 11/3 day, Triple BT Rounds',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'3x BTs on 11 March',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w2:{event:'Transfer on 17/03/2026',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w3:{event:'Wait .. .. .. Patience',feeling:'Hopeful yet scared',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w4:{event:'Pregnancy Confirmed by BHCG on 31/03',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'BHCG Confirmed (31-Mar)',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w5:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w6:{event:'Spotting noticed on 12/04; twins confirmed on 13/04',feeling:'',aheight:'6 mm',ahb:'122',aobs:'',bheight:'6 mm',bhb:'120',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (13/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w7:{event:'Second Sono to check internal injury, good recovery',feeling:'',aheight:'12 mm',ahb:'164',aobs:'',bheight:'12 mm',bhb:'158',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate (20/04)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w8:{event:'Aaditee Clinic appt 28/04 NPB and TMP',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w9:{event:'10 W Sono and BT (CBC, B12 etc), all OK',feeling:'',aheight:'29 mm',ahb:'180',aobs:'',bheight:'30 mm',bhb:'182',bobs:'',vaccine:'',blood:'Dhande (05-May)',doctor:'',sono:'Arya Clinic (05/05 7:30 PM)',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w10:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w11:{event:'NT Scan 18 May; Taaka 20 May, OGCT and DM BT All OK',feeling:'',aheight:'18 mm BPD',ahb:'173',aobs:'',bheight:'17.6 mm BPD',bhb:'173',bobs:'',vaccine:'',blood:'OGCT & DM at Dhande 18/5',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w12:{event:'Recover from Taaka',feeling:'Slight dizzy one night after dinner',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Green Array',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w13:{event:'NIPT done, All OK, Susten inj. ends and Meds reduced',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'NIPT at GreenArray',doctor:'29/5 at Neo',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w14:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w15:{event:'Dr Adkar Aptmt & Flu Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Influenza',blood:'',doctor:'16 June',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w16:{event:'General Scan on 18/6, saw baby faces; Gayatri Mantra Jap 25/6',feeling:'Very excited, saw baby faces and their movements, also relieved that everything is going very well.\n23 Jun Vishnusahasranam, highly responsive babies',aheight:'34 mm BPD',ahb:'140',aobs:'LowLyingPlacenta',bheight:'34 mm BPD',bhb:'160',bobs:'',vaccine:'',blood:'',doctor:'',sono:'Bhate 18 June',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w17:{event:'Weekend trip to Mahabi (TD+ND & AP+TP)',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w18:{event:'Anomaly postponed to 21 July',feeling:'BP 94/64 good, continue gestojoy 400, lonopin alternating ata; Growth size both together estimated at 22 weeks',aheight:'',ahb:'',aobs:'Growth size at 22 weeks',bheight:'',bhb:'',bobs:'Growth size at 22 weeks',vaccine:'',blood:'As per prescription at Dhande',doctor:'1 July Dr Adkar 6 pm',sono:'Anomaly scheduled at 21 week',report_summary:'',bp:'94/64',weight:'',medications:'Gestojoy 400, Lonopin alt days',kicks:''},
+    w19:{event:'TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Rescheduled',blood:'',doctor:'',sono:'At Arya',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w20:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'TT Vax on 22/07',blood:'',doctor:'22/07',sono:'Arya Anomaly 21/07',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w21:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w22:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w23:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w24:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Get prescription',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w23:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'Get prescription',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w24:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w25:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w26:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w27:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w28:{event:'Booster TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Booster TT',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w27:{event:'Booster TT Vax',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'Booster TT',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w28:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w29:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w30:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w31:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
@@ -1101,12 +1209,11 @@ const BASE={
     w33:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w34:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w35:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w36:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w37:{event:'Tentative Delivery to be scheduled at Neo',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w36:{event:'Tentative Delivery to be scheduled at Neo',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
+    w37:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w38:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
     w39:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w40:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''},
-    w41:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''}
+    w40:{event:'',feeling:'',aheight:'',ahb:'',aobs:'',bheight:'',bhb:'',bobs:'',vaccine:'',blood:'',doctor:'',sono:'',report_summary:'',bp:'',weight:'',medications:'',kicks:''}
   }
 };
 
@@ -1159,7 +1266,7 @@ function initDB(){
     try{
       const s=JSON.parse(raw);
       if(s&&typeof s==='object'){
-        ['journal','boy','girl','unisex','birthplan'].forEach(function(k){if(s[k]&&s[k].toString().trim())db[k]=s[k];});
+        ['journal','journaldate','boy','girl','unisex','birthplan','drivelink','freenotes'].forEach(function(k){if(s[k]&&s[k].toString().trim())db[k]=s[k];});
         if(s.weeks){
           for(const k in s.weeks){
             if(!db.weeks[k])db.weeks[k]=blankWeek();
@@ -1175,7 +1282,7 @@ function initDB(){
     }catch(e){console.error('DB load:',e);}
   }
 
-  for(let i=1;i<=TOTAL;i++){const k='w'+i;if(!db.weeks[k])db.weeks[k]=blankWeek();}
+  for(let i=0;i<TOTAL;i++){const k='w'+i;if(!db.weeks[k])db.weeks[k]=blankWeek();}
   if(!db.bag||!db.bag.length)db.bag=JSON.parse(JSON.stringify(BASE_BAG));
   if(!db.directory||!db.directory.length)db.directory=JSON.parse(JSON.stringify(BASE_DIR));
   if(!db.products)db.products=[];
@@ -1226,15 +1333,16 @@ async function syncAllToSheet(){
   setSyncStatus('syncing','Syncing…');
   try{
     const weekRows=[];
-    for(let i=1;i<=TOTAL;i++){
+    for(let i=0;i<TOTAL;i++){
       const k='w'+i;
       weekRows.push(Object.assign({week:k},db.weeks[k]));
     }
     await gasPost({action:'bulk_weeks',sheet:'weeks',rows:weekRows});
     const metaRows=[
-      {key:'journal',value:db.journal},
+      {key:'journal',value:db.journal},{key:'journaldate',value:db.journaldate||''},
       {key:'boy',value:db.boy},{key:'girl',value:db.girl},
-      {key:'unisex',value:db.unisex},{key:'birthplan',value:db.birthplan||''}
+      {key:'unisex',value:db.unisex},{key:'birthplan',value:db.birthplan||''},
+      {key:'drivelink',value:db.drivelink||''},{key:'freenotes',value:db.freenotes||''}
     ];
     for(const m of metaRows)await gasPost({action:'upsert_meta',sheet:'meta',row:m});
     for(const item of db.bag)await gasPost({action:'upsert_row',sheet:'nest',row:item});
@@ -1264,10 +1372,13 @@ function loadFromSheet(){
     gasRead('meta',function(mrows){
       mrows.forEach(function(r){
         if(r.key==='journal'&&r.value)db.journal=r.value;
+        if(r.key==='journaldate'&&r.value)db.journaldate=r.value;
         if(r.key==='girl'&&r.value)db.girl=r.value;
         if(r.key==='boy'&&r.value)db.boy=r.value;
         if(r.key==='unisex'&&r.value)db.unisex=r.value;
         if(r.key==='birthplan'&&r.value)db.birthplan=r.value;
+        if(r.key==='drivelink'&&r.value)db.drivelink=r.value;
+        if(r.key==='freenotes'&&r.value)db.freenotes=r.value;
       });
       gasRead('nest',function(nrows){
         if(nrows.length){
@@ -1302,7 +1413,7 @@ function loadFromSheet(){
                 krows.forEach(function(r){
                   if(!r.id)return;
                   const idx=db.kicklog.findIndex(function(k){return k.id===r.id;});
-                  const merged={id:r.id,week:r.week||'',date:r.date||'',count:r.count||0,duration_mins:r.duration_mins||0,notes:r.notes||''};
+                  const merged={id:r.id,week:r.week||'',date:r.date||'',time:r.time||'',count_a:r.count_a||0,count_b:r.count_b||0,count:r.count||0,duration_mins:r.duration_mins||0,notes:r.notes||''};
                   if(idx>=0)db.kicklog[idx]=merged;else db.kicklog.push(merged);
                 });
                 // newest first
@@ -1322,7 +1433,10 @@ function loadFromSheet(){
 function getMetrics(){
   const now=todayMid();
   const days=Math.floor((now-LMP)/86400000);
-  const week=Math.max(1,Math.floor(days/7)+1);
+  // Clinical/Flo convention: completed weeks + remaining days (e.g. 19w6d)
+  // Week 0 = first 7 days (not yet 1 full week completed) — matches Flo and doctor scan reports.
+  // Data is stored under w0..w40 to match this convention exactly.
+  const week=Math.floor(days/7);
   const dow=(days%7)+1;
   const tEDD=addDays(LMP,259);
   const fEDD=addDays(LMP,280);
@@ -1340,6 +1454,9 @@ function renderAll(){
   renderKickLog();
   renderBirthPlan();
   renderNames();
+  renderDriveLink();
+  renderFreeNotes();
+  renderJournal();
   drawGrowthChart();
 }
 
@@ -1385,11 +1502,41 @@ function renderToday(){
 
 function hasData(d){return WEEK_FIELDS.some(function(f){return d[f]&&d[f].toString().trim();});}
 
+/* Translates a week's raw logged fields into warm, family-readable lines.
+   Used by the report's "Latest Updates" card so relatives get the feeling
+   of the update, not a clinical field dump. Default tone is reassuring and
+   gentle — mentions checks/appointments happened and things are fine,
+   without medical jargon or raw values, unless the couple wrote their own
+   milestone/feeling text (which is always shown as-is, in their own words). */
+function warmWeekSummary(d){
+  const lines=[];
+  if(d.event)lines.push('✨ '+d.event);
+  if(d.feeling)lines.push('🌸 "'+d.feeling+'"');
+
+  const checksHappened=[];
+  if(d.doctor)checksHappened.push('a doctor visit');
+  if(d.sono)checksHappened.push('a scan');
+  if(d.blood)checksHappened.push('a blood test');
+  if(d.vaccine)checksHappened.push('a vaccine');
+  if(checksHappened.length){
+    const list=checksHappened.length===1?checksHappened[0]:
+      checksHappened.slice(0,-1).join(', ')+' and '+checksHappened[checksHappened.length-1];
+    lines.push('🩺 This week included '+list+' — all part of the routine care plan.');
+  }
+
+  const hA=d.aheight||d.ahb,hB=d.bheight||d.bhb;
+  if(hA||hB){
+    lines.push('👶 Both babies were checked and are growing well.');
+  }
+
+  return lines;
+}
+
 function renderWeekCards(){
   const m=getMetrics();const cur=m.week;
   const hook=document.getElementById('week-cards');
   hook.innerHTML='';
-  for(let w=1;w<=TOTAL;w++){
+  for(let w=0;w<TOTAL;w++){
     const k='w'+w;
     const d=db.weeks[k]||{};
     const data=hasData(d);
@@ -1399,8 +1546,8 @@ function renderWeekCards(){
     if(currentJourneyFilter==='doctor'&&!d.doctor)continue;
     if(currentJourneyFilter==='milestone'&&!d.event)continue;
 
-    const wDate=addDays(LMP,(w-1)*7);
-    const ph=w<=12?'wcp1':w<=26?'wcp2':'wcp3';
+    const wDate=addDays(LMP,w*7);
+    const ph=w<=11?'wcp1':w<=25?'wcp2':'wcp3';
     const past=w<cur&&!isCur?' wcpast':'';
     const pillCls='wc-pill '+ph+past+(isCur?' wccur':'');
 
@@ -1480,7 +1627,7 @@ function drawGrowthChart(){
   ctx.scale(dpr,dpr);
 
   const dataA=[],dataB=[];
-  for(let w=1;w<=TOTAL;w++){
+  for(let w=0;w<TOTAL;w++){
     const d=db.weeks['w'+w]||{};
     const parseSize=function(v){if(!v)return null;const n=parseFloat(v);return isNaN(n)?null:n;};
     const a=parseSize(d.aheight),b=parseSize(d.bheight);
@@ -1500,7 +1647,7 @@ function drawGrowthChart(){
   const pad={l:30,r:10,t:10,b:20};
   const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
 
-  const toX=function(w){return pad.l+(w-1)/(TOTAL-1)*cW;};
+  const toX=function(w){return pad.l+w/(TOTAL-1)*cW;};
   const toY=function(v){return pad.t+cH-(v/maxV)*cH;};
 
   ctx.strokeStyle='rgba(201,123,132,.12)';
@@ -1531,7 +1678,7 @@ function drawGrowthChart(){
 
 function openEditor(w){
   const d=db.weeks['w'+w]||{};
-  const wDate=addDays(LMP,(w-1)*7);
+  const wDate=addDays(LMP,w*7);
   document.getElementById('ew').value=w;
   document.getElementById('m-title').textContent='Week '+w+' — Entry';
   document.getElementById('m-sub').textContent=fmt(wDate,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -1548,6 +1695,9 @@ function openEditor(w){
     document.getElementById('ai-result-box').style.display='block';
     document.getElementById('ai-result-text').textContent=d.report_summary;
   }
+  document.getElementById('drive-file-inp').value='';
+  document.getElementById('drive-upload-status').style.display='none';
+  loadWeekFiles(w);
   document.getElementById('editor-modal').classList.add('open');
   document.getElementById('editor-modal').scrollTop=0;
 }
@@ -1617,30 +1767,45 @@ function saveVital(field,val){
   if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
 }
 
-function recordKick(){
+function recordKick(twin){
   if(!kickStart)kickStart=new Date();
-  kickCount++;
-  document.getElementById('kick-num').textContent=kickCount;
+  if(twin==='a')kickCountA++;else kickCountB++;
+  document.getElementById('kick-num-a').textContent=kickCountA;
+  document.getElementById('kick-num-b').textContent=kickCountB;
   if(navigator.vibrate)navigator.vibrate(50);
 }
-function resetKicks(){kickCount=0;kickStart=null;document.getElementById('kick-num').textContent='0';}
+function resetKicks(){
+  kickCountA=0;kickCountB=0;kickStart=null;
+  document.getElementById('kick-num-a').textContent='0';
+  document.getElementById('kick-num-b').textContent='0';
+}
 function saveKickSession(){
-  if(!kickCount){toast('No kicks recorded yet',true);return;}
+  if(!kickCountA&&!kickCountB){toast('No kicks recorded yet',true);return;}
   const m=getMetrics();
-  const dur=kickStart?Math.round((new Date()-kickStart)/60000):0;
-  const entry={id:'k'+Date.now(),week:m.week,date:new Date().toLocaleDateString('en-IN'),count:kickCount,duration_mins:dur,notes:''};
+  const now=new Date();
+  const dur=kickStart?Math.round((now-kickStart)/60000):0;
+  const entry={
+    id:'k'+Date.now(),week:m.week,
+    date:now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+    time:now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+    count_a:kickCountA,count_b:kickCountB,count:kickCountA+kickCountB,
+    duration_mins:dur,notes:''
+  };
   db.kicklog.unshift(entry);
   syncDB();
   renderKickLog();
   resetKicks();
   if(GAS_URL)gasPost({action:'upsert_row',sheet:'kicklog',row:entry});
-  toast('✦ Session saved — '+entry.count+' kicks in '+dur+' min');
+  toast('✦ Session saved — A:'+entry.count_a+' · B:'+entry.count_b+' in '+dur+' min');
 }
 function renderKickLog(){
   const list=document.getElementById('kick-log-list');
   if(!db.kicklog||!db.kicklog.length){list.innerHTML='<div style="font-size:.65rem;color:var(--stone)">No sessions logged yet.</div>';return;}
   list.innerHTML=db.kicklog.slice(0,20).map(function(e){
-    return '<div class="checklist-item"><div style="flex:1;"><div style="font-size:.7rem;font-weight:700;color:var(--txt);">W'+e.week+' — '+e.date+'</div><div style="font-size:.62rem;color:var(--stone);">👣 '+e.count+' kicks · '+e.duration_mins+' min</div></div></div>';
+    const hasSplit=(e.count_a!==undefined&&e.count_a!=='')||(e.count_b!==undefined&&e.count_b!=='');
+    const breakdown=hasSplit?('A:'+(e.count_a||0)+' · B:'+(e.count_b||0)):(e.count+' total');
+    const when=e.date+(e.time?' · '+e.time:'');
+    return '<div class="checklist-item"><div style="flex:1;"><div style="font-size:.7rem;font-weight:700;color:var(--txt);">W'+e.week+' — '+when+'</div><div style="font-size:.62rem;color:var(--stone);">👣 '+breakdown+' · '+e.duration_mins+' min</div></div></div>';
   }).join('');
 }
 
@@ -1714,6 +1879,93 @@ function fileToBase64(file){
     r.onload=function(){res(r.result.split(',')[1]);};
     r.onerror=rej;
     r.readAsDataURL(file);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   DRIVE FILE UPLOADS — per-week scan/document storage
+   Routed through the Apps Script (runs as the account
+   that already has edit access to DRIVE_FOLDER_ID), so
+   there's no separate login flow in the app itself.
+═══════════════════════════════════════════════ */
+let currentEditorFiles=[];
+
+async function uploadWeekFile(ev){
+  const file=ev.target.files[0];
+  if(!file)return;
+  if(!GAS_URL||GAS_URL.indexOf('PASTE_YOUR')!==-1){
+    toast('Drive upload needs the Apps Script connected — check GAS_URL in the code',true);
+    return;
+  }
+  if(currentEditorFiles.length>=3){
+    toast('Maximum 3 files per week — remove one first',true);
+    return;
+  }
+  const w=document.getElementById('ew').value;
+  document.getElementById('drive-upload-status').style.display='flex';
+  try{
+    const b64=await fileToBase64(file);
+    const res=await gasPost({
+      action:'upload_file',
+      rootFolderId:DRIVE_FOLDER_ID,
+      week:w,
+      filename:file.name,
+      mimeType:file.type||'application/octet-stream',
+      base64:b64
+    });
+    if(res&&res.ok){
+      toast('✦ Saved to Drive — Week '+w+' folder');
+      loadWeekFiles(w);
+    }else{
+      toast('Upload failed: '+(res&&res.error?res.error:'unknown error'),true);
+    }
+  }catch(e){
+    toast('Upload error: '+e.message,true);
+  }finally{
+    document.getElementById('drive-upload-status').style.display='none';
+    ev.target.value='';
+  }
+}
+
+function loadWeekFiles(w){
+  currentEditorFiles=[];
+  const listEl=document.getElementById('drive-file-list');
+  const countEl=document.getElementById('drive-upload-count');
+  listEl.innerHTML='';
+  countEl.textContent='';
+  if(!GAS_URL||GAS_URL.indexOf('PASTE_YOUR')!==-1)return;
+  gasPost({action:'list_week_files',week:w}).then(function(res){
+    if(res&&res.ok&&res.data){
+      currentEditorFiles=res.data;
+      renderWeekFileList();
+    }
+  }).catch(function(){});
+}
+
+function renderWeekFileList(){
+  const listEl=document.getElementById('drive-file-list');
+  const countEl=document.getElementById('drive-upload-count');
+  countEl.textContent=currentEditorFiles.length?currentEditorFiles.length+'/3':'';
+  listEl.innerHTML=currentEditorFiles.map(function(f){
+    const isImg=f.mimeType&&f.mimeType.indexOf('image')===0;
+    return '<div class="drive-file-item">'+
+      '<span class="drive-file-icon">'+(isImg?'🖼️':'📄')+'</span>'+
+      '<span class="drive-file-name">'+f.filename+'</span>'+
+      '<button class="drive-file-open" onclick="window.open(\''+f.viewUrl+'\',\'_blank\')">Open</button>'+
+      '<button class="drive-file-del" onclick="deleteWeekFile(\''+f.fileId+'\')">×</button>'+
+      '</div>';
+  }).join('');
+}
+
+function deleteWeekFile(fileId){
+  gasPost({action:'delete_file',fileId:fileId}).then(function(res){
+    if(res&&res.ok){
+      currentEditorFiles=currentEditorFiles.filter(function(f){return f.fileId!==fileId;});
+      renderWeekFileList();
+      toast('✦ File removed');
+    }else{
+      toast('Could not remove file: '+(res&&res.error?res.error:'unknown error'),true);
+    }
   });
 }
 
@@ -1945,6 +2197,46 @@ function saveNames(){
   toast('✦ Baby names saved');
 }
 
+function renderDriveLink(){
+  const link=db.drivelink||'';
+  document.getElementById('drive-link').value=link;
+  const wrap=document.getElementById('drive-link-open-wrap');
+  const a=document.getElementById('drive-link-open');
+  if(link){wrap.style.display='block';a.href=link;}else{wrap.style.display='none';}
+}
+function saveDriveLink(){
+  db.drivelink=document.getElementById('drive-link').value.trim();
+  syncDB();
+  renderDriveLink();
+  if(GAS_URL)gasPost({action:'upsert_meta',sheet:'meta',row:{key:'drivelink',value:db.drivelink}});
+  toast('✦ Drive link saved');
+}
+
+function renderFreeNotes(){document.getElementById('free-notes-txt').value=db.freenotes||'';}
+function saveFreeNotes(){
+  db.freenotes=document.getElementById('free-notes-txt').value;
+  syncDB();
+  if(GAS_URL)gasPost({action:'upsert_meta',sheet:'meta',row:{key:'freenotes',value:db.freenotes}});
+  toast('✦ Notes saved');
+}
+
+function renderJournal(){
+  document.getElementById('journal-txt').value=db.journal||'';
+  const lbl=document.getElementById('journal-date-lbl');
+  lbl.textContent=db.journaldate?('Last updated: '+db.journaldate):'Not saved yet';
+}
+function saveJournal(){
+  db.journal=document.getElementById('journal-txt').value;
+  db.journaldate=todayMid().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  syncDB();
+  renderJournal();
+  if(GAS_URL){
+    gasPost({action:'upsert_meta',sheet:'meta',row:{key:'journal',value:db.journal}});
+    gasPost({action:'upsert_meta',sheet:'meta',row:{key:'journaldate',value:db.journaldate}});
+  }
+  toast('✦ Journal entry saved');
+}
+
 function openReport(mode){
   const m=getMetrics();
   function mcH(cls,lcls,vcls){
@@ -1955,11 +2247,41 @@ function openReport(mode){
   }
   document.getElementById('r-metrics').innerHTML=mcH('rmc','rmc-lbl','rmc-val');
 
+  const latestWrap=document.getElementById('r-latest-wrap');
+  if(mode==='family'){
+    const weeksToShow=[m.week];
+    if(m.week>0)weeksToShow.unshift(m.week-1);
+    let latestHTML='';
+    let anyContent=false;
+    weeksToShow.forEach(function(w){
+      const k='w'+w;
+      const d=db.weeks[k]||{};
+      if(!hasData(d))return;
+      anyContent=true;
+      const wDate=addDays(LMP,w*7);
+      const lines=warmWeekSummary(d);
+      if(!lines.length)return;
+      latestHTML+='<div class="r-latest-week">'+
+        '<div class="r-latest-wk-hd"><span class="r-latest-wk-pill">W'+w+'</span><span class="r-latest-wk-date">'+fmt(wDate,{day:'numeric',month:'short'})+'</span></div>'+
+        lines.map(function(l){return '<div class="r-latest-line">'+l+'</div>';}).join('')+
+        '</div>';
+    });
+    if(anyContent){
+      latestWrap.style.display='block';
+      document.getElementById('r-latest-content').innerHTML=latestHTML;
+    }else{
+      latestWrap.style.display='none';
+    }
+  }else{
+    latestWrap.style.display='none';
+  }
+
   const journalWrap=document.getElementById('r-journal-wrap');
   const namesWrap=document.getElementById('r-names-wrap');
   if(mode==='family'&&db.journal&&db.journal.trim()){
     journalWrap.style.display='block';
     document.getElementById('r-journal-txt').textContent=db.journal;
+    document.getElementById('r-journal-date').textContent=db.journaldate||'';
   }else journalWrap.style.display='none';
 
   if(db.boy||db.girl||db.unisex){
@@ -1970,43 +2292,56 @@ function openReport(mode){
       '<div class="rmc"><span class="rmc-lbl">✨ Unisex</span><div class="rmc-val" style="font-size:.78rem">'+(db.unisex||'—')+'</div></div>';
   }else namesWrap.style.display='none';
 
-  document.getElementById('r-tbl-heading').textContent=mode==='doctor'?'Clinical Summary (W1–W'+m.week+')':'Milestone Chronicle (W1–W37)';
+  document.getElementById('r-tbl-heading').textContent=mode==='doctor'?'Clinical Summary (W0–W'+m.week+')':'Our Journey So Far';
   const maxW=mode==='doctor'?m.week:RPT_MAX;
-  const hook=document.getElementById('r-rows');
+  const hook=document.getElementById('r-story-rows');
   hook.innerHTML='';
   const footnotes=[];
-  for(let w=1;w<=maxW;w++){
+  for(let w=0;w<=maxW;w++){
     const k='w'+w;const d=db.weeks[k]||{};
     const clinical=d.vaccine||d.blood||d.doctor||d.sono||d.aheight||d.ahb||d.bheight||d.bhb;
     if(mode==='doctor'&&!clinical)continue;
     if(!hasData(d))continue;
     if(d.report_summary)footnotes.push('<strong>W'+w+':</strong> '+d.report_summary);
-    const wDate=addDays(LMP,(w-1)*7);
-    const ph=w<=12?'rp1':w<=26?'rp2':'rp3';
-    const hA=d.aheight||d.ahb||d.aobs,hB=d.bheight||d.bhb||d.bobs;
-    let twStr='<span style="color:#C0B0A0">—</span>';
-    if(hA||hB){
-      let t='<div class="rtw">';
-      if(hA){
-        const partsA=[d.aheight,d.ahb?d.ahb+'bpm':''].filter(Boolean).join(' · ');
-        t+='<span class="rta">A</span> '+(partsA||d.aobs||'')+'<br>';
+    const wDate=addDays(LMP,w*7);
+    const ph=w<=11?'':w<=25?' p2':' p3';
+
+    if(mode==='doctor'){
+      // Doctor mode stays genuinely clinical — real values, not narrative
+      const hA=d.aheight||d.ahb||d.aobs,hB=d.bheight||d.bhb||d.bobs;
+      let twLine='';
+      if(hA||hB){
+        const partsA=[d.aheight,d.ahb?d.ahb+' bpm':'',d.aobs].filter(Boolean).join(' · ');
+        const partsB=[d.bheight,d.bhb?d.bhb+' bpm':'',d.bobs].filter(Boolean).join(' · ');
+        twLine='<div class="r-story-baby">👶 '+(hA?'<span class="ta">A</span> '+partsA:'')+(hA&&hB?' &nbsp;·&nbsp; ':'')+(hB?'<span class="tb">B</span> '+partsB:'')+'</div>';
       }
-      if(hB){
-        const partsB=[d.bheight,d.bhb?d.bhb+'bpm':''].filter(Boolean).join(' · ');
-        t+='<span class="rtb">B</span> '+(partsB||d.bobs||'');
-      }
-      twStr=t+'</div>';
+      const clinLines=[];
+      if(d.vaccine)clinLines.push('💉 Vaccine: '+d.vaccine);
+      if(d.blood)clinLines.push('🧪 Blood: '+d.blood);
+      if(d.doctor)clinLines.push('🩺 Dr Adkar: '+d.doctor);
+      if(d.sono)clinLines.push('🖼️ Scan: '+d.sono);
+      hook.insertAdjacentHTML('beforeend',
+        '<div class="r-story-item"><div class="r-story-wk"><span class="r-story-wk-pill'+ph+'">W'+w+'</span><span class="r-story-wk-date">'+fmt(wDate,{day:'numeric',month:'short'})+'</span></div>'+
+        '<div class="r-story-content">'+
+        (d.event?'<div class="r-story-text">'+d.event+'</div>':'')+
+        twLine+
+        (clinLines.length?'<div class="r-story-check">'+clinLines.join(' &nbsp;·&nbsp; ')+'</div>':'')+
+        '</div></div>');
+    }else{
+      // Family mode — warm narrative, translated tone, same helper as Latest Updates
+      const lines=warmWeekSummary(d);
+      const evText=d.event?'<div class="r-story-text">'+(mode==='family'?d.event:d.event)+'</div>':'';
+      let filesHTML='';
+      // Files are loaded async per-week only when editor opens, so here we just
+      // note if this week has files via db cache if available (best-effort, non-blocking)
+      hook.insertAdjacentHTML('beforeend',
+        '<div class="r-story-item"><div class="r-story-wk"><span class="r-story-wk-pill'+ph+'">W'+w+'</span><span class="r-story-wk-date">'+fmt(wDate,{day:'numeric',month:'short'})+'</span></div>'+
+        '<div class="r-story-content">'+
+        (d.event?'<div class="r-story-text">'+d.event+'</div>':'')+
+        (d.feeling?'<div class="r-story-feel">"'+d.feeling+'"</div>':'')+
+        lines.filter(function(l){return l.indexOf('✨')!==0&&l.indexOf('🌸')!==0;}).map(function(l){return '<div class="r-story-check">'+l+'</div>';}).join('')+
+        '</div></div>');
     }
-    function cell(v){
-      const short=v&&v.length>18?v.substring(0,17)+'…':v;
-      return '<div class="rcell'+(v?'':' mt')+'" title="'+(v||'')+'">'+(short||'—')+'</div>';
-    }
-    const evShort=d.event&&d.event.length>60?d.event.substring(0,58)+'…':d.event;
-    hook.insertAdjacentHTML('beforeend',
-      '<div class="r-row"><div class="rw '+ph+'">W'+w+'</div>'+
-      '<div class="rd">'+fmt(wDate,{day:'numeric',month:'short'})+'</div>'+
-      '<div class="rev" title="'+(d.event||'')+'">'+(evShort||'<span style="color:#C0B0A0;font-weight:400">—</span>')+'</div>'+
-      '<div>'+twStr+'</div>'+cell(d.vaccine)+cell(d.doctor)+cell(d.sono)+cell(d.blood)+'</div>');
   }
   const modal=document.getElementById('report-view-modal');
   const fnHook=document.getElementById('r-footnotes');
@@ -2026,7 +2361,7 @@ function shareReportWhatsApp(){
   const m=getMetrics();
   let msg='❤️ *TejAish Twin Pregnancy Update* ❤️\n';
   msg+='Week '+m.week+' · Day '+m.dow+'/7 · '+m.left+' days to EDD\n\n';
-  if(db.journal)msg+='📝 *Journal:* '+db.journal+'\n\n';
+  if(db.journal)msg+='📝 *Journal'+(db.journaldate?' ('+db.journaldate+')':'')+':* '+db.journal+'\n\n';
   msg+='*Recent Milestones:*\n';
   for(let w=Math.max(1,m.week-3);w<=m.week;w++){
     const d=db.weeks['w'+w]||{};
@@ -2062,7 +2397,7 @@ function makeICS(inputId,label){
   const val=inpEl?inpEl.value.trim():'';
   if(!val){toast('Enter a value first',true);return;}
   const w=parseInt(document.getElementById('ew').value);
-  const wDate=addDays(LMP,(w-1)*7);
+  const wDate=addDays(LMP,w*7);
   const yr=wDate.getFullYear(),mo=String(wDate.getMonth()+1).padStart(2,'0'),dy=String(wDate.getDate()).padStart(2,'0');
   const ics=[
     'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TejAish//EN','CALSCALE:GREGORIAN',
@@ -2099,7 +2434,7 @@ function importDB(ev){
       if(imp&&imp.weeks){
         db=JSON.parse(JSON.stringify(BASE));
         db.bag=[];db.directory=[];db.products=[];db.kicklog=[];
-        ['journal','boy','girl','unisex','birthplan'].forEach(function(k){if(imp[k]&&imp[k].toString().trim())db[k]=imp[k];});
+        ['journal','journaldate','boy','girl','unisex','birthplan','drivelink','freenotes'].forEach(function(k){if(imp[k]&&imp[k].toString().trim())db[k]=imp[k];});
         if(imp.weeks){for(const k in imp.weeks){if(!db.weeks[k])db.weeks[k]=blankWeek();const iw=imp.weeks[k];WEEK_FIELDS.forEach(function(f){if(iw[f]&&iw[f].toString().trim())db.weeks[k][f]=iw[f];});}}
         if(imp.bag&&imp.bag.length)db.bag=imp.bag;
         if(imp.directory&&imp.directory.length)db.directory=imp.directory;
@@ -2113,28 +2448,6 @@ function importDB(ev){
   r.readAsText(file);
 }
 
-function saveGasUrl(){
-  GAS_URL=document.getElementById('gas-url').value.trim();
-  localStorage.setItem('tej_gas_url',GAS_URL);
-  if(GAS_URL){
-    setSyncStatus('syncing','Setting up sheet…');
-    toast('✦ Preparing your Google Sheet — this may take a moment…');
-    gasPost({action:'init_headers'}).then(function(res){
-      if(res && res.ok){
-        toast('✦ Sheet ready — pushing your existing data…');
-        syncAllToSheet();
-      } else {
-        setSyncStatus('error','Setup failed');
-        toast('Could not set up Sheet tabs: '+(res&&res.error?res.error:'unknown error — check the Script URL and that it\'s deployed with access "Anyone"'),true);
-      }
-    }).catch(function(e){
-      setSyncStatus('error','Setup failed');
-      toast('Connection error: '+e.message,true);
-    });
-  }else{
-    toast('✦ Script URL saved');
-  }
-}
 function saveGeminiKey(){
   GEMINI_KEY=document.getElementById('gemini-key').value.trim();
   localStorage.setItem('tej_gemini_key',GEMINI_KEY);
@@ -2166,16 +2479,36 @@ function toast(msg,err){
   t._t=setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.style.display='none';},400);},2800);
 }
 
+function initGasConnection(){
+  const lbl=document.getElementById('gas-status-lbl');
+  const isConfigured=GAS_URL && GAS_URL.indexOf('PASTE_YOUR') === -1 && GAS_URL.indexOf('script.google.com') !== -1;
+  if(!isConfigured){
+    if(lbl){lbl.textContent='Not configured';lbl.style.color='var(--stone)';}
+    setSyncStatus('','Offline');
+    return;
+  }
+  if(lbl){lbl.textContent='Connected ✓';lbl.style.color='var(--sage)';}
+  setSyncStatus('syncing','Connecting…');
+  gasPost({action:'init_headers'}).then(function(res){
+    if(res && res.ok){
+      loadFromSheet();
+    }else{
+      setSyncStatus('error','Setup failed');
+      toast('Sheet setup issue: '+(res&&res.error?res.error:'check the GAS_URL in the code'),true);
+    }
+  }).catch(function(e){
+    setSyncStatus('error','Connection failed');
+  });
+}
+
 window.onload=function(){
   initDB();
   renderAll();
-  const gasUrl=localStorage.getItem('tej_gas_url')||'';
   const gemKey=localStorage.getItem('tej_gemini_key')||'';
-  if(gasUrl){document.getElementById('gas-url').value=gasUrl;GAS_URL=gasUrl;}
   if(gemKey){document.getElementById('gemini-key').value=gemKey;GEMINI_KEY=gemKey;}
   const lastExp=localStorage.getItem('tej_last_export');
   if(lastExp)document.getElementById('vault-last-export').textContent='Last export: '+lastExp;
-  if(GAS_URL)loadFromSheet();else setSyncStatus('','Offline');
+  initGasConnection();
 };
 </script>
 </body>
