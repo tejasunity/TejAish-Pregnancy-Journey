@@ -1390,21 +1390,37 @@ function gasPost(payload){
 }
 
 let gasReadSeq=0;
-function gasRead(sheet,cb){
+// Every gasRead ALWAYS eventually calls back — either with real data, or with []
+// after one retry also fails/times out. No request can hang the sync forever.
+function gasReadAttempt(sheet,cb,attempt){
   if(!GAS_URL){cb([]);return;}
   // Date.now() alone only has millisecond resolution — firing multiple reads in the
   // same tick (parallel sync) can collide on the same name and silently drop one.
   // The counter guarantees every call gets a unique callback name.
   const cbName='gasRead_'+Date.now()+'_'+(gasReadSeq++);
   const s=document.createElement('script');
-  window[cbName]=function(res){
+  let settled=false;
+  function retryOrGiveUp(){
+    if(settled)return;
+    settled=true;
+    clearTimeout(timer);
     delete window[cbName];s.remove();
-    cb(res.ok?res.data:[]);
+    if(attempt<2)gasReadAttempt(sheet,cb,attempt+1);
+    else cb([]);
+  }
+  const timer=setTimeout(retryOrGiveUp,9000); // 9s ceiling per attempt, one retry = 18s worst case
+  window[cbName]=function(res){
+    if(settled)return;
+    settled=true;
+    clearTimeout(timer);
+    delete window[cbName];s.remove();
+    cb(res&&res.ok?res.data:[]);
   };
   s.src=GAS_URL+'?action=read&sheet='+sheet+'&callback='+cbName;
-  s.onerror=function(){delete window[cbName];s.remove();cb([]);};
+  s.onerror=retryOrGiveUp;
   document.head.appendChild(s);
 }
+function gasRead(sheet,cb){gasReadAttempt(sheet,cb,1);}
 
 async function syncAllToSheet(){
   if(!GAS_URL){toast('Add your Apps Script URL in Settings first',true);return;}
@@ -1523,7 +1539,10 @@ function loadFromSheet(){
   setSyncStatus('syncing','Loading…');
   const sheets=Object.keys(SHEET_MERGERS);
   let remaining=sheets.length;
-  sheets.forEach(function(sheet){
+  // Small stagger between requests (not a full serial wait) — keeps almost all of the
+  // parallel speed-up while easing burst load on Apps Script's per-user concurrency limit.
+  sheets.forEach(function(sheet,i){
+    setTimeout(function(){
     gasRead(sheet,function(rows){
       if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
       remaining--;
@@ -1533,6 +1552,7 @@ function loadFromSheet(){
         setSyncStatus('online','Synced ✓');
       }
     });
+    },i*90);
   });
 }
 
@@ -2730,16 +2750,18 @@ function initGasConnection(){
     loadFromSheet();
     return;
   }
+  // A failed/timed-out setup check should NOT block the whole sync — the tabs almost
+  // certainly already exist from an earlier successful run. Warn softly and continue.
   gasPost({action:'init_headers'}).then(function(res){
     if(res && res.ok){
       try{localStorage.setItem(HEADERS_OK_KEY,'1');}catch(e){}
-      loadFromSheet();
     }else{
-      setSyncStatus('error','Setup failed');
-      toast('Sheet setup issue: '+(res&&res.error?res.error:'check the GAS_URL in the code'),true);
+      toast('Sheet setup check failed (continuing anyway): '+(res&&res.error?res.error:'—'),true);
     }
+    loadFromSheet();
   }).catch(function(e){
-    setSyncStatus('error','Connection failed');
+    toast('Sheet setup check failed (continuing anyway)',true);
+    loadFromSheet();
   });
 }
 
