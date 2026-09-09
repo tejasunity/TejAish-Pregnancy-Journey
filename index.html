@@ -1946,16 +1946,24 @@ function saveVital(field,val){
 }
 
 // ── GD Glucose tracker ───────────────────────────────────────────────────────
-// DAILY schedule: fasting every day + ONE post-meal target that rotates
-// breakfast → lunch → dinner → repeat, every single calendar day (confirmed
-// 9 Sept 2026 = post-lunch, 10 Sept 2026 = post-dinner — anchored on that).
-const GD_ROTATION=['post_bf','post_lunch','post_dinner'];
-const GD_ANCHOR=new Date(2026,8,9); // 9 Sept 2026 → post_lunch (index 1)
-function gdSchedFor(d){
-  var dd=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-  var diff=Math.round((dd-GD_ANCHOR)/86400000);
-  var idx=(((diff+1)%3)+3)%3; // normalize so JS's negative-mod can't misfire on past dates
-  return ['fasting',GD_ROTATION[idx]];
+// Confirmed schedule: Mon/Wed/Fri only (matches the original Excel tracker's own
+// header: "Monitoring days: Monday / Wednesday / Friday"). Each test day = fasting
+// + ONE rotating post-meal target (Mon=breakfast, Wed=lunch, Fri=dinner — matches
+// 9 Sept 2026 [Wed] = post-lunch, confirmed).
+const GD_TEST_DOWS=[1,3,5]; // 0=Sun..6=Sat
+const GD_SCHED={1:['fasting','post_bf'],3:['fasting','post_lunch'],5:['fasting','post_dinner']};
+function gdSchedFor(d){return GD_SCHED[d.getDay()]||null;}
+function gdIsTestDay(d){return GD_TEST_DOWS.indexOf(d.getDay())>=0;}
+function gdPrevTestDay(from){var d=new Date(from);do{d.setDate(d.getDate()-1);}while(!gdIsTestDay(d));return d;}
+function gdNextTestDay(from){var d=new Date(from);do{d.setDate(d.getDate()+1);}while(!gdIsTestDay(d));return d;}
+// The test day closest to "from" — itself if it IS one, else whichever neighbour
+// (past or future) is fewer days away.
+function gdNearestTestDay(from){
+  if(gdIsTestDay(from))return new Date(from);
+  var back=new Date(from),fwd=new Date(from),bi=0,fi=0;
+  do{back.setDate(back.getDate()-1);bi++;}while(!gdIsTestDay(back));
+  do{fwd.setDate(fwd.getDate()+1);fi++;}while(!gdIsTestDay(fwd));
+  return fi<=bi?fwd:back;
 }
 const GD_META={fasting:{lbl:'Fasting',max:100},post_bf:{lbl:'After breakfast',max:130},post_lunch:{lbl:'After lunch',max:130},post_dinner:{lbl:'After dinner',max:130}};
 function gdKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -1965,11 +1973,18 @@ function gdEnsure(k){var g=gdGet(k);if(!g){g={id:'g'+k,date:k,fasting:'',post_bf
 function renderGlucose(){
   var host=document.getElementById('gd-days');if(!host)return;
   var today=todayMid();
-  var offs=[-1,0,1];var dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  host.innerHTML=offs.map(function(off,i){
-    var d=new Date(today);d.setDate(d.getDate()+off);
+  // Navigate by ACTUAL test day, not blind calendar yesterday/tomorrow — on a
+  // Mon/Wed/Fri schedule "tomorrow" is often not a test day at all.
+  var center=gdNearestTestDay(today);
+  var days=[gdPrevTestDay(center),center,gdNextTestDay(center)];
+  var dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  host.innerHTML=days.map(function(d,i){
     var k=gdKey(d);var g=gdGet(k)||{};var sched=gdSchedFor(d);
-    var when=off===-1?'Yesterday':off===0?'Today':'Tomorrow';
+    var isToday=(d.getTime()===today.getTime());
+    // Label by POSITION (previous/center/upcoming), not by comparing to today —
+    // on a non-test day the center box is the nearest test day, which can be
+    // either before or after today, so a today-relative label could duplicate.
+    var when=isToday?'Today':(i===0?'Previous test':i===1?'Nearest test':'Upcoming test');
     var cells=['fasting','post_bf','post_lunch','post_dinner'].map(function(f){
       var on=sched.indexOf(f)>=0;var val=g[f]||'';
       var high=on&&val!==''&&Number(val)>GD_META[f].max;
@@ -1980,7 +1995,7 @@ function renderGlucose(){
     '<div class="gd-cell gd-note-cell"><div class="gd-cell-lbl">Notes</div>'+
     '<input class="gd-inp gd-note-inp" type="text" placeholder="e.g. walked after lunch" value="'+gdEsc(g.notes||'')+'" '+
     'oninput="gdNoteInput(\''+k+'\',this.value)" onchange="saveGlucoseNote(\''+k+'\',this.value)"></div>';
-    return '<div class="gd-day'+(off===0?' today':'')+'"><div class="gd-day-hd"><div class="gd-day-dow">'+dn[d.getDay()]+
+    return '<div class="gd-day'+(isToday?' today':'')+'"><div class="gd-day-hd"><div class="gd-day-dow">'+dn[d.getDay()]+
       '</div><div class="gd-day-date">'+d.getDate()+' '+d.toLocaleDateString('en-IN',{month:'short'})+'</div><div class="gd-when">'+when+'</div></div>'+cells+'</div>';
   }).join('');
 }
