@@ -117,7 +117,7 @@ body{
 .week-hero{
   background:linear-gradient(135deg,#FDF2F0,#FBEFEC);
   border:1px solid rgba(201,123,132,.25);
-  border-radius:22px;padding:20px;margin-bottom:14px;
+  border-radius:22px;padding:13px 16px;margin-bottom:12px;
   position:relative;overflow:hidden;
 }
 .week-hero::before{
@@ -128,11 +128,11 @@ body{
 }
 .hero-week-num{
   font-family:'Aptos','Calibri','Segoe UI','Helvetica Neue',Arial,sans-serif;font-weight:700;
-  font-size:3.2rem;color:var(--goldl);
+  font-size:2.5rem;color:var(--goldl);
   line-height:1;letter-spacing:-2px;
 }
 .hero-week-sub{font-size:.62rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.14em;margin-top:2px;}
-.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:16px;}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px;}
 .hero-right{text-align:right;}
 .hero-edd{font-size:.62rem;font-weight:700;color:var(--stone);text-transform:uppercase;letter-spacing:.1em;}
 .hero-edd-val{font-size:.88rem;font-weight:800;color:var(--txt);margin-top:2px;}
@@ -155,24 +155,24 @@ body{
 
 .baby-size-strip{
   display:flex;align-items:center;gap:10px;
-  background:rgba(201,123,132,.06);border-radius:var(--radsm);padding:9px 12px;
-  margin-top:10px;
+  background:rgba(201,123,132,.06);border-radius:var(--radsm);padding:6px 11px;
+  margin-top:8px;
 }
 .baby-size-emoji{font-size:1.6rem;}
 .baby-size-text{font-size:.65rem;color:var(--stone);line-height:1.5;}
 .baby-size-text strong{color:var(--txt);font-weight:700;}
 
-.quick-log-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.quick-log-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px;}
 .ql-btn{
   background:var(--ink2);border:1px solid rgba(201,123,132,.12);
-  border-radius:var(--rad);padding:12px 6px;
+  border-radius:var(--rad);padding:10px 3px;
   display:flex;flex-direction:column;align-items:center;gap:5px;
   cursor:pointer;transition:background .15s,border-color .15s;
   -webkit-tap-highlight-color:transparent;
 }
 .ql-btn:hover,.ql-btn:active{background:var(--goldg);border-color:rgba(201,123,132,.3);}
-.ql-icon{font-size:1.4rem;}
-.ql-lbl{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--stone);}
+.ql-icon{font-size:1.2rem;}
+.ql-lbl{font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--stone);}
 
 .vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .vital-card{background:rgba(201,123,132,.06);border:1px solid rgba(201,123,132,.12);border-radius:var(--radsm);padding:10px 12px;}
@@ -534,6 +534,42 @@ canvas#growthChart{width:100%;max-height:160px;}
 }
 .kick-btn:active{transform:scale(.9);}
 
+/* ── Kick counter: shrunk to make room for the glucose card (overrides above) ── */
+.kick-counter-dual{padding:8px 4px 2px;gap:10px;}
+.kick-num{font-size:1.8rem;}
+.kick-btn{width:52px;height:52px;font-size:1.15rem;margin-top:7px;}
+
+/* ── GD glucose tracker ── */
+.gd-card{position:relative;}
+.gd-target{font-size:.56rem;font-weight:800;letter-spacing:.06em;color:var(--sage);text-transform:uppercase;margin-bottom:10px;}
+.gd-corner{position:absolute;top:-2px;right:0;font-size:.58rem;font-weight:800;color:var(--sky);background:var(--skyd);border:none;border-radius:20px;padding:5px 11px;cursor:pointer;}
+.gd-days{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.gd-day{background:rgba(201,123,132,.05);border:1px solid rgba(201,123,132,.12);border-radius:var(--radsm);padding:7px 5px;}
+.gd-day.today{background:rgba(62,143,208,.07);border-color:rgba(62,143,208,.3);}
+.gd-day-hd{text-align:center;margin-bottom:6px;}
+.gd-day-dow{font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--stone);}
+.gd-day-date{font-size:.72rem;font-weight:800;color:var(--txt);}
+.gd-day.today .gd-day-date{color:var(--sky);}
+.gd-when{font-size:.5rem;font-weight:800;color:var(--sky);text-transform:uppercase;letter-spacing:.08em;}
+.gd-cell{margin-bottom:4px;}
+.gd-cell-lbl{font-size:.46rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--stone);margin-bottom:2px;}
+.gd-inp{width:100%;background:#fff;border:1px solid rgba(201,123,132,.2);border-radius:8px;padding:5px 3px;text-align:center;font-size:.8rem;font-weight:800;color:var(--txt);font-family:inherit;}
+.gd-inp:focus{outline:none;border-color:var(--sky);}
+.gd-inp.high{background:#FDEAEA;border-color:#E06A6A;color:#B00000;}
+.gd-cell.off{opacity:.4;}
+.gd-cell.off .gd-inp{background:rgba(156,138,135,.12);border-style:dashed;color:var(--stone);}
+.gd-legend{font-size:.54rem;color:var(--stone);margin-top:10px;text-align:center;}
+
+/* ── Diary quick-capture ── */
+.diary-inp{width:100%;min-height:52px;background:rgba(201,123,132,.05);border:1px solid rgba(201,123,132,.15);border-radius:var(--radsm);padding:9px 11px;font-size:.72rem;color:var(--txt);font-family:inherit;resize:vertical;}
+.diary-inp:focus{outline:none;border-color:var(--sky);}
+.diary-hint{font-size:.54rem;color:var(--stone);margin-top:6px;line-height:1.5;}
+.diary-item{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(201,123,132,.1);font-size:.68rem;color:var(--txtsoft);}
+.diary-item .dt{font-size:.52rem;color:var(--stone);white-space:nowrap;font-weight:700;}
+.gd-hist-row{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;gap:4px;font-size:.62rem;padding:6px 4px;border-bottom:1px solid rgba(201,123,132,.1);}
+.gd-hist-row.hd{font-weight:800;color:var(--stone);text-transform:uppercase;font-size:.5rem;letter-spacing:.05em;}
+.gd-hist-row .hi{color:#B00000;font-weight:800;}
+
 @media print{
   @page{size:A4 portrait;margin:9mm 11mm;}
   html,body{
@@ -622,21 +658,16 @@ canvas#growthChart{width:100%;max-height:160px;}
       <div class="ql-btn" onclick="openQL('appointment')"><div class="ql-icon">🩺</div><div class="ql-lbl">Appt</div></div>
       <div class="ql-btn" onclick="openQL('medication')"><div class="ql-icon">💊</div><div class="ql-lbl">Meds</div></div>
       <div class="ql-btn" onclick="openQL('note')"><div class="ql-icon">📝</div><div class="ql-lbl">Note</div></div>
+      <div class="ql-btn" onclick="openDiary()"><div class="ql-icon">📓</div><div class="ql-lbl">Diary</div></div>
     </div>
   </div>
 
-  <div class="section-card">
-    <div class="eyebrow">Today's Vitals</div>
-    <div class="vitals-grid">
-      <div class="vital-card">
-        <div class="vital-lbl">Blood Pressure</div>
-        <input class="vital-inp" id="vital-bp" placeholder="e.g. 120/80" onblur="saveVital('bp',this.value)">
-      </div>
-      <div class="vital-card">
-        <div class="vital-lbl">Weight (kg)</div>
-        <input class="vital-inp" id="vital-wt" placeholder="e.g. 62.5" onblur="saveVital('weight',this.value)">
-      </div>
-    </div>
+  <div class="section-card gd-card">
+    <div class="eyebrow">Glucose — Gestational Diabetes</div>
+    <button class="gd-corner" onclick="openGlucoseHistory()">⋯ All readings</button>
+    <div class="gd-target">Target — Fasting 90–100 · Post-meal (1 hr) 120–130 mg/dL</div>
+    <div class="gd-days" id="gd-days"></div>
+    <div class="gd-legend">Tap a box to enter a reading · grey = not scheduled that day · red = over target</div>
   </div>
 
   <div class="section-card">
@@ -1016,6 +1047,38 @@ canvas#growthChart{width:100%;max-height:160px;}
   </div>
 </div>
 
+<div id="gd-hist-modal" class="overlay">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-hd">
+      <div><div class="modal-title">Glucose — All Readings</div><div class="modal-sub">Red = over target</div></div>
+      <button class="modal-close" onclick="closeGlucoseHistory()">×</button>
+    </div>
+    <div class="modal-body" id="gd-hist-body" style="max-height:58vh;overflow:auto;"></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeGlucoseHistory()">Close</button>
+      <button class="btn btn-sky" onclick="printGlucose()">📄 Export PDF for doctor</button>
+    </div>
+  </div>
+</div>
+
+<div id="diary-modal" class="overlay">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-hd">
+      <div><div class="modal-title">📓 Quick Diary</div><div class="modal-sub">Jot fast — filed into the right cells later</div></div>
+      <button class="modal-close" onclick="closeDiary()">×</button>
+    </div>
+    <div class="modal-body">
+      <textarea class="diary-inp" id="diary-inp" rows="3" placeholder="e.g. 'injection 12 Sep 9am; fasting 93; felt nauseous after lunch'"></textarea>
+      <div class="diary-hint">Notes collect here for quick capture — they get filed into the right weeks, glucose cells &amp; reminders.</div>
+      <div id="diary-list" style="margin-top:10px;max-height:36vh;overflow:auto;"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeDiary()">Close</button>
+      <button class="btn btn-sage" onclick="saveDiary()">Save note</button>
+    </div>
+  </div>
+</div>
+
 <div id="edit-dir-modal" class="overlay">
   <div class="modal-box" style="max-width:420px;">
     <div class="modal-hd">
@@ -1141,7 +1204,7 @@ canvas#growthChart{width:100%;max-height:160px;}
    hardcoded value on every load, so there's no risk of
    different devices drifting to different URLs.
    ═══════════════════════════════════════════════════════ */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz_ewTqEQDQCY-oOdBNI1Ch3_a2NvQ47O-ix7QCzEA9MDgIvNrlcFZY1Pvp8UZX2c4G/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx4BN4fVx3OGDCkyYAwT1XRywxcl5sh_B1jzrfD0SfqWHy1bS0lwUN3M_gJtrOa19xa/exec';
 const DRIVE_FOLDER_ID = '1IYKzlVn8cyuna5nClOq81YIDqPfvqvuT'; // extracted from your shared Drive folder link
 const GEMINI_KEY_DEFAULT = ''; // optional — can still be overridden per-device in Settings if left blank
 
@@ -1260,6 +1323,7 @@ let db={};
 function initDB(){
   db=JSON.parse(JSON.stringify(BASE));
   db.bag=[];db.directory=[];db.products=[];db.kicklog=[];
+  db.glucose=[];db.events=[];db.diary=[];
 
   const raw=localStorage.getItem(DB_KEY);
   if(raw){
@@ -1278,6 +1342,9 @@ function initDB(){
         if(s.directory&&s.directory.length)db.directory=s.directory;
         if(s.products&&s.products.length)db.products=s.products;
         if(s.kicklog&&s.kicklog.length)db.kicklog=s.kicklog;
+        if(s.glucose&&s.glucose.length)db.glucose=s.glucose;
+        if(s.events&&s.events.length)db.events=s.events;
+        if(s.diary&&s.diary.length)db.diary=s.diary;
       }
     }catch(e){console.error('DB load:',e);}
   }
@@ -1287,6 +1354,9 @@ function initDB(){
   if(!db.directory||!db.directory.length)db.directory=JSON.parse(JSON.stringify(BASE_DIR));
   if(!db.products)db.products=[];
   if(!db.kicklog)db.kicklog=[];
+  if(!db.glucose)db.glucose=[];
+  if(!db.events)db.events=[];
+  if(!db.diary)db.diary=[];
 
   syncDB();
 }
@@ -1419,9 +1489,40 @@ function loadFromSheet(){
                 // newest first
                 db.kicklog.sort(function(a,b){return (b.id>a.id)?1:-1;});
               }
-              syncDB();
-              renderAll();
-              setSyncStatus('online','Synced ✓');
+              gasRead('glucose',function(grows){
+                if(grows.length){
+                  grows.forEach(function(r){
+                    if(!r.id)return;
+                    const idx=db.glucose.findIndex(function(g){return g.id===r.id;});
+                    const merged={id:r.id,date:r.date||'',fasting:r.fasting||'',post_bf:r.post_bf||'',post_lunch:r.post_lunch||'',post_dinner:r.post_dinner||'',notes:r.notes||''};
+                    if(idx>=0)db.glucose[idx]=merged;else db.glucose.push(merged);
+                  });
+                }
+                gasRead('events',function(erows){
+                  if(erows.length){
+                    erows.forEach(function(r){
+                      if(!r.id)return;
+                      const idx=db.events.findIndex(function(e){return e.id===r.id;});
+                      const merged={id:r.id,date:r.date||'',time:r.time||'',title:r.title||'',type:r.type||'note',notes:r.notes||'',done:r.done==='true'||r.done===true};
+                      if(idx>=0)db.events[idx]=merged;else db.events.push(merged);
+                    });
+                  }
+                  gasRead('diary',function(dyrows){
+                    if(dyrows.length){
+                      dyrows.forEach(function(r){
+                        if(!r.id)return;
+                        const idx=db.diary.findIndex(function(x){return x.id===r.id;});
+                        const merged={id:r.id,date:r.date||'',text:r.text||'',filed:r.filed==='true'||r.filed===true};
+                        if(idx>=0)db.diary[idx]=merged;else db.diary.push(merged);
+                      });
+                      db.diary.sort(function(a,b){return (b.id>a.id)?1:-1;});
+                    }
+                    syncDB();
+                    renderAll();
+                    setSyncStatus('online','Synced ✓');
+                  });
+                });
+              });
             });
           });
         });
@@ -1478,9 +1579,8 @@ function renderToday(){
   document.getElementById('baby-size-txt').textContent=BABY_SIZES[sz]||'growing fast';
   document.getElementById('baby-emoji').textContent=BABY_EMOJI[sz]||'👶';
 
-  const wd=db.weeks['w'+m.week]||{};
-  if(wd.bp)document.getElementById('vital-bp').value=wd.bp;
-  if(wd.weight)document.getElementById('vital-wt').value=wd.weight;
+  renderGlucose();
+  renderDiary();
 
   const ul=document.getElementById('upcoming-list');
   const upcoming=[];
@@ -1691,9 +1791,11 @@ function openEditor(w){
   document.getElementById('ai-result-box').style.display='none';
   document.getElementById('ai-status').style.display='none';
   document.getElementById('report-pdf-inp').value='';
+  // Always reset the summary box to THIS week's value (blank if none). Without this,
+  // stale text from a previously-opened week leaks into saveWeek() and forward-fills.
+  document.getElementById('ai-result-text').textContent=d.report_summary||'';
   if(d.report_summary){
     document.getElementById('ai-result-box').style.display='block';
-    document.getElementById('ai-result-text').textContent=d.report_summary;
   }
   document.getElementById('drive-file-inp').value='';
   document.getElementById('drive-upload-status').style.display='none';
@@ -1766,6 +1868,109 @@ function saveVital(field,val){
   syncDB();
   if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
 }
+
+// ── GD Glucose tracker ───────────────────────────────────────────────────────
+// Staggered schedule (Dr Adkar's chart): each testing day = fasting + one rotating
+// meal. weekday 0=Sun..6=Sat → Mon=breakfast, Wed=lunch, Fri=dinner.
+const GD_SCHED={1:['fasting','post_bf'],3:['fasting','post_lunch'],5:['fasting','post_dinner']};
+const GD_META={fasting:{lbl:'Fasting',max:100},post_bf:{lbl:'After breakfast',max:130},post_lunch:{lbl:'After lunch',max:130},post_dinner:{lbl:'After dinner',max:130}};
+function gdKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function gdGet(k){return db.glucose.find(function(g){return g.date===k;});}
+function gdEnsure(k){var g=gdGet(k);if(!g){g={id:'g'+k,date:k,fasting:'',post_bf:'',post_lunch:'',post_dinner:'',notes:''};db.glucose.push(g);}return g;}
+
+function renderGlucose(){
+  var host=document.getElementById('gd-days');if(!host)return;
+  var today=todayMid();
+  var offs=[-1,0,1];var dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  host.innerHTML=offs.map(function(off,i){
+    var d=new Date(today);d.setDate(d.getDate()+off);
+    var k=gdKey(d);var g=gdGet(k)||{};var sched=GD_SCHED[d.getDay()];
+    var when=off===-1?'Yesterday':off===0?'Today':'Tomorrow';
+    var cells;
+    if(!sched){cells='<div style="font-size:.55rem;color:var(--stone);text-align:center;padding:16px 2px;">No test<br>scheduled</div>';}
+    else{cells=['fasting','post_bf','post_lunch','post_dinner'].map(function(f){
+      var on=sched.indexOf(f)>=0;var val=g[f]||'';
+      var high=on&&val!==''&&Number(val)>GD_META[f].max;
+      return '<div class="gd-cell'+(on?'':' off')+'"><div class="gd-cell-lbl">'+GD_META[f].lbl+'</div>'+
+        '<input class="gd-inp'+(high?' high':'')+'" inputmode="numeric" '+(on?'':'disabled ')+'value="'+val+'" '+
+        'oninput="gdInput(\''+k+'\',\''+f+'\',this.value)" onchange="saveGlucose(\''+k+'\',\''+f+'\',this.value)"></div>';
+    }).join('');}
+    return '<div class="gd-day'+(off===0?' today':'')+'"><div class="gd-day-hd"><div class="gd-day-dow">'+dn[d.getDay()]+
+      '</div><div class="gd-day-date">'+d.getDate()+' '+d.toLocaleDateString('en-IN',{month:'short'})+'</div><div class="gd-when">'+when+'</div></div>'+cells+'</div>';
+  }).join('');
+}
+var gdSheetTimer;
+// oninput: save EVERY keystroke to the phone instantly (survives an immediate app close).
+// Do NOT re-render here — that would drop keyboard focus mid-typing. Sheet push is debounced.
+function gdInput(k,field,val){
+  var g=gdEnsure(k);g[field]=(val||'').trim();
+  syncDB();
+  clearTimeout(gdSheetTimer);
+  gdSheetTimer=setTimeout(function(){if(GAS_URL)gasPost({action:'upsert_row',sheet:'glucose',row:g});},1000);
+}
+// onchange (leaving the cell): push to the Sheet immediately + re-render to apply the red highlight.
+function saveGlucose(k,field,val){
+  var g=gdEnsure(k);g[field]=(val||'').trim();
+  syncDB();
+  clearTimeout(gdSheetTimer);
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'glucose',row:g});
+  renderGlucose();
+}
+function gdSortedRows(){
+  return db.glucose.filter(function(g){return g.fasting||g.post_bf||g.post_lunch||g.post_dinner;})
+    .sort(function(a,b){return a.date<b.date?1:-1;});
+}
+function openGlucoseHistory(){
+  var rows=gdSortedRows();var body=document.getElementById('gd-hist-body');
+  if(!rows.length){body.innerHTML='<div style="padding:20px;text-align:center;color:var(--stone);font-size:.72rem;">No readings logged yet.</div>';}
+  else{body.innerHTML='<div class="gd-hist-row hd"><div>Date</div><div>Fasting</div><div>B\'fast</div><div>Lunch</div><div>Dinner</div></div>'+
+    rows.map(function(g){
+      function c(v,mx){if(!v)return '<div>—</div>';return '<div class="'+(Number(v)>mx?'hi':'')+'">'+v+'</div>';}
+      return '<div class="gd-hist-row"><div>'+new Date(g.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+'</div>'+
+        c(g.fasting,100)+c(g.post_bf,130)+c(g.post_lunch,130)+c(g.post_dinner,130)+'</div>';
+    }).join('');}
+  document.getElementById('gd-hist-modal').classList.add('open');
+}
+function closeGlucoseHistory(){document.getElementById('gd-hist-modal').classList.remove('open');}
+function printGlucose(){
+  var rows=gdSortedRows();
+  var body=rows.map(function(g){
+    function c(v,mx){if(!v)return '<td>—</td>';return '<td style="'+(Number(v)>mx?'color:#b00000;font-weight:bold;':'')+'">'+v+'</td>';}
+    return '<tr><td>'+new Date(g.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+'</td>'+
+      c(g.fasting,100)+c(g.post_bf,130)+c(g.post_lunch,130)+c(g.post_dinner,130)+'<td>'+(g.notes||'')+'</td></tr>';
+  }).join('');
+  var html='<html><head><title>Glucose Readings — Aishwarya</title><style>'+
+    'body{font-family:Arial,sans-serif;color:#222;padding:24px;}h1{font-size:18px;color:#A85D68;margin:0 0 2px;}'+
+    '.sub{color:#777;font-size:12px;margin-bottom:16px;}table{width:100%;border-collapse:collapse;font-size:13px;}'+
+    'th,td{border:1px solid #ddd;padding:7px 9px;text-align:center;}th{background:#D98895;color:#fff;font-size:11px;text-transform:uppercase;}'+
+    'td:last-child,th:last-child{text-align:left;}</style></head><body>'+
+    '<h1>Gestational Diabetes — Glucose Readings</h1><div class="sub">Aishwarya · Twin pregnancy · Target: fasting 90–100, post-meal (1 hr) 120–130 mg/dL · Generated '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</div>'+
+    '<table><tr><th>Date</th><th>Fasting</th><th>After breakfast</th><th>After lunch</th><th>After dinner</th><th>Notes</th></tr>'+
+    (body||'<tr><td colspan="6">No readings yet.</td></tr>')+'</table></body></html>';
+  var w=window.open('','_blank');
+  if(!w){toast('Allow pop-ups to export the PDF',true);return;}
+  w.document.write(html);w.document.close();w.focus();setTimeout(function(){w.print();},300);
+}
+
+// ── Diary quick-capture ──────────────────────────────────────────────────────
+function saveDiary(){
+  var inp=document.getElementById('diary-inp');var t=(inp.value||'').trim();if(!t)return;
+  var now=new Date();
+  var entry={id:'dy'+Date.now(),date:gdKey(now)+' '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),text:t,filed:false};
+  db.diary.unshift(entry);syncDB();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'diary',row:{id:entry.id,date:entry.date,text:entry.text,filed:'false'}});
+  inp.value='';renderDiary();toast('✦ Note saved to diary');
+}
+function renderDiary(){
+  var host=document.getElementById('diary-list');if(!host)return;
+  var items=(db.diary||[]).slice(0,6);
+  host.innerHTML=items.map(function(e){
+    return '<div class="diary-item"><span class="dt">'+(e.date||'')+'</span><span>'+(e.filed?'✓ ':'')+gdEsc(e.text)+'</span></div>';
+  }).join('');
+}
+function gdEsc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function openDiary(){renderDiary();document.getElementById('diary-modal').classList.add('open');setTimeout(function(){document.getElementById('diary-inp').focus();},80);}
+function closeDiary(){document.getElementById('diary-modal').classList.remove('open');}
 
 function recordKick(twin){
   if(!kickStart)kickStart=new Date();
