@@ -570,6 +570,8 @@ canvas#growthChart{width:100%;max-height:160px;}
 .diary-hint{font-size:.54rem;color:var(--stone);margin-top:6px;line-height:1.5;}
 .diary-item{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(201,123,132,.1);font-size:.68rem;color:var(--txtsoft);}
 .diary-item .dt{font-size:.52rem;color:var(--stone);white-space:nowrap;font-weight:700;}
+.diary-filed{font-size:.58rem;color:var(--sage);font-weight:700;margin-top:3px;}
+.diary-file-btn{font-size:.56rem;font-weight:800;color:var(--sky);background:var(--skyd);border:none;border-radius:20px;padding:3px 10px;margin-top:4px;cursor:pointer;}
 .gd-hist-row{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;gap:4px;font-size:.62rem;padding:6px 4px;border-bottom:1px solid rgba(201,123,132,.1);}
 .gd-hist-row.hd{font-weight:800;color:var(--stone);text-transform:uppercase;font-size:.5rem;letter-spacing:.05em;}
 .gd-hist-row .hi{color:#B00000;font-weight:800;}
@@ -2057,13 +2059,88 @@ function saveDiary(){
   db.diary.unshift(entry);syncDB();
   if(GAS_URL)gasPost({action:'upsert_row',sheet:'diary',row:{id:entry.id,date:entry.date,text:entry.text,filed:'false'}});
   inp.value='';renderDiary();toast('✦ Note saved to diary');
+  autoFileDiaryEntry(entry).catch(function(){}); // no Gemini key set -> silently stays a plain note
 }
 function renderDiary(){
   var host=document.getElementById('diary-list');if(!host)return;
   var items=(db.diary||[]).slice(0,6);
   host.innerHTML=items.map(function(e){
-    return '<div class="diary-item"><span class="dt">'+(e.date||'')+'</span><span>'+(e.filed?'✓ ':'')+gdEsc(e.text)+'</span></div>';
+    var status=e.filed?('<div class="diary-filed">✓ '+gdEsc(e.filedSummary||'filed')+'</div>')
+      :('<button class="diary-file-btn" onclick="autoFileDiaryEntry(db.diary.find(function(x){return x.id===\''+e.id+'\';}))">✨ Auto-file</button>');
+    return '<div class="diary-item"><span class="dt">'+(e.date||'')+'</span><div style="flex:1;"><div>'+gdEsc(e.text)+'</div>'+status+'</div></div>';
   }).join('');
+}
+// Sends a diary note to Gemini (same key/model pattern as report analysis) to pull out
+// structured pieces — a glucose reading, or content for a specific week field — and
+// files each into the right place automatically. No key configured -> stays a plain note.
+async function autoFileDiaryEntry(entry){
+  if(!entry)return;
+  const key=GEMINI_KEY||localStorage.getItem('tej_gemini_key')||'';
+  if(!key)return;
+  const m=getMetrics();
+  const todayISO=todayMid().toISOString().slice(0,10);
+  const prompt='You are filing a quick pregnancy-tracker diary note into structured data. '+
+    'Today is '+todayISO+' (pregnancy week '+m.week+'). LMP is 26 Feb 2026. '+
+    'The note may mention: a glucose reading (fasting / post-breakfast / post-lunch / post-dinner, mg/dL), '+
+    'an injection/vaccine, an appointment, a doctor visit, a scan/sono, blood test, medication, or a general feeling/event. '+
+    'It may name a specific date (e.g. "12 Sept") — use it; otherwise use today. '+
+    'Respond with ONLY raw JSON, no markdown fences, exactly this shape: '+
+    '{"date":"YYYY-MM-DD","glucose":{"fasting":null,"post_bf":null,"post_lunch":null,"post_dinner":null},'+
+    '"week_field":null,"week_text":null,"summary":""} '+
+    'week_field must be one of: event, feeling, vaccine, blood, doctor, sono, medications — or null if nothing besides glucose applies. '+
+    'Only fill glucose numbers explicitly stated; leave the rest null. summary is one short sentence describing what you filed (or "nothing to file" if the note has no fileable data).\n\n'+
+    'Note: "'+entry.text.replace(/"/g,'\\"')+'"';
+  const payload={contents:[{parts:[{text:prompt}]}]};
+  const models=['gemini-flash-latest','gemini-2.5-flash','gemini-3.5-flash'];
+  let json=null;
+  for(const model of models){
+    try{
+      const resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+      });
+      const data=await resp.json();
+      const part=data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0];
+      if(part&&part.text){
+        let raw=part.text.trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```\s*$/,'').trim();
+        json=JSON.parse(raw);
+        break;
+      }
+    }catch(e){/* try next model */}
+  }
+  if(!json)return;
+  const filedBits=[];
+  const g=json.glucose||{};
+  const hasGlucose=['fasting','post_bf','post_lunch','post_dinner'].some(function(f){return g[f]!=null&&g[f]!=='';});
+  if(hasGlucose){
+    const dISO=json.date||todayISO;
+    const d=new Date(dISO+'T00:00:00');
+    const k=gdKey(d);
+    const row=gdEnsure(k);
+    ['fasting','post_bf','post_lunch','post_dinner'].forEach(function(f){
+      if(g[f]!=null&&g[f]!==''){row[f]=String(g[f]);filedBits.push(GD_META[f].lbl+' '+g[f]);}
+    });
+    syncDB();
+    if(GAS_URL)gasPost({action:'upsert_row',sheet:'glucose',row:row});
+  }
+  if(json.week_field&&json.week_text){
+    const dISO=json.date||todayISO;
+    const d=new Date(dISO+'T00:00:00');
+    const days=Math.floor((d-LMP)/86400000);
+    const wk=Math.max(0,Math.floor(days/7));
+    const k='w'+wk;
+    if(!db.weeks[k])db.weeks[k]=blankWeek();
+    const existing=db.weeks[k][json.week_field]||'';
+    db.weeks[k][json.week_field]=existing?existing+'\n'+json.week_text:json.week_text;
+    syncDB();
+    if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
+    filedBits.push(json.week_field+' (W'+wk+')');
+  }
+  entry.filed=true;
+  entry.filedSummary=json.summary||(filedBits.length?filedBits.join(', '):'nothing to file');
+  syncDB();
+  if(GAS_URL)gasPost({action:'upsert_row',sheet:'diary',row:{id:entry.id,date:entry.date,text:entry.text,filed:'true'}});
+  renderGlucose();renderDiary();
+  if(filedBits.length)toast('✨ Filed: '+filedBits.join(' · '));
 }
 function gdEsc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function openDiary(){renderDiary();document.getElementById('diary-modal').classList.add('open');setTimeout(function(){document.getElementById('diary-inp').focus();},80);}
@@ -2694,12 +2771,59 @@ function shareWhatsApp(){
   window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
 }
 
+// Date-anchoring fix: a week form entry like "injection on 12 Sept" used to always
+// calendar/reminder on the WEEK'S start date (e.g. the 9th), never the 12th actually
+// typed. This extracts a real date from the free text when one is present.
+const MONTH_MAP={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sept:8,sep:8,oct:9,nov:10,dec:11};
+function parseDatesFromText(text,refYear){
+  const found=[];
+  const mo='jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec';
+  let m;
+  const reA=new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th)?\\s*('+mo+')[a-z]*\\.?\\s*(\\d{4})?','gi');
+  while((m=reA.exec(text))){
+    const day=parseInt(m[1],10),mon=MONTH_MAP[m[2].toLowerCase()],yr=m[3]?parseInt(m[3],10):refYear;
+    if(day>=1&&day<=31)found.push({index:m.index,date:new Date(yr,mon,day)});
+  }
+  const reB=new RegExp('\\b('+mo+')[a-z]*\\.?\\s*(\\d{1,2})(?:st|nd|rd|th)?\\s*(\\d{4})?','gi');
+  while((m=reB.exec(text))){
+    const mon=MONTH_MAP[m[1].toLowerCase()],day=parseInt(m[2],10),yr=m[3]?parseInt(m[3],10):refYear;
+    if(day>=1&&day<=31)found.push({index:m.index,date:new Date(yr,mon,day)});
+  }
+  const reC=/\b(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?\b/g;
+  while((m=reC.exec(text))){
+    const day=parseInt(m[1],10),mon=parseInt(m[2],10)-1;
+    if(mon<0||mon>11||day<1||day>31)continue;
+    const yr=m[3]?(m[3].length===2?2000+parseInt(m[3],10):parseInt(m[3],10)):refYear;
+    found.push({index:m.index,date:new Date(yr,mon,day)});
+  }
+  return found;
+}
+const ICS_KEYWORDS={'Vaccine':['vax','vaccine','inj','dose','tt '],'Blood Test':['blood','bt','ogct','nipt','cbc','b12','test'],'Dr Adkar':['doctor','dr ','adkar','appt','visit'],'Sono Scan':['sono','scan','ultrasound','doppler','anomaly','usg']};
+function extractEventDate(text,label,refYear){
+  const dates=parseDatesFromText(text,refYear);
+  if(!dates.length)return null;
+  if(dates.length===1)return dates[0].date;
+  // Multiple dates in the same field (e.g. "OGCT 7 sept and Vax 12 sept") — pick
+  // whichever date sits closest to this field's own keyword, not just the first one.
+  const kws=ICS_KEYWORDS[label]||[];
+  const lower=text.toLowerCase();
+  let best=dates[0],bestDist=Infinity;
+  dates.forEach(function(d){
+    kws.forEach(function(kw){
+      const idx=lower.indexOf(kw);
+      if(idx>=0){const dist=Math.abs(idx-d.index);if(dist<bestDist){bestDist=dist;best=d;}}
+    });
+  });
+  return best.date;
+}
 function makeICS(inputId,label){
   const inpEl=document.getElementById(inputId);
   const val=inpEl?inpEl.value.trim():'';
   if(!val){toast('Enter a value first',true);return;}
   const w=parseInt(document.getElementById('ew').value);
-  const wDate=addDays(LMP,w*7);
+  const weekStart=addDays(LMP,w*7);
+  const foundDate=extractEventDate(val,label,weekStart.getFullYear());
+  const wDate=foundDate||weekStart;
   const yr=wDate.getFullYear(),mo=String(wDate.getMonth()+1).padStart(2,'0'),dy=String(wDate.getDate()).padStart(2,'0');
   const ics=[
     'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TejAish//EN','CALSCALE:GREGORIAN',
@@ -2713,7 +2837,7 @@ function makeICS(inputId,label){
   const uri='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
   const a=document.createElement('a');a.href=uri;a.download='W'+w+'_'+label.replace(/\s+/g,'_')+'.ics';
   a.style.display='none';document.body.appendChild(a);a.click();document.body.removeChild(a);
-  toast('📅 Calendar reminder downloaded');
+  toast(foundDate?('📅 Set for '+dy+'/'+mo+' (found in your text)'):('📅 Set for week start '+dy+'/'+mo+' — no date found in the text'));
 }
 
 function exportDB(){
