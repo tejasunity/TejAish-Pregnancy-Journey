@@ -1487,24 +1487,31 @@ async function syncAllToSheet(){
 // gasRead fires all of these AT ONCE instead of waiting for each to finish before
 // starting the next, so total load time = the SLOWEST single read, not the sum of all 9.
 const SHEET_MERGERS={
+  // NOTE: the Sheet is authoritative once synced — always SET each field (blank
+  // included), never guard with a truthy check. A truthy guard means a field you
+  // blank out on the Sheet (e.g. clearing a polluted report_summary) can NEVER
+  // clear on a device that already cached the old value — it'd just stay stuck
+  // forever, since "sync" would only ever fill in, never erase. (Real bug, found
+  // 2026-09-09: Sheet cleanup of report_summary wasn't reflecting on a phone that
+  // had already cached the polluted text.)
   weeks:function(rows){
     rows.forEach(function(r){
       const k=r.week;
       if(!k)return;
       if(!db.weeks[k])db.weeks[k]=blankWeek();
-      WEEK_FIELDS.forEach(function(f){if(r[f]&&r[f].toString().trim())db.weeks[k][f]=r[f];});
+      WEEK_FIELDS.forEach(function(f){db.weeks[k][f]=r[f]||'';});
     });
   },
   meta:function(mrows){
     mrows.forEach(function(r){
-      if(r.key==='journal'&&r.value)db.journal=r.value;
-      if(r.key==='journaldate'&&r.value)db.journaldate=r.value;
-      if(r.key==='girl'&&r.value)db.girl=r.value;
-      if(r.key==='boy'&&r.value)db.boy=r.value;
-      if(r.key==='unisex'&&r.value)db.unisex=r.value;
-      if(r.key==='birthplan'&&r.value)db.birthplan=r.value;
-      if(r.key==='drivelink'&&r.value)db.drivelink=r.value;
-      if(r.key==='freenotes'&&r.value)db.freenotes=r.value;
+      if(r.key==='journal')db.journal=r.value||'';
+      if(r.key==='journaldate')db.journaldate=r.value||'';
+      if(r.key==='girl')db.girl=r.value||'';
+      if(r.key==='boy')db.boy=r.value||'';
+      if(r.key==='unisex')db.unisex=r.value||'';
+      if(r.key==='birthplan')db.birthplan=r.value||'';
+      if(r.key==='drivelink')db.drivelink=r.value||'';
+      if(r.key==='freenotes')db.freenotes=r.value||'';
     });
   },
   nest:function(nrows){
