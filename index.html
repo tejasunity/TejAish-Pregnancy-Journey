@@ -1899,8 +1899,11 @@ function saveWeek(){
   db.weeks[k].vaccine=g('fv');db.weeks[k].blood=g('fbl');
   db.weeks[k].doctor=g('fd');db.weeks[k].sono=g('fs');
   db.weeks[k].medications=g('fmeds');
+  // Always save whatever the AI box currently shows — including blank. The old
+  // "only if non-empty" guard meant an intentionally-cleared summary could never
+  // actually be saved as cleared; it would just silently keep whatever was there.
   const aiBox=document.getElementById('ai-result-text');
-  if(aiBox&&aiBox.textContent.trim())db.weeks[k].report_summary=aiBox.textContent.trim();
+  if(aiBox)db.weeks[k].report_summary=aiBox.textContent.trim();
   syncDB();
   if(GAS_URL)gasPost({action:'upsert_week',sheet:'weeks',row:Object.assign({week:k},db.weeks[k])});
   renderAll();closeEditor();
