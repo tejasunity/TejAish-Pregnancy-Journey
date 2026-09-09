@@ -1422,6 +1422,36 @@ function gasReadAttempt(sheet,cb,attempt){
 }
 function gasRead(sheet,cb){gasReadAttempt(sheet,cb,1);}
 
+// Reads EVERY tab in one Apps Script execution + one round-trip (needs the
+// 'read_all' action on the backend). Same timeout+retry guarantee as gasRead.
+// cb(null) means "not supported or failed" — the caller falls back to per-sheet reads.
+function gasReadAllAttempt(cb,attempt){
+  if(!GAS_URL){cb(null);return;}
+  const cbName='gasReadAll_'+Date.now()+'_'+(gasReadSeq++);
+  const s=document.createElement('script');
+  let settled=false;
+  function retryOrGiveUp(){
+    if(settled)return;
+    settled=true;
+    clearTimeout(timer);
+    delete window[cbName];s.remove();
+    if(attempt<2)gasReadAllAttempt(cb,attempt+1);
+    else cb(null);
+  }
+  const timer=setTimeout(retryOrGiveUp,9000);
+  window[cbName]=function(res){
+    if(settled)return;
+    settled=true;
+    clearTimeout(timer);
+    delete window[cbName];s.remove();
+    cb(res&&res.ok?res.data:null);
+  };
+  s.src=GAS_URL+'?action=read_all&callback='+cbName;
+  s.onerror=retryOrGiveUp;
+  document.head.appendChild(s);
+}
+function gasReadAll(cb){gasReadAllAttempt(cb,1);}
+
 async function syncAllToSheet(){
   if(!GAS_URL){toast('Add your Apps Script URL in Settings first',true);return;}
   setSyncStatus('syncing','Syncing…');
@@ -1534,25 +1564,44 @@ const SHEET_MERGERS={
     db.diary.sort(function(a,b){return (b.id>a.id)?1:-1;});
   }
 };
+function applyAllSheetData(all){
+  Object.keys(SHEET_MERGERS).forEach(function(sheet){
+    const rows=all[sheet];
+    if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
+  });
+  syncDB();
+  renderAll();
+  setSyncStatus('online','Synced ✓');
+}
+// Per-sheet fallback (9 requests) — used only if the backend doesn't support
+// read_all yet (pre-redeploy) or that single call fails outright.
+function loadFromSheetPerTab(){
+  const sheets=Object.keys(SHEET_MERGERS);
+  let remaining=sheets.length;
+  sheets.forEach(function(sheet,i){
+    setTimeout(function(){
+      gasRead(sheet,function(rows){
+        if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
+        remaining--;
+        if(remaining===0){
+          syncDB();
+          renderAll();
+          setSyncStatus('online','Synced ✓');
+        }
+      });
+    },i*90);
+  });
+}
 function loadFromSheet(){
   if(!GAS_URL)return;
   setSyncStatus('syncing','Loading…');
-  const sheets=Object.keys(SHEET_MERGERS);
-  let remaining=sheets.length;
-  // Small stagger between requests (not a full serial wait) — keeps almost all of the
-  // parallel speed-up while easing burst load on Apps Script's per-user concurrency limit.
-  sheets.forEach(function(sheet,i){
-    setTimeout(function(){
-    gasRead(sheet,function(rows){
-      if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
-      remaining--;
-      if(remaining===0){
-        syncDB();
-        renderAll();
-        setSyncStatus('online','Synced ✓');
-      }
-    });
-    },i*90);
+  // Fast path: one Apps Script call reads every tab at once (needs the 'read_all'
+  // action on the backend). Falls back to the old per-sheet reads automatically
+  // if that's not supported yet or the call fails — no app update needed later,
+  // it just gets fast the moment the backend is redeployed.
+  gasReadAll(function(all){
+    if(all)applyAllSheetData(all);
+    else loadFromSheetPerTab();
   });
 }
 
