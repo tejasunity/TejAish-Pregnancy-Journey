@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>TejAish — Twin Pregnancy</title>
 
 <style>
@@ -1204,6 +1207,35 @@ canvas#growthChart{width:100%;max-height:160px;}
 <div id="toast"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════
+   APP_VERSION — bump this literal on every deploy (any string
+   that changes is fine, e.g. the date). Checked below against
+   what's actually live so a home-screen icon on a stale cache
+   auto-refreshes itself instead of needing a manual delete +
+   re-add every time. Do NOT remove this line — the version
+   check parses it with a regex.
+   ═══════════════════════════════════════════════════════ */
+const APP_VERSION='2026-09-10-a';
+(function checkForNewVersion(){
+  try{
+    // cache:'no-store' + a cache-busting query param — belt and suspenders
+    // against iOS's aggressive home-screen-icon caching specifically.
+    fetch(location.pathname+'?_cachebust='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.text();})
+      .then(function(html){
+        const m=html.match(/const APP_VERSION='([^']+)'/);
+        if(!m||m[1]===APP_VERSION)return;
+        // Only auto-reload ONCE per version per tab session — guards against a
+        // reload loop if something's persistently inconsistent (e.g. offline).
+        const already=sessionStorage.getItem('tej_reloaded_for_version');
+        if(already===m[1])return;
+        sessionStorage.setItem('tej_reloaded_for_version',m[1]);
+        location.href=location.pathname+'?_v='+Date.now();
+      })
+      .catch(function(){/* offline or blocked — just keep running the cached copy */});
+  }catch(e){}
+})();
+
 /* ═══════════════════════════════════════════════════════
    CONFIGURATION — edit these lines directly, then
    redeploy to GitHub Pages. Both phones read this same
