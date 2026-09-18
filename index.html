@@ -588,7 +588,7 @@ canvas#growthChart{width:100%;max-height:160px;}
     overflow:visible!important;
   }
   .app-hdr,.tab-bar,.page,#editor-modal,#quicklog-modal,#toast{display:none!important;}
-  body > *:not(#report-view-modal){display:none!important;}
+  body > *:not(#report-view-modal):not(#glucose-print-view){display:none!important;}
   #report-view-modal{
     display:block!important;position:static!important;
     inset:auto!important;left:auto!important;top:auto!important;
@@ -597,6 +597,13 @@ canvas#growthChart{width:100%;max-height:160px;}
     overflow:visible!important;z-index:auto!important;
   }
   #report-view-modal .r-actions{display:none!important;}
+  /* Glucose PDF export prints IN-PAGE (no window.open/new tab) — opening a new
+     window and calling .print() on it is exactly the pattern that traps iOS
+     home-screen web apps after using the native Share sheet (e.g. to WhatsApp):
+     the new window/tab context can be left with no way back except a force-quit.
+     Populating this hidden div and calling window.print() on the SAME page,
+     same as the Report tab already does above, avoids that entirely. */
+  #glucose-print-view{display:block!important;background:#fff!important;color:#222!important;padding:0!important;}
   .rbox{
     box-shadow:none!important;max-width:100%!important;width:100%!important;
     border-radius:0!important;margin:0!important;overflow:visible!important;
@@ -623,9 +630,14 @@ canvas#growthChart{width:100%;max-height:160px;}
   .r-story-text{line-height:1.35!important;}
   .r-story-item{page-break-inside:avoid;}
 }
+/* Hidden outside of printing — see the @media print rule above for why this
+   exists as an in-page div instead of a new window. */
+#glucose-print-view{display:none;}
 </style>
 </head>
 <body>
+
+<div id="glucose-print-view"></div>
 
 <header class="app-hdr">
   <div>
@@ -1215,7 +1227,7 @@ canvas#growthChart{width:100%;max-height:160px;}
    re-add every time. Do NOT remove this line — the version
    check parses it with a regex.
    ═══════════════════════════════════════════════════════ */
-const APP_VERSION='2026-09-10-a';
+const APP_VERSION='2026-09-18-a';
 (function checkForNewVersion(){
   try{
     // cache:'no-store' + a cache-busting query param — belt and suspenders
@@ -1610,6 +1622,7 @@ function applyAllSheetData(all){
     const rows=all[sheet];
     if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
   });
+  gdDedupe(); // one-time repair for any stray duplicate glucose rows from before this fix
   syncDB();
   renderAll();
   setSyncStatus('online','Synced ✓');
@@ -1625,6 +1638,7 @@ function loadFromSheetPerTab(){
         if(rows&&rows.length)SHEET_MERGERS[sheet](rows);
         remaining--;
         if(remaining===0){
+          gdDedupe();
           syncDB();
           renderAll();
           setSyncStatus('online','Synced ✓');
@@ -2009,8 +2023,41 @@ function gdNearestTestDay(from){
 }
 const GD_META={fasting:{lbl:'Fasting',max:100},post_bf:{lbl:'After breakfast',max:130},post_lunch:{lbl:'After lunch',max:130},post_dinner:{lbl:'After dinner',max:130}};
 function gdKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function gdGet(k){return db.glucose.find(function(g){return g.date===k;});}
+// Google Sheets silently re-types the 'date' COLUMN as a real Date cell the moment
+// it sees a value like "2026-09-09" — reading it back then gives a totally
+// different string ("Wed Sep 09 2026 00:00:00 GMT+0530 (India Standard Time)").
+// Comparing against that mangled string with === always fails, which used to make
+// gdEnsure() think "no row for today yet" and push a SECOND row with the same id
+// on every sync — the reported 'doubling'. Fix: never trust the .date string for
+// lookup/sort/display — the id ('gYYYY-MM-DD') is plain text Sheets has no reason
+// to touch, so it's immune to this. Derive everything from id instead.
+function gdDateFromId(id){
+  var parts=String(id).replace(/^g/,'').split('-');
+  return new Date(+parts[0],+parts[1]-1,+parts[2]);
+}
+function gdGet(k){return db.glucose.find(function(g){return g.id==='g'+k;});}
 function gdEnsure(k){var g=gdGet(k);if(!g){g={id:'g'+k,date:k,fasting:'',post_bf:'',post_lunch:'',post_dinner:'',notes:''};db.glucose.push(g);}return g;}
+// One-time repair: collapse any stray duplicate-id rows already sitting in a
+// device's local array (from the bug above) into a single merged row — combining
+// whichever fields are non-empty from each copy, so nothing typed gets lost —
+// then re-push the merged result to the Sheet so it's clean everywhere.
+function gdDedupe(){
+  var byId={},order=[],changed=false;
+  db.glucose.forEach(function(g){
+    if(!g||!g.id)return;
+    if(!byId[g.id]){byId[g.id]=g;order.push(g.id);return;}
+    changed=true;
+    var kept=byId[g.id];
+    ['fasting','post_bf','post_lunch','post_dinner'].forEach(function(f){
+      if((!kept[f]||kept[f]==='')&&g[f])kept[f]=g[f];
+    });
+    if((!kept.notes||kept.notes==='')&&g.notes)kept.notes=g.notes;
+  });
+  if(!changed)return;
+  db.glucose=order.map(function(id){return byId[id];});
+  syncDB();
+  db.glucose.forEach(function(g){if(GAS_URL)gasPost({action:'upsert_row',sheet:'glucose',row:g});});
+}
 
 function renderGlucose(){
   var host=document.getElementById('gd-days');if(!host)return;
@@ -2072,8 +2119,12 @@ function saveGlucoseNote(k,val){
   if(GAS_URL)gasPost({action:'upsert_row',sheet:'glucose',row:g});
 }
 function gdSortedRows(){
+  // Sort by id ('gYYYY-MM-DD'), not the .date field — that field can come back from
+  // the Sheet in a completely different string format (see gdDateFromId above),
+  // which broke chronological ordering ('distorted dates' in the history/PDF).
+  // The zero-padded YYYY-MM-DD id sorts correctly as a plain string.
   return db.glucose.filter(function(g){return g.fasting||g.post_bf||g.post_lunch||g.post_dinner;})
-    .sort(function(a,b){return a.date<b.date?1:-1;});
+    .sort(function(a,b){return a.id<b.id?1:-1;});
 }
 function openGlucoseHistory(){
   var rows=gdSortedRows();var body=document.getElementById('gd-hist-body');
@@ -2081,31 +2132,38 @@ function openGlucoseHistory(){
   else{body.innerHTML='<div class="gd-hist-row hd"><div>Date</div><div>Fasting</div><div>B\'fast</div><div>Lunch</div><div>Dinner</div><div>Notes</div></div>'+
     rows.map(function(g){
       function c(v,mx){if(!v)return '<div>—</div>';return '<div class="'+(Number(v)>mx?'hi':'')+'">'+v+'</div>';}
-      return '<div class="gd-hist-row"><div>'+new Date(g.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+'</div>'+
+      return '<div class="gd-hist-row"><div>'+gdDateFromId(g.id).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+'</div>'+
         c(g.fasting,100)+c(g.post_bf,130)+c(g.post_lunch,130)+c(g.post_dinner,130)+
         '<div class="gd-hist-note" title="'+gdEsc(g.notes||'')+'">'+(g.notes?gdEsc(g.notes):'—')+'</div></div>';
     }).join('');}
   document.getElementById('gd-hist-modal').classList.add('open');
 }
 function closeGlucoseHistory(){document.getElementById('gd-hist-modal').classList.remove('open');}
+// Prints IN-PAGE (populates a hidden div + window.print() on the SAME page) —
+// see the #glucose-print-view CSS comment for why: window.open + a separate
+// document is exactly the pattern that leaves iOS home-screen web apps stuck
+// after using the native Share sheet (e.g. sharing the PDF to WhatsApp), with
+// no way back except force-closing the app.
 function printGlucose(){
   var rows=gdSortedRows();
   var body=rows.map(function(g){
     function c(v,mx){if(!v)return '<td>—</td>';return '<td style="'+(Number(v)>mx?'color:#b00000;font-weight:bold;':'')+'">'+v+'</td>';}
-    return '<tr><td>'+new Date(g.date).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+'</td>'+
-      c(g.fasting,100)+c(g.post_bf,130)+c(g.post_lunch,130)+c(g.post_dinner,130)+'<td>'+(g.notes||'')+'</td></tr>';
+    return '<tr><td>'+gdDateFromId(g.id).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+'</td>'+
+      c(g.fasting,100)+c(g.post_bf,130)+c(g.post_lunch,130)+c(g.post_dinner,130)+'<td>'+gdEsc(g.notes||'')+'</td></tr>';
   }).join('');
-  var html='<html><head><title>Glucose Readings — Aishwarya</title><style>'+
-    'body{font-family:Arial,sans-serif;color:#222;padding:24px;}h1{font-size:18px;color:#A85D68;margin:0 0 2px;}'+
-    '.sub{color:#777;font-size:12px;margin-bottom:16px;}table{width:100%;border-collapse:collapse;font-size:13px;}'+
-    'th,td{border:1px solid #ddd;padding:7px 9px;text-align:center;}th{background:#D98895;color:#fff;font-size:11px;text-transform:uppercase;}'+
-    'td:last-child,th:last-child{text-align:left;}</style></head><body>'+
+  var html='<style>'+
+    '#glucose-print-view h1{font-size:18px;color:#A85D68;margin:0 0 2px;font-family:Arial,sans-serif;}'+
+    '#glucose-print-view .sub{color:#777;font-size:12px;margin-bottom:16px;font-family:Arial,sans-serif;}'+
+    '#glucose-print-view table{width:100%;border-collapse:collapse;font-size:13px;font-family:Arial,sans-serif;}'+
+    '#glucose-print-view th,#glucose-print-view td{border:1px solid #ddd;padding:7px 9px;text-align:center;}'+
+    '#glucose-print-view th{background:#D98895;color:#fff;font-size:11px;text-transform:uppercase;}'+
+    '#glucose-print-view td:last-child,#glucose-print-view th:last-child{text-align:left;}'+
+    '</style>'+
     '<h1>Gestational Diabetes — Glucose Readings</h1><div class="sub">Aishwarya · Twin pregnancy · Target: fasting 90–100, post-meal (1 hr) 120–130 mg/dL · Generated '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</div>'+
     '<table><tr><th>Date</th><th>Fasting</th><th>After breakfast</th><th>After lunch</th><th>After dinner</th><th>Notes</th></tr>'+
-    (body||'<tr><td colspan="6">No readings yet.</td></tr>')+'</table></body></html>';
-  var w=window.open('','_blank');
-  if(!w){toast('Allow pop-ups to export the PDF',true);return;}
-  w.document.write(html);w.document.close();w.focus();setTimeout(function(){w.print();},300);
+    (body||'<tr><td colspan="6">No readings yet.</td></tr>')+'</table>';
+  document.getElementById('glucose-print-view').innerHTML=html;
+  window.print();
 }
 
 // ── Diary quick-capture ──────────────────────────────────────────────────────
@@ -2135,7 +2193,12 @@ async function autoFileDiaryEntry(entry){
   const key=GEMINI_KEY||localStorage.getItem('tej_gemini_key')||'';
   if(!key)return;
   const m=getMetrics();
-  const todayISO=todayMid().toISOString().slice(0,10);
+  // NOT .toISOString() — that converts to UTC, and India is UTC+5:30, so local
+  // midnight is always still the PREVIOUS day in UTC. Every diary entry filed
+  // without an explicit date in the note text was landing on the wrong day,
+  // every single time, for any user in India (a real 'distorted dates' bug).
+  // gdKey() already builds this correctly from LOCAL date parts — reuse it.
+  const todayISO=gdKey(todayMid());
   const prompt='You are filing a quick pregnancy-tracker diary note into structured data. '+
     'Today is '+todayISO+' (pregnancy week '+m.week+'). LMP is 26 Feb 2026. '+
     'The note may mention: a glucose reading (fasting / post-breakfast / post-lunch / post-dinner, mg/dL), '+
