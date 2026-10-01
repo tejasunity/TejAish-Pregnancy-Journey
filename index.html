@@ -819,15 +819,15 @@ canvas#growthChart{width:100%;max-height:160px;}
       <div style="display:flex;flex-direction:column;gap:12px;">
         <div>
           <label class="flbl">👦 Boy Contenders</label>
-          <input type="text" class="fi" id="names-boy" placeholder="e.g. Arjun, Veer, Aarav…">
+          <textarea class="ft" id="names-boy" rows="3" placeholder="e.g. Arjun, Veer, Aarav…"></textarea>
         </div>
         <div>
           <label class="flbl">👧 Girl Contenders</label>
-          <input type="text" class="fi" id="names-girl" placeholder="e.g. Anandi, Diya…">
+          <textarea class="ft" id="names-girl" rows="3" placeholder="e.g. Anandi, Diya…"></textarea>
         </div>
         <div>
           <label class="flbl">✨ Unisex Picks</label>
-          <input type="text" class="fi" id="names-unisex" placeholder="e.g. Rio, Amaya…">
+          <textarea class="ft" id="names-unisex" rows="3" placeholder="e.g. Rio, Amaya…"></textarea>
         </div>
         <button class="btn btn-gold btn-full" onclick="saveNames()">Save Names</button>
       </div>
@@ -1227,7 +1227,7 @@ canvas#growthChart{width:100%;max-height:160px;}
    re-add every time. Do NOT remove this line — the version
    check parses it with a regex.
    ═══════════════════════════════════════════════════════ */
-const APP_VERSION='2026-09-18-a';
+const APP_VERSION='2026-10-01-a';
 (function checkForNewVersion(){
   try{
     // cache:'no-store' + a cache-busting query param — belt and suspenders
